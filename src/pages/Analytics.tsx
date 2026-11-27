@@ -140,7 +140,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
 
       {isEmpty && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-6 text-sm text-muted-foreground">
-          📊 No queue activity yet. Charts will populate live as customers join your queues.
+          No queue activity yet. Charts will populate live as customers join your queues.
         </div>
       )}
 

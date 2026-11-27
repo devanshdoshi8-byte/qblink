@@ -354,7 +354,7 @@ const CustomerScreen4 = ({ onNext }: { onNext: () => void }) => {
               initial={{ opacity: 0, x: -10 }}
               animate={i < step ? { opacity: 1, x: 0 } : { opacity: 0.25, x: -6 }}
               transition={{ duration: 0.35 }}
-              className="flex items-start gap-2.5 rounded-xl border border-border bg-card/80 backdrop-blur p-2.5"
+              className="flex items-start gap-2.5 rounded-xl border border-border bg-card p-2.5"
             >
               <span
                 className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${

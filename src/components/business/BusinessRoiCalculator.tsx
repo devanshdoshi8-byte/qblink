@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Calculator,
   TrendingDown,
-  Sparkles,
   HelpCircle,
   RotateCcw,
   Copy,
@@ -367,7 +366,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
             <div className="p-5 sm:p-6 rounded-3xl bg-success-soft border border-success/30 text-foreground space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Scenario Improvement ({currentWalkawayRate}% → {targetWalkawayRate}%)
+                  <TrendingDown className="w-3.5 h-3.5" /> Scenario Improvement ({currentWalkawayRate}% → {targetWalkawayRate}%)
                 </span>
                 <span className="font-mono text-xs font-bold text-success bg-success/15 px-2 py-0.5 rounded-full">
                   -{outputs.rateReductionPercent}% Walkaway

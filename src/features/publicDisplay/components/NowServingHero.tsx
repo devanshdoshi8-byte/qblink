@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Clock, AlertTriangle, PauseCircle, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, PauseCircle } from "lucide-react";
 import { PublicDisplayState } from "../types";
 
 interface NowServingHeroProps {
@@ -113,7 +113,7 @@ export const NowServingHero: React.FC<NowServingHeroProps> = ({ displayData }) =
           {/* Counter Label */}
           {counterLabel && (
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-muted/60 border border-border text-foreground font-extrabold text-sm sm:text-base md:text-lg shadow-xs">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <CheckCircle2 className="w-4 h-4 text-primary" />
               <span>{counterLabel}</span>
             </div>
           )}

@@ -267,8 +267,8 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
                           : "border-border bg-card card-shadow hover:border-primary/40"
                       }`}
                     >
-                      <div className="text-2xl mb-2" aria-hidden="true">
-                        {c.emoji}
+                      <div className="mb-2 text-primary" aria-hidden="true">
+                        <c.icon className="w-5 h-5" />
                       </div>
                       <p className="font-bold text-sm text-foreground leading-tight">{c.title}</p>
                       <AnimatePresence initial={false}>

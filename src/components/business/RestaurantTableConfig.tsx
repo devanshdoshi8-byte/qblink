@@ -1,6 +1,6 @@
 import {
-  ArrowRight, Check, Eye, Info, Plus, Sparkles, Trash2,
-  Users, Utensils, Wand2, X, Zap,
+  ArrowRight, Check, Eye, Info, Plus, Trash2,
+  Users, Utensils, X, Zap,
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -283,7 +283,7 @@ const RestaurantTableConfig = ({
           </div>
 
           <div className="mt-4 rounded-xl border border-primary/25 bg-primary/[0.06] p-3 flex gap-2.5">
-            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-[11.5px] text-foreground/80 leading-snug">
               <span className="font-semibold text-foreground">Most restaurants benefit from Flexible Matching</span> —
               customers join faster while Qblink manages queue assignment behind the scenes.
@@ -364,7 +364,7 @@ const PolicyCard = ({
       <p id={titleId} className="text-sm font-bold text-foreground">{title}</p>
       {badge && (
         <span className="inline-flex items-center gap-1 text-[9.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-primary/15 text-primary">
-          <Sparkles className="w-2.5 h-2.5" aria-hidden="true" /> {badge}
+          {badge}
         </span>
       )}
     </div>
@@ -395,7 +395,7 @@ const PolicyCard = ({
             <span className={`px-1.5 py-0.5 rounded font-semibold ${i === 1 && active ? "bg-primary text-primary-foreground" : "bg-card text-foreground/70 border border-border/50"}`}>
               {step}
             </span>
-            {i < flow.length - 1 && <ArrowRight aria-hidden="true" className={`w-3 h-3 shrink-0 ${active ? "text-primary animate-pulse" : "text-muted-foreground/60"}`} />}
+            {i < flow.length - 1 && <ArrowRight aria-hidden="true" className={`w-3 h-3 shrink-0 ${active ? "text-primary" : "text-muted-foreground/60"}`} />}
           </div>
         ))}
       </div>
@@ -587,7 +587,7 @@ const CustomerPreviewModal = ({
                           Auto-assigned to {routed}-seat table queue
                         </p>
                       ) : (
-                        <p className="text-[10px] text-primary mt-0.5 animate-pulse">Finding best table…</p>
+                        <p className="text-[10px] text-primary mt-0.5">Finding best table…</p>
                       )
                     ) : (
                       <p className="text-[11px] font-semibold text-foreground mt-0.5">
@@ -657,7 +657,7 @@ const CustomerPreviewModal = ({
                       }`}
                     >
                       {isRouted && (
-                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary animate-ping" />
+                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary" />
                       )}
                       <p className={`text-[9px] font-semibold uppercase tracking-wide ${isRouted ? "text-primary" : "text-muted-foreground"}`}>
                         {seats}-seat
@@ -929,7 +929,7 @@ const LearnMoreModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Decision hint */}
           <div className="rounded-xl border border-primary/25 bg-primary/[0.06] p-3.5 flex gap-2.5">
-            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-[11.5px] text-foreground/80 leading-snug">
               <span className="font-semibold text-foreground">Start with Flexible Matching</span> unless your seating categories are part of the guest experience — like a rooftop, private room, or tasting menu area. You can switch modes anytime without changing your queues or losing data.
             </p>

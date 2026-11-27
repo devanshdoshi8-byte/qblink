@@ -1,7 +1,7 @@
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { publicUrl } from "@/lib/publicUrl";
-import { Smartphone, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import { Smartphone, Clock, ArrowRight, ShieldCheck } from "lucide-react";
 
 interface JoinQrKioskCardProps {
   queueId: string;
@@ -44,7 +44,7 @@ export const JoinQrKioskCard: React.FC<JoinQrKioskCardProps> = ({ queueId, queue
       {/* Feature Badges */}
       <div className="hidden lg:flex flex-col gap-2 shrink-0 text-xs text-muted-foreground border-l border-border/80 pl-6">
         <div className="flex items-center gap-2 font-medium text-foreground">
-          <Sparkles className="w-4 h-4 text-primary" />
+          <Clock className="w-4 h-4 text-primary" />
           <span>Live wait countdown on phone</span>
         </div>
         <div className="flex items-center gap-2 font-medium text-foreground">

@@ -86,11 +86,6 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 relative">
             <span
-              className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                isQueueActive ? "bg-success" : "bg-warning"
-              }`}
-            />
-            <span
               className={`relative inline-flex rounded-full h-2 w-2 ${
                 isQueueActive ? "bg-success" : "bg-warning"
               }`}

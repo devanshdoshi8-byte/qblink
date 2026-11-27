@@ -36,7 +36,7 @@ export const ChaosToClarityExperience: React.FC<ChaosToClarityExperienceProps> =
   // Interaction 1 -> 2: Scan & Transform
   const handleScanQR = () => {
     setQueueState((prev) => ({ ...prev, step: 2 }));
-    toast.success("✨ QR Scanned in mobile browser: Pocket ticket #A-26 issued!");
+    toast.success("QR Scanned in mobile browser: Pocket ticket #A-26 issued!");
   };
 
   // Interaction 2 -> 3: Advance Live Queue
@@ -60,7 +60,7 @@ export const ChaosToClarityExperience: React.FC<ChaosToClarityExperienceProps> =
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Layers className="w-3.5 h-3.5" />
             <span>Interactive Product Simulation</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground tracking-tight">

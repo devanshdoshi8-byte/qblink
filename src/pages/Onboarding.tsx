@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Sparkles, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
 import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
@@ -124,7 +124,7 @@ const Onboarding = () => {
             {step === "outro" && (
               <div className="w-full max-w-md mx-auto text-center">
                 <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-6 elevated-shadow">
-                  <Sparkles className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
+                  <CheckCircle2 className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight mb-4">
                   <TypingText text={`${name || "Friend"}, your journey is just beginning.`} speed={28} />

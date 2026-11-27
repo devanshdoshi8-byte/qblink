@@ -33,7 +33,7 @@ export const WaitAndExplore = ({ estimatedWaitMinutes, businessAddress }: Props)
   }
 
   return (
-    <div className="w-full max-w-md mx-auto my-4 bg-card/60 border border-border/80 rounded-3xl p-4 card-shadow backdrop-blur-xs">
+    <div className="w-full max-w-md mx-auto my-4 bg-card border border-border/80 rounded-3xl p-4 card-shadow">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left text-xs font-semibold text-foreground hover:opacity-80 transition-opacity"

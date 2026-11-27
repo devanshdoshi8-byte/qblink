@@ -20,7 +20,7 @@ export const Signature = () => (
         {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((t, i) => (
           <span key={i} className="flex items-center gap-16">
             {t}
-            <span className="text-glow/60">✦</span>
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-glow/60" aria-hidden />
           </span>
         ))}
       </div>

@@ -353,7 +353,7 @@ function HotspotMarker3D({
           <button
             type="button"
             onClick={onClick}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-mono-caps font-bold tracking-wider shadow-xl backdrop-blur-md transition-all whitespace-nowrap ${
+            className={`px-2.5 py-1 rounded-full text-[11px] font-mono-caps font-bold tracking-wider shadow-lg transition-all whitespace-nowrap ${
               isActive
                 ? "bg-glow text-ink ring-2 ring-cream"
                 : "bg-ink/80 text-cream/90 border border-glow/30 hover:border-glow hover:scale-105"
@@ -605,7 +605,7 @@ export const ChaoticRoom360: React.FC = () => {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
           <div className="max-w-3xl">
             <div className="font-mono-caps text-glow/90 mb-4 flex items-center gap-2 text-xs tracking-[0.25em]">
-              <span className="w-2 h-2 rounded-full bg-glow animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-glow" />
               Ch. 04 · 360° Spatial Reality Simulator
             </div>
             <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.94] tracking-tight">
@@ -623,9 +623,9 @@ export const ChaoticRoom360: React.FC = () => {
           </div>
 
           {/* Quick Stats Banner */}
-          <div className="flex items-center gap-4 bg-deep/40 border border-glow/20 rounded-2xl p-4 backdrop-blur-md">
+          <div className="flex items-center gap-4 bg-deep/65 border border-glow/20 rounded-2xl p-4">
             <div className="w-12 h-12 rounded-xl bg-glow/15 border border-glow/30 flex items-center justify-center text-glow">
-              <Compass className="w-6 h-6 animate-spin" style={{ animationDuration: "24s" }} />
+              <Compass className="w-6 h-6" />
             </div>
             <div>
               <div className="text-xs font-mono-caps text-cream/50">SPATIAL HEADING</div>
@@ -690,10 +690,10 @@ export const ChaoticRoom360: React.FC = () => {
                 key={s.id}
                 type="button"
                 onClick={() => snapToHotspot(s)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-mono-caps font-semibold backdrop-blur-md border transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-mono-caps font-semibold border transition-all flex items-center gap-1.5 ${
                   activeHotspot?.id === s.id
                     ? "bg-glow text-ink border-cream shadow-lg scale-105"
-                    : "bg-ink/70 text-cream/80 border-glow/20 hover:border-glow/60"
+                    : "bg-ink/90 text-cream/85 border-glow/20 hover:border-glow/60"
                 }`}
               >
                 <span
@@ -711,16 +711,16 @@ export const ChaoticRoom360: React.FC = () => {
               type="button"
               onClick={toggleMute}
               title={isMuted ? "Unmute Spatial Soundscape" : "Mute Soundscape"}
-              className="p-2.5 rounded-xl bg-ink/70 border border-glow/25 text-cream hover:text-glow backdrop-blur-md transition-all hover:scale-105"
+              className="p-2.5 rounded-xl bg-ink/90 border border-glow/25 text-cream hover:text-glow transition-all hover:scale-105"
             >
-              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-glow animate-pulse" />}
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-glow" />}
             </button>
 
             <button
               type="button"
               onClick={() => setIsAutoRotate(!isAutoRotate)}
               title="Toggle Auto 360° Orbit"
-              className={`p-2.5 rounded-xl border backdrop-blur-md transition-all hover:scale-105 ${
+              className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${
                 isAutoRotate
                   ? "bg-glow text-ink border-cream"
                   : "bg-ink/70 text-cream border-glow/25 hover:text-glow"
@@ -732,7 +732,7 @@ export const ChaoticRoom360: React.FC = () => {
 
           {/* Center-Bottom Floating Metamorphosis Slider Control */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-xl z-20 pointer-events-auto">
-            <div className="rounded-2xl bg-ink/85 border border-glow/30 backdrop-blur-xl p-4 sm:p-5 shadow-2xl">
+            <div className="rounded-2xl bg-ink/95 border border-glow/30 p-4 sm:p-5 shadow-xl">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2 text-xs font-mono-caps font-bold">
                   <span
@@ -745,7 +745,7 @@ export const ChaoticRoom360: React.FC = () => {
                 </div>
 
                 <div className="text-xs font-mono-caps text-glow font-bold flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 animate-pulse" />
+                  <Sliders className="w-3.5 h-3.5" />
                   <span>Drag Transformation</span>
                 </div>
 
@@ -784,8 +784,8 @@ export const ChaoticRoom360: React.FC = () => {
           </div>
 
           {/* Interactive Drag Instruction Hint */}
-          <div className="absolute top-1/2 left-6 -translate-y-1/2 z-10 pointer-events-none hidden md:flex items-center gap-2 text-xs font-mono-caps text-cream/40 bg-ink/40 px-3 py-2 rounded-xl backdrop-blur-sm border border-cream/5">
-            <MoveHorizontal className="w-4 h-4 text-glow animate-pulse" />
+          <div className="absolute top-1/2 left-6 -translate-y-1/2 z-10 pointer-events-none hidden md:flex items-center gap-2 text-xs font-mono-caps text-cream/60 bg-ink/80 px-3 py-2 rounded-xl border border-cream/10">
+            <MoveHorizontal className="w-4 h-4 text-glow" />
             <span>Drag in any direction to look 360°</span>
           </div>
         </div>
@@ -799,7 +799,7 @@ export const ChaoticRoom360: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="mt-8 rounded-3xl bg-deep/30 border border-glow/20 p-6 sm:p-8 backdrop-blur-md grid grid-cols-1 lg:grid-cols-3 gap-6 items-center"
+              className="mt-8 rounded-3xl bg-deep/65 border border-glow/20 p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center"
             >
               <div className="lg:col-span-2">
                 <div className="flex items-center gap-3">

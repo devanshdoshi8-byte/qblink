@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Activity, CheckCircle, Clock, Users, ShieldAlert } from "lucide-react";
+import { ArrowRight, TrendingUp, Activity, CheckCircle, Clock, Users, ShieldAlert } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const tabs = ["Live queue", "Insights", "Queue health", "Tokens"];
@@ -51,16 +51,12 @@ export const DashboardPreview = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-14 rounded-3xl glass-panel p-2.5 sm:p-4 overflow-hidden shadow-2xl border border-[hsl(var(--brand-glow)/0.2)]"
+          className="mt-14 rounded-3xl bg-[hsl(var(--brand-deep)/0.4)] p-2.5 sm:p-4 overflow-hidden shadow-xl border border-[hsl(var(--brand-glow)/0.2)]"
         >
           <div className="rounded-2xl bg-[hsl(var(--brand-navy))] border border-[hsl(var(--brand-cream)/0.08)] overflow-hidden">
-            {/* Chrome Bar */}
-            <div className="flex items-center justify-between px-5 h-12 border-b border-[hsl(var(--brand-cream)/0.08)] bg-[hsl(var(--brand-navy)/0.8)]">
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-destructive/60" />
-                <span className="w-3 h-3 rounded-full bg-warning/60" />
-                <span className="w-3 h-3 rounded-full bg-success/60" />
-              </div>
+            {/* Console Bar */}
+            <div className="flex items-center justify-between px-5 h-12 border-b border-[hsl(var(--brand-cream)/0.08)] bg-[hsl(var(--brand-navy))]">
+              <span className="text-[11px] font-mono-caps text-cream/60 hidden sm:inline">Counter Desk</span>
 
               <div className="flex gap-4 sm:gap-6 text-xs font-semibold overflow-x-auto no-scrollbar">
                 {tabs.map((t, i) => (
@@ -80,7 +76,7 @@ export const DashboardPreview = () => {
               </div>
 
               <div className="flex items-center gap-1.5 text-[11px] stage-accent font-mono-caps">
-                <span className="w-2 h-2 rounded-full bg-[hsl(var(--brand-glow))] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[hsl(var(--brand-glow))]" />
                 <span>Live Feed</span>
               </div>
             </div>
@@ -151,7 +147,7 @@ export const DashboardPreview = () => {
                     <button
                       key={b}
                       type="button"
-                      className="text-xs rounded-xl px-3.5 py-3 glass-panel stage-muted hover:text-white transition-colors"
+                      className="text-xs rounded-xl px-3.5 py-3 bg-[hsl(var(--brand-cream)/0.06)] border border-[hsl(var(--brand-cream)/0.12)] stage-muted hover:text-white transition-colors"
                     >
                       {b}
                     </button>
@@ -165,7 +161,7 @@ export const DashboardPreview = () => {
                   <div className="flex items-center justify-between text-xs tracking-[0.2em] uppercase stage-muted mb-3 font-mono-caps font-bold">
                     <span>Hourly Flow Intensity</span>
                     <span className="text-[hsl(var(--brand-glow))] flex items-center gap-1">
-                      <Activity className="w-3 h-3 animate-pulse" /> 5–7 PM Peak
+                      <Activity className="w-3 h-3" /> 5–7 PM Peak
                     </span>
                   </div>
 
@@ -202,12 +198,12 @@ export const DashboardPreview = () => {
                     { l: "Avg wait", v: "11 min", icon: Clock },
                     { l: "Served today", v: "148", icon: Users },
                     { l: "No-shows", v: "4", icon: ShieldAlert },
-                    { l: "Flow Health", v: "94 / 100", icon: Sparkles },
+                    { l: "Flow Health", v: "94 / 100", icon: TrendingUp },
                   ].map((m) => (
                     <motion.div
                       key={m.l}
                       whileHover={{ scale: 1.02 }}
-                      className="rounded-xl glass-panel p-3.5 border border-[hsl(var(--brand-cream)/0.08)]"
+                      className="rounded-xl bg-[hsl(var(--brand-deep)/0.45)] p-3.5 border border-[hsl(var(--brand-cream)/0.08)]"
                     >
                       <div className="flex items-center justify-between text-xs tracking-wider uppercase stage-muted font-mono-caps">
                         <span>{m.l}</span>
@@ -220,7 +216,7 @@ export const DashboardPreview = () => {
 
                 <div className="rounded-xl border border-[hsl(var(--brand-glow)/0.35)] bg-[hsl(var(--brand-glow)/0.08)] p-4 shadow-sm">
                   <div className="text-xs tracking-[0.18em] uppercase stage-accent font-bold mb-1 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--brand-glow))]" />
+                    <TrendingUp className="w-3.5 h-3.5 text-[hsl(var(--brand-glow))]" />
                     Qblink Intelligence Dispatch
                   </div>
                   <p className="text-xs stage-muted leading-relaxed">

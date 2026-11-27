@@ -193,7 +193,7 @@ const AdminOverview = () => {
           <p className="text-sm text-muted-foreground mt-1">Real-time picture of everything happening on Qblink</p>
         </div>
         <span className="text-xs text-muted-foreground flex items-center gap-1.5 bg-card px-3 py-1.5 rounded-full card-shadow">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Live
+          <span className="w-1.5 h-1.5 rounded-full bg-success" /> Live
         </span>
       </div>
 

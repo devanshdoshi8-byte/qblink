@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, Menu, Play, Sparkles, Tv, Layers, DollarSign, X, ArrowRight } from "lucide-react";
+import { ChevronDown, Menu, Play, Activity, Tv, Layers, DollarSign, X, ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/qblink-logo.png";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,7 +18,7 @@ const demoLinks = [
     title: "Chaos to Clarity Story",
     href: "/chaos-to-clarity",
     desc: "10-second visual before & after walk-in transformation",
-    icon: Sparkles,
+    icon: Activity,
     badge: "10s Pitch",
     badgeColor: "bg-warning-soft text-warning border-warning/30",
   },
@@ -123,7 +123,7 @@ export const TopNav = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.98 }}
                     transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="absolute left-0 mt-2 w-96 rounded-2xl bg-card border border-border p-2.5 shadow-2xl z-50 backdrop-blur-xl"
+                    className="absolute left-0 mt-2 w-96 rounded-2xl bg-card border border-border p-2.5 shadow-xl z-50"
                   >
                     <div className="px-3 py-2 border-b border-border/60 mb-1 flex items-center justify-between">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
@@ -286,7 +286,7 @@ export const TopNav = () => {
           to="/pitch"
           className="flex-1 py-2.5 px-3 rounded-xl border border-primary/30 bg-primary/10 text-primary font-semibold text-xs text-center flex items-center justify-center gap-1.5 shadow-sm"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-success" />
           <span>Try Pitch Demo</span>
         </Link>
         <Link

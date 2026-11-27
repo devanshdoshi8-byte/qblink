@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, UserCheck, Clock, ShieldCheck } from "lucide-react";
+import { ArrowRight, UserCheck, Clock, ShieldCheck } from "lucide-react";
 
 export const ThreeMotions = () => (
   <section
@@ -7,15 +7,11 @@ export const ThreeMotions = () => (
     className="relative ink-surface py-24 sm:py-32 overflow-hidden grain"
     aria-label="How it works"
   >
-    {/* Atmospheric gradient backdrops */}
-    <div className="absolute top-1/2 left-1/4 w-96 h-96 rounded-full bg-glow/5 blur-[100px] pointer-events-none" />
-    <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-teal/10 blur-[120px] pointer-events-none" />
-
     <div className="max-w-7xl mx-auto px-6 lg:px-24 relative z-10">
       <div className="flex items-end justify-between flex-wrap gap-6 mb-8">
         <div>
           <div className="font-mono-caps text-glow/80 mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-glow animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-glow" />
             Ch. 03 · Unified Kinetic Flow
           </div>
           <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
@@ -31,7 +27,7 @@ export const ThreeMotions = () => (
       </div>
 
       {/* Interactive Timeline Pipeline (Desktop) */}
-      <div className="mt-16 relative hidden md:block rounded-3xl bg-deep/25 border border-glow/20 p-8 shadow-2xl backdrop-blur-sm">
+      <div className="mt-16 relative hidden md:block rounded-3xl bg-deep/35 border border-glow/20 p-8 shadow-xl">
         <svg viewBox="0 0 1200 240" className="w-full">
           <defs>
             <linearGradient id="threadGlow" x1="0" x2="1">
@@ -72,9 +68,9 @@ export const ThreeMotions = () => (
 
           {/* Three key station nodes */}
           {[
-            { x: 160, y: 92, n: "01", label: "Join", sub: "Scan QR · take spot", icon: "✦" },
-            { x: 600, y: 148, n: "02", label: "Wait", sub: "Live position updates", icon: "●" },
-            { x: 1060, y: 118, n: "03", label: "Serve", sub: "Arrival call alert", icon: "✓" },
+            { x: 160, y: 92, n: "01", label: "Join", sub: "Scan QR · take spot", icon: "01" },
+            { x: 600, y: 148, n: "02", label: "Wait", sub: "Live position updates", icon: "02" },
+            { x: 1060, y: 118, n: "03", label: "Serve", sub: "Arrival call alert", icon: "03" },
           ].map((s, i) => (
             <g key={i} className="group cursor-pointer">
               {/* Outer pulsing beacon ring */}

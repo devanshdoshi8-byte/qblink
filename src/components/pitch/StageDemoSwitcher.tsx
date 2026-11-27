@@ -95,7 +95,7 @@ export const StageDemoSwitcher = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => setCollapsed(false)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/90 backdrop-blur-xl border border-primary/30 shadow-xl text-primary text-xs font-semibold hover:bg-card transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-primary/30 shadow-xl text-primary text-xs font-semibold hover:bg-muted transition-all"
             title="Expand Pitch Presenter Toolbar"
           >
             <Presentation className="w-3.5 h-3.5" />
@@ -109,7 +109,7 @@ export const StageDemoSwitcher = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-card/95 backdrop-blur-md border border-border shadow-lg"
+            className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-card border border-border shadow-lg"
           >
             {/* Stage Mode Label */}
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold border-r border-border/80">

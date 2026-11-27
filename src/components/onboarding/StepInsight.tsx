@@ -536,7 +536,7 @@ const ImpactSplit = ({ name, onNext }: { name: string; onNext: () => void }) => 
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
-              <div className="bg-card/95 backdrop-blur-sm border border-primary/20 rounded-2xl px-5 py-4 elevated-shadow text-center max-w-[280px]">
+              <div className="bg-card border border-primary/20 rounded-2xl px-5 py-4 elevated-shadow text-center max-w-[280px]">
                 <p className="text-[10px] uppercase tracking-widest text-primary font-bold mb-1.5">The truth</p>
                 <p className="text-base font-extrabold text-foreground leading-snug">
                   One queue problem.

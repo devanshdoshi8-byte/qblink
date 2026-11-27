@@ -5,7 +5,6 @@ import {
   Clock,
   MapPin,
   RefreshCw,
-  Sparkles,
   Users,
   Wifi,
   BellRing,
@@ -530,7 +529,7 @@ const LiveWaitingExperience = ({
               transition={{ duration: 0.5 }}
               className="text-xs font-medium text-primary/90"
             >
-              <Sparkles className="inline w-3.5 h-3.5 mr-1 -mt-0.5" />
+              <BellRing className="inline w-3.5 h-3.5 mr-1 -mt-0.5" />
               {lines[lineIdx]}
             </motion.p>
           </AnimatePresence>

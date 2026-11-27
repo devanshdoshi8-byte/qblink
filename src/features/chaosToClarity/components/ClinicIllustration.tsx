@@ -72,7 +72,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                 : "bg-red-500/20 text-red-300 border-red-500/40"
             }`}
           >
-            {isTransformed ? "✨ THE QBLINK WAY" : "⚠️ THE OLD WAY"}
+            {isTransformed ? "THE QBLINK WAY" : "THE OLD WAY"}
           </span>
         </div>
       </div>
@@ -84,8 +84,8 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
           <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg relative">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-bold text-lg">
-                  👩‍💼
+                <div className="w-9 h-9 rounded-xl bg-primary/20 text-primary flex items-center justify-center">
+                  <Users className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">Reception Desk</h4>
@@ -185,13 +185,13 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
           <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg relative">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-warning-soft text-warning flex items-center justify-center font-bold text-lg">
-                  👩‍💻
+                <div className="w-9 h-9 rounded-xl bg-warning-soft text-warning flex items-center justify-center">
+                  <User className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">Anya (Patient Protagonist)</h4>
                   <span className="text-[10px] text-slate-400">
-                    {isTransformed ? "Relaxing at Terrace Cafe ☕" : "Trapped in Crowded Waiting Room"}
+                    {isTransformed ? "Relaxing at Terrace Cafe" : "Trapped in Crowded Waiting Room"}
                   </span>
                 </div>
               </div>
@@ -236,7 +236,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                     </span>
                     <p className="leading-relaxed">
                       {queueState.isCalled
-                        ? "🎉 Turn alert received! Walking back into Consultation Room 3 right on time."
+                        ? "Turn alert received! Walking back into Consultation Room 3 right on time."
                         : "Opened laptop at the open-air cafe. Working peacefully while phone tracks queue position live."}
                     </p>
                   </motion.div>
@@ -266,7 +266,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                   <span>Anya's Pocket Ticket: #A-{queueState.protagonistToken}</span>
                 </div>
                 <span className="font-mono text-xs font-bold text-white bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800">
-                  {queueState.isCalled ? "🎉 IT'S YOUR TURN" : `~${queueState.estimatedWaitMinutes}m wait`}
+                  {queueState.isCalled ? "IT'S YOUR TURN" : `~${queueState.estimatedWaitMinutes}m wait`}
                 </span>
               </div>
 
@@ -281,7 +281,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                       : "bg-success text-success-foreground hover:bg-success/90"
                   }`}
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4" />
                   <span>{queueState.isCalled ? "Doctor is Serving Anya" : "Call Next Patient (Advance Queue)"}</span>
                 </button>
               </div>

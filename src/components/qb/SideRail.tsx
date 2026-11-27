@@ -110,7 +110,7 @@ export const SideRail = () => {
               <div
                 role="menu"
                 aria-label="Appearance"
-                className="no-theme-transition absolute left-12 bottom-0 min-w-[180px] rounded-lg border border-glow/25 bg-[hsl(var(--brand-navy)/0.98)] backdrop-blur-md shadow-2xl overflow-hidden animate-fade-in"
+                className="no-theme-transition absolute left-12 bottom-0 min-w-[180px] rounded-lg border border-glow/25 bg-[hsl(var(--brand-navy))] shadow-xl overflow-hidden animate-fade-in"
               >
                 <div className="px-3 py-2 font-mono-caps text-[hsl(var(--brand-glow))]/80 border-b border-glow/15">
                   Appearance
@@ -156,7 +156,7 @@ export const SideRail = () => {
           <ThemeToggle size="sm" />
           <button
             onClick={() => setOpen(true)}
-            className="font-mono-caps text-cream/80 border border-glow/40 px-3 py-1.5 rounded-sm backdrop-blur-md bg-ink/40"
+            className="font-mono-caps text-cream/80 border border-glow/40 px-3 py-1.5 rounded-sm bg-ink/85"
             aria-label="Open menu"
           >
             Menu

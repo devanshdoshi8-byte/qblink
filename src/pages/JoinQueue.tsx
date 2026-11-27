@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Clock, Users, CheckCircle, Loader2, Activity, RefreshCw, UserCircle2, AlertCircle, ArrowLeft } from "lucide-react";
+import { Clock, Users, CheckCircle, Loader2, Activity, RefreshCw, UserCircle2, AlertCircle, ArrowLeft, BellRing, Lightbulb } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import AIAssistant from "@/components/AIAssistant";
 import TrustPrivacyCard from "@/components/TrustPrivacyCard";
@@ -758,39 +758,14 @@ const JoinQueue = () => {
       {celebrate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div className="absolute inset-0 bg-background/85 backdrop-blur-sm animate-in fade-in duration-300" />
-          {/* Floating emoji confetti */}
-          {Array.from({ length: 24 }).map((_, i) => {
-            const emojis = ["🎉", "✨", "🎊", "🔔", "⭐", "🥳", "💫"];
-            const e = emojis[i % emojis.length];
-            const left = (i * 4.2) % 100;
-            const delay = (i % 8) * 0.12;
-            const dur = 2.4 + (i % 5) * 0.4;
-            return (
-              <span
-                key={i}
-                className="absolute text-4xl"
-                style={{
-                  left: `${left}%`,
-                  top: "-10%",
-                  animation: `qb-fall ${dur}s ease-in ${delay}s forwards`,
-                }}
-              >
-                {e}
-              </span>
-            );
-          })}
-          <div className="relative bg-card rounded-3xl px-8 py-10 card-shadow text-center max-w-xs mx-4 animate-in zoom-in-50 duration-500">
-            <div className="text-6xl mb-3 animate-bounce">🔔</div>
+          <div className="relative bg-card border border-primary/25 rounded-3xl px-8 py-10 card-shadow text-center max-w-xs mx-4 animate-in zoom-in-50 duration-300">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+              <BellRing className="w-7 h-7" />
+            </div>
             <h2 className="text-2xl font-extrabold text-primary mb-1">It's Your Turn!</h2>
             <p className="text-sm text-muted-foreground mb-3">Please proceed to the counter</p>
             <p className="text-4xl font-extrabold text-foreground">#{myToken}</p>
           </div>
-          <style>{`
-            @keyframes qb-fall {
-              0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-              100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
-            }
-          `}</style>
         </div>
       )}
       <div className="w-full max-w-sm">
@@ -1045,7 +1020,7 @@ const JoinQueue = () => {
             <SuccessCelebration token={myToken} visible={showJoinSuccess} />
             {myStatus === "called" ? (
               <>
-                <div className="w-20 h-20 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <div className="w-20 h-20 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-10 h-10 text-success" />
                 </div>
                 <h2 className="text-2xl font-bold text-success mb-2">It's Your Turn!</h2>
@@ -1116,8 +1091,9 @@ const JoinQueue = () => {
                       />
                       <LiveActivityFeed events={intel.activity} loading={!intel.ready} className="mt-4" />
                       <div className="mt-4 bg-info-soft border border-info/30 rounded-xl p-3 text-left">
-                        <p className="text-xs text-info">
-                          💡 Tip: Please arrive at least <span className="font-semibold">10 minutes before</span> your estimated turn time.
+                        <p className="text-xs text-info flex items-start gap-2">
+                          <Lightbulb className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
+                          <span>Tip: Please arrive at least <span className="font-semibold">10 minutes before</span> your estimated turn time.</span>
                         </p>
                       </div>
                       <ContextualTips

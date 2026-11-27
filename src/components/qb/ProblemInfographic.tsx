@@ -19,12 +19,9 @@ export const ProblemInfographic = () => {
       className="relative ink-surface py-24 sm:py-32 overflow-hidden grain"
       aria-label="The problem"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-glow/5 blur-[120px] pointer-events-none" />
-
       <div className="relative max-w-7xl mx-auto px-6 lg:px-24">
         <div className="font-mono-caps text-glow/80 mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-glow animate-ping" />
+          <span className="w-1.5 h-1.5 rounded-full bg-glow" />
           Ch. 02 · The Shape of Uncertainty
         </div>
         <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
@@ -38,7 +35,7 @@ export const ProblemInfographic = () => {
         </p>
 
         {/* Interactive Silhouette Room Stage */}
-        <div className="mt-16 relative aspect-[16/7] rounded-2xl bg-gradient-to-b from-deep/40 via-deep/10 to-transparent border border-glow/20 overflow-hidden shadow-2xl backdrop-blur-sm">
+        <div className="mt-16 relative aspect-[16/7] rounded-2xl bg-deep/25 border border-glow/20 overflow-hidden shadow-xl">
           {/* Animated Sonar Radar Sweep */}
           <div className="absolute inset-0 pointer-events-none opacity-30">
 
@@ -155,7 +152,7 @@ export const ProblemInfographic = () => {
             >
               <div className="font-mono-caps text-glow text-xs font-bold flex items-center justify-between">
                 <span>0{i + 1}</span>
-                {active === i && <AlertCircle className="w-3.5 h-3.5 text-glow animate-pulse" />}
+                {active === i && <AlertCircle className="w-3.5 h-3.5 text-glow" />}
               </div>
               <div className="text-cream font-semibold mt-1 text-sm">{s.label}</div>
               <div className="text-[11px] text-cream/50 mt-0.5">{s.stat}</div>

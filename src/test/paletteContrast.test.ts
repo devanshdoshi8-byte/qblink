@@ -145,12 +145,12 @@ describe("Design palette WCAG AA contrast & anti-slop regression guard", () => {
       { name: "Neon electric hex", re: /#0099ff|#2474f5|#0da2e7/i },
       { name: "Legacy gradient/glow CSS classes", re: /\b(?:gradient-bg|gradient-text|cta-glow|stage-grid)\b/ },
       {
-        name: "AI backdrop animation classes",
-        re: /\b(?:animate-glow-pulse|animate-glow-border|animate-pulse-halo|animate-radar-sweep|animate-kinetic-shimmer|animate-stage-sweep)\b/,
+        name: "AI backdrop/loop animation classes",
+        re: /\b(?:animate-glow-pulse|animate-glow-border|animate-pulse-halo|animate-radar-sweep|animate-kinetic-shimmer|animate-stage-sweep|animate-ping|animate-bounce)\b/,
       },
       { name: "Off-brand purple/indigo/pink Tailwind classes", re: /\b(?:purple|indigo|pink)-\d{2,3}\b/ },
       { name: "Oversaturated legacy chart HSL", re: /hsl\((?:205\s+100%|185\s+100%|280\s+70%)/ },
-      { name: "Large blur halo backdrop", re: /\bblur-(?:2xl|3xl)\b/ },
+      { name: "Large blur halo backdrop", re: /(?<!backdrop-)\bblur-(?:2xl|3xl)\b|(?<!backdrop-)blur-\[\d+px\]/ },
     ];
 
     const filesToScan = [

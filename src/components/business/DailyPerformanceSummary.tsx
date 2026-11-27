@@ -144,7 +144,7 @@ export const DailyPerformanceSummary = ({
           {/* Peak Hour Banner */}
           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">⚡</span>
+              <Zap className="w-5 h-5 text-warning shrink-0" aria-hidden="true" />
               <div>
                 <h4 className="text-sm font-bold text-foreground">
                   {summary.peakHour.hasData ? `Peak Traffic Window: ${summary.peakHour.value}` : "Steady Flow Throughout the Day"}

@@ -116,7 +116,7 @@ const AdminQueues = () => {
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <h2 className="font-semibold text-foreground">Live Queues</h2>
             <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Live
+              <span className="w-1.5 h-1.5 rounded-full bg-success" /> Live
             </span>
           </div>
           <div className="overflow-x-auto">

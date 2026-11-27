@@ -272,7 +272,7 @@ const Tile = ({ e, i }: { e: Env; i: number }) => {
                 variants={statVariants}
                 className="flex items-baseline gap-2 font-mono-caps text-xs tracking-[0.18em] text-ink-accent"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-teal animate-pulse" />
+                <span className="h-1.5 w-1.5 rounded-full bg-teal" />
                 {e.wait}
               </motion.div>
               <motion.p variants={statVariants} className="text-cream/85 leading-relaxed">

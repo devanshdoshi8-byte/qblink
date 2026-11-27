@@ -964,7 +964,7 @@ const QueueManager = ({
 
       {/* Hotkeys Cheat Sheet Modal */}
       {showHotkeysModal && (
-        <Modal onClose={() => setShowHotkeysModal(false)} title="⚡ Front-Desk Keyboard Shortcuts">
+        <Modal onClose={() => setShowHotkeysModal(false)} title="Front-Desk Keyboard Shortcuts">
           <div className="space-y-3 text-xs">
             <p className="text-muted-foreground">
               Designed for high-speed receptionists and service desks. Control queues without touching your mouse:

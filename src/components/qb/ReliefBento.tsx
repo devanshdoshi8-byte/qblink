@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Radio, Zap, Sparkles, Check, ArrowUpRight } from "lucide-react";
+import { Radio, Zap, Check, ArrowUpRight } from "lucide-react";
 
 export const ReliefBento = () => {
   const [pos, setPos] = useState(3);
@@ -16,11 +16,9 @@ export const ReliefBento = () => {
       aria-label="The relief layer"
     >
       {/* Ambient background glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-glow/5 blur-[140px] pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-6 lg:px-24 relative z-10">
         <div className="font-mono-caps text-glow/80 mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-glow animate-ping" />
+          <span className="w-1.5 h-1.5 rounded-full bg-glow" />
           Ch. 05 · The Relief Architecture
         </div>
         <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
@@ -47,10 +45,10 @@ export const ReliefBento = () => {
 
             <div className="flex justify-between items-center font-mono-caps text-cream/70 text-xs">
               <span className="flex items-center gap-2 font-bold">
-                <Radio className="w-4 h-4 text-glow animate-pulse" /> LIVE STREAMING POSITION
+                <Radio className="w-4 h-4 text-glow" /> LIVE STREAMING POSITION
               </span>
               <span className="px-3 py-1 rounded-full bg-glow/15 border border-glow/30 text-glow font-bold text-[11px] flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-glow animate-ping" /> Realtime
+                <span className="w-2 h-2 rounded-full bg-glow" /> Realtime
               </span>
             </div>
 
@@ -130,7 +128,7 @@ export const ReliefBento = () => {
             className="md:col-span-2 md:row-span-2 relative rounded-3xl bg-gradient-to-b from-deep/50 to-deep/20 border border-glow/25 p-8 flex flex-col justify-between shadow-xl"
           >
             <div className="w-10 h-10 rounded-2xl bg-glow/15 border border-glow/30 flex items-center justify-center text-glow">
-              <Sparkles className="w-5 h-5 animate-spin" style={{ animationDuration: '10s' }} />
+              <Radio className="w-5 h-5" />
             </div>
             <div className="font-display text-xl sm:text-2xl text-cream italic leading-relaxed my-3 font-medium">
               "The moment the number ticks down on your phone, the whole room breathes. That's the product."

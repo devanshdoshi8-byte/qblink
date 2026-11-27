@@ -77,15 +77,15 @@ export const MorphingVisualStage: React.FC<MorphingVisualStageProps> = ({ indust
 
       {/* Problem vs Fix Quick Bar */}
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs text-red-800 dark:text-red-300">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400 block mb-1">
-            ⚠️ The Old Way (Friction & Chaos)
+        <div className="p-4 rounded-2xl bg-danger-soft border border-danger/25 text-xs text-foreground">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-danger block mb-1">
+            The Old Way (Friction & Chaos)
           </span>
           <p className="font-medium leading-relaxed">{industry.frictionProblem}</p>
         </div>
         <div className="p-4 rounded-2xl bg-success-soft border border-success/25 text-xs text-foreground">
           <span className="text-[10px] font-bold uppercase tracking-wider text-success block mb-1">
-            ✨ The Qblink Way (Visible Controlled Flow)
+            The Qblink Way (Visible Controlled Flow)
           </span>
           <p className="font-medium leading-relaxed">{industry.qblinkFix}</p>
         </div>

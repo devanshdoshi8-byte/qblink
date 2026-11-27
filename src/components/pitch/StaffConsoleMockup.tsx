@@ -33,17 +33,11 @@ export const StaffConsoleMockup: React.FC<StaffConsoleMockupProps> = ({
   onTogglePause,
 }) => {
   return (
-    <div className="flex flex-col h-full rounded-3xl border border-border/80 bg-card/95 backdrop-blur-md shadow-2xl overflow-hidden">
-      {/* Mac Window Frame Header */}
+    <div className="flex flex-col h-full rounded-3xl border border-border/80 bg-card shadow-xl overflow-hidden">
       <div className="px-5 py-3.5 border-b border-border/60 bg-muted/40 flex items-center justify-between select-none">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-warning/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-success/80 inline-block" />
-          </div>
-          <span className="ml-3 text-xs font-bold font-mono tracking-tight text-foreground/80">
-            Qblink Counter Terminal • {state.counterName}
+          <span className="text-xs font-bold font-mono tracking-tight text-foreground/85">
+            Qblink Counter Terminal · {state.counterName}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -210,7 +204,7 @@ export const StaffConsoleMockup: React.FC<StaffConsoleMockupProps> = ({
                     <div className="flex items-center gap-2">
                       {isGrace ? (
                         <span className="px-2 py-0.5 rounded-full bg-warning-soft text-warning font-bold text-[10px] flex items-center gap-1">
-                          <Hourglass className="w-3 h-3 animate-spin" /> Grace Hold (2m)
+                          <Hourglass className="w-3 h-3" /> Grace Hold (2m)
                         </span>
                       ) : (
                         <span className="text-muted-foreground text-[11px] font-mono">
@@ -228,7 +222,7 @@ export const StaffConsoleMockup: React.FC<StaffConsoleMockupProps> = ({
         {/* Activity Log Bar */}
         <div className="pt-2 border-t border-border/40 text-[11px] text-muted-foreground flex items-center justify-between">
           <div className="flex items-center gap-2 truncate">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             <span className="truncate">
               {state.recentActivity[0]?.text || "Queue initialized"}
             </span>

@@ -305,7 +305,7 @@ const CustomerDashboard = () => {
           <>
             <div className="mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                Hi {profileName?.split(" ")[0] || "there"} 👋
+                Hi {profileName?.split(" ")[0] || "there"}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 What kind of service do you need today?
@@ -616,10 +616,7 @@ const LiveDiscoveryStrip = ({
     <section className="mb-8">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="relative inline-flex h-2 w-2">
-            <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-60" />
-            <span className="relative inline-block h-2 w-2 rounded-full bg-primary" />
-          </span>
+          <span className="inline-block h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
           <h2 className="text-lg font-bold text-foreground">Live near you</h2>
           <span className="text-[11px] text-muted-foreground">
             · sorted by shortest wait

@@ -89,7 +89,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {m === "guided" ? "🎬 Guided Story" : m === "explore" ? "🧭 Free Explore" : "⚖️ Judge Mode"}
+                {m === "guided" ? "Guided Story" : m === "explore" ? "Free Explore" : "Judge Mode"}
               </button>
             ))}
           </div>

@@ -196,7 +196,7 @@ export const PitchDemo: React.FC = () => {
         {/* Presenter Objective Subtitle */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-widest mb-2">
-            <Sparkles className="w-3.5 h-3.5" /> Dual-Device Interactive Showcase
+            <Smartphone className="w-3.5 h-3.5" /> Dual-Device Interactive Showcase
           </div>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
             One Single Platform. Two Synchronized Views.

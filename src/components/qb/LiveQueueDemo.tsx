@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, RotateCcw, FastForward, CheckCircle2, Bell, Sparkles, Activity } from "lucide-react";
+import { Play, Pause, RotateCcw, FastForward, CheckCircle2, Bell, Activity } from "lucide-react";
 
 const TOTAL_AHEAD = 6;
 const TICK_MS = 2800;
@@ -58,7 +58,7 @@ export const LiveQueueDemo = () => {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 font-mono-caps text-primary mb-4 text-xs tracking-[0.2em] uppercase font-semibold">
-                <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-primary" />
                 Ch. 04 · Interactive Simulation
               </div>
 
@@ -67,7 +67,7 @@ export const LiveQueueDemo = () => {
                 <br />
                 <span className="text-primary relative inline-block">
                   dissolve in real time.
-                  <span className="absolute left-0 bottom-0 w-full h-1 bg-gradient-to-r from-primary to-secondary opacity-60 rounded-full" />
+                  <span className="absolute left-0 bottom-0 w-full h-1 bg-primary opacity-60 rounded-full" />
                 </span>
               </h2>
 
@@ -81,7 +81,7 @@ export const LiveQueueDemo = () => {
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center justify-between">
                   <span>Simulator Controls</span>
                   <span className="flex items-center gap-1 text-[11px] text-primary">
-                    <Activity className="w-3 h-3 animate-pulse" /> Live engine
+                    <Activity className="w-3 h-3" /> Live engine
                   </span>
                 </div>
 
@@ -138,7 +138,7 @@ export const LiveQueueDemo = () => {
               }`} />
 
               {/* Phone Frame */}
-              <div className="relative rounded-[3rem] border-[7px] border-foreground/15 bg-card shadow-2xl overflow-hidden backdrop-blur-md">
+              <div className="relative rounded-[3rem] border-[7px] border-foreground/15 bg-card shadow-xl overflow-hidden">
                 {/* Phone Speaker Notch */}
                 <div className="h-8 bg-card flex items-center justify-between px-7 pt-1">
                   <span className="text-[0.6875rem] font-semibold text-foreground/80 tabular-nums">9:41</span>
@@ -155,13 +155,13 @@ export const LiveQueueDemo = () => {
                   {/* Top Bar / Brand header */}
                   <div className="flex items-center justify-between pb-4 border-b border-border/60">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shadow-sm">
-                        <Sparkles className="w-5 h-5 text-white animate-pulse" />
+                      <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-sm">
+                        <Activity className="w-5 h-5 text-primary-foreground" />
                       </div>
                       <div>
                         <div className="font-display text-sm font-bold text-foreground">City Life Health</div>
                         <div className="text-[11px] text-muted-foreground flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-success animate-ping" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-success" />
                           Live Queue Active
                         </div>
                       </div>
@@ -185,8 +185,8 @@ export const LiveQueueDemo = () => {
                           transition={{ type: "spring", damping: 15, stiffness: 200 }}
                           className="text-center space-y-4"
                         >
-                          <div className="relative mx-auto w-24 h-24 rounded-full bg-success/15 flex items-center justify-center animate-pulse">
-                            <div className="absolute inset-0 rounded-full border-2 border-success/40 animate-ping" />
+                          <div className="relative mx-auto w-24 h-24 rounded-full bg-success/15 flex items-center justify-center">
+                            <div className="absolute inset-0 rounded-full border-2 border-success/40" />
                             <CheckCircle2 className="w-12 h-12 text-success" />
                           </div>
 
@@ -293,7 +293,7 @@ export const LiveQueueDemo = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="rounded-xl bg-warning/15 border border-warning/30 p-2.5 text-center flex items-center justify-center gap-2"
                           >
-                            <span className="w-2 h-2 rounded-full bg-warning animate-ping" />
+                            <span className="w-2 h-2 rounded-full bg-warning" />
                             <span className="text-xs font-bold text-warning">Almost your turn · Head to desk</span>
                           </motion.div>
                         ) : (

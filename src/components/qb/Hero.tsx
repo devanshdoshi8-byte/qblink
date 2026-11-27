@@ -1,6 +1,6 @@
 import { Component, ReactNode, Suspense, lazy, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, QrCode, Sparkles } from "lucide-react";
+import { ArrowRight, QrCode } from "lucide-react";
 import { motion } from "framer-motion";
 
 const QueueEcosystem3D = lazy(() => import("./hero/QueueEcosystem3D"));
@@ -76,17 +76,9 @@ export const Hero = () => {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 rounded-full glass-panel px-3.5 py-1.5 mb-7 hover:border-[hsl(var(--brand-glow)/0.4)] transition-colors"
-          >
-            <span className="w-2 h-2 rounded-full bg-[hsl(var(--brand-glow))] animate-pulse" />
-            <span className="text-xs tracking-[0.18em] uppercase stage-muted font-medium">
-              Customer Flow Intelligence Platform
-            </span>
-          </motion.div>
+          <p className="font-mono-caps text-xs tracking-[0.18em] uppercase stage-muted font-medium mb-5">
+            Customer Flow Intelligence Platform
+          </p>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -129,7 +121,6 @@ export const Hero = () => {
                 to="/auth"
                 className="group relative inline-flex items-center gap-2.5 rounded-xl bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-semibold px-6 py-3.5 shadow-sm hover:opacity-95 transition-all"
               >
-                <Sparkles className="w-4 h-4" />
                 Start free pilot
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
@@ -148,7 +139,7 @@ export const Hero = () => {
             <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.96 }}>
               <Link
                 to="/onboarding"
-                className="inline-flex items-center gap-2 rounded-xl glass-panel stage-text font-medium px-5 py-3.5 hover:bg-[hsl(var(--brand-cream)/0.1)] transition-all border border-[hsl(var(--brand-cream)/0.15)]"
+                className="inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--brand-cream)/0.06)] stage-text font-medium px-5 py-3.5 hover:bg-[hsl(var(--brand-cream)/0.12)] transition-all border border-[hsl(var(--brand-cream)/0.18)]"
               >
                 <QrCode className="w-4 h-4 text-[hsl(var(--brand-glow))]" />
                 See customer journey
@@ -183,7 +174,7 @@ export const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.65 }}
         transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2"
         aria-hidden
       >
         <svg width="20" height="12" viewBox="0 0 20 12" fill="none">

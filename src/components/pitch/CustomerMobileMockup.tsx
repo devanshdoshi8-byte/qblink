@@ -5,7 +5,6 @@ import {
   Clock,
   Users,
   CheckCircle2,
-  Sparkles,
   Hourglass,
   QrCode,
   ShieldCheck,
@@ -31,11 +30,11 @@ export const CustomerMobileMockup: React.FC<CustomerMobileMockupProps> = ({
   // Trigger dynamic phone notification toast on status changes
   useEffect(() => {
     if (metrics.status === "called") {
-      setNotificationToast(`🎉 It's your turn! Proceed to ${state.counterName}`);
+      setNotificationToast(`It's your turn! Proceed to ${state.counterName}`);
     } else if (metrics.status === "next") {
-      setNotificationToast(`⚡ You're next in line! (0 people ahead)`);
+      setNotificationToast(`You're next in line! (0 people ahead)`);
     } else if (metrics.status === "grace") {
-      setNotificationToast(`⏳ Arrival grace active (2 min hold)`);
+      setNotificationToast(`Arrival grace active (2 min hold)`);
     } else if (metrics.aheadCount <= 2 && metrics.aheadCount > 0) {
       setNotificationToast(`Ticket ${state.userToken}: ${metrics.aheadCount} people ahead`);
     }
@@ -66,7 +65,7 @@ export const CustomerMobileMockup: React.FC<CustomerMobileMockupProps> = ({
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="absolute top-11 inset-x-4 z-40 p-3 rounded-2xl bg-[hsl(var(--brand-navy)/0.96)] border border-primary/40 text-[hsl(var(--brand-cream))] shadow-2xl backdrop-blur-xl flex items-center gap-2.5"
+            className="absolute top-11 inset-x-4 z-40 p-3 rounded-2xl bg-[hsl(var(--brand-navy))] border border-primary/40 text-[hsl(var(--brand-cream))] shadow-xl flex items-center gap-2.5"
           >
             <div className="w-7 h-7 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
               <Bell className="w-3.5 h-3.5" />
@@ -124,7 +123,7 @@ export const CustomerMobileMockup: React.FC<CustomerMobileMockupProps> = ({
           >
             <div className="flex items-center justify-center gap-1.5 mb-1">
               {metrics.status === "called" ? (
-                <Sparkles className="w-4 h-4 text-success" />
+                <CheckCircle2 className="w-4 h-4 text-success" />
               ) : metrics.status === "next" ? (
                 <Zap className="w-4 h-4 text-warning" />
               ) : metrics.status === "grace" ? (

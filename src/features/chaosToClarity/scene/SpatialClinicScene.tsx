@@ -145,7 +145,6 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
             {/* Terrace / Cafe Area in Window */}
             <div className="h-40 rounded-xl bg-slate-950/60 border border-slate-800/50 p-2 flex items-center justify-center relative overflow-hidden">
               <div className="text-center">
-                <span className="text-2xl block mb-1">☕</span>
                 <span className="text-[11px] font-bold text-slate-300 block">Terrace Lounge</span>
                 <span className="text-[9px] text-slate-500">
                   {isAfter ? "Anya working calmly on laptop" : "Patients trapped inside instead"}
@@ -177,11 +176,11 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           {/* ========================================================================= */}
           {/* ZONE 1: RECEPTION DESK & STAFF (LEFT SIDE) */}
           {/* ========================================================================= */}
-          <div className="absolute left-20 bottom-24 w-80 p-5 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md">
+          <div className="absolute left-20 bottom-24 w-80 p-5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center font-bold text-sm">
-                  👩‍💼
+                <div className="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center">
+                  <Users className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">{industryConfig.staffTitle} Desk</h4>
@@ -212,7 +211,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                   onClick={(e) => { e.stopPropagation(); onOpenStaffModal(); }}
                   className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 pointer-events-auto"
                 >
-                  <Laptop className="w-3.5 h-3.5" /> View Staff Console Terminal ➔
+                  <Laptop className="w-3.5 h-3.5" /> View Staff Console Terminal <ArrowRight className="w-3 h-3" />
                 </button>
                 <span className="font-mono text-[10px] text-slate-400">
                   {isAfter ? "Velocity: 3m/turn" : "Manual Logbook"}
@@ -260,7 +259,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                 scale: isTransitioning ? [1, 1.15, 1] : 1,
                 boxShadow: isAfter ? "0 0 35px rgba(16,185,129,0.35)" : "0 0 20px rgba(59,130,246,0.2)",
               }}
-              className="p-4 rounded-3xl bg-slate-900/95 border-2 border-primary text-white shadow-2xl flex flex-col items-center gap-2 backdrop-blur-lg"
+              className="p-4 rounded-3xl bg-slate-900 border-2 border-primary text-white shadow-xl flex flex-col items-center gap-2"
             >
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
                 <QrCode className="w-3.5 h-3.5" />
@@ -300,11 +299,11 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           {/* ========================================================================= */}
           {/* ZONE 4: PROTAGONIST CUSTOMER (ANYA) */}
           {/* ========================================================================= */}
-          <div className="absolute right-28 bottom-28 w-72 p-4 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md">
+          <div className="absolute right-28 bottom-28 w-72 p-4 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-warning-soft text-warning flex items-center justify-center font-bold text-sm">
-                  👩‍💻
+                <div className="w-8 h-8 rounded-lg bg-warning-soft text-warning flex items-center justify-center">
+                  <User className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">Anya (Protagonist)</h4>
@@ -405,12 +404,12 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                   onMouseLeave={() => setHoveredHotspot(null)}
                   className={`w-7 h-7 rounded-full flex items-center justify-center shadow-lg transition-all ${
                     isTargeted
-                      ? "bg-primary text-white scale-125 ring-4 ring-primary/40 animate-bounce"
-                      : "bg-slate-900/90 border border-slate-700 text-slate-300 hover:scale-110 hover:border-primary hover:text-white"
+                      ? "bg-primary text-white scale-110 ring-4 ring-primary/40"
+                      : "bg-slate-900 border border-slate-700 text-slate-300 hover:scale-110 hover:border-primary hover:text-white"
                   }`}
                   aria-label={hotspot.label}
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Info className="w-3.5 h-3.5" />
                 </button>
 
                 {/* Hotspot Hover Tag */}
@@ -418,7 +417,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                   <motion.div
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute bottom-9 left-1/2 -translate-x-1/2 w-48 p-2 rounded-xl bg-slate-950/95 border border-slate-700 text-white text-[10px] shadow-2xl backdrop-blur-md pointer-events-none z-30"
+                    className="absolute bottom-9 left-1/2 -translate-x-1/2 w-48 p-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-[10px] shadow-xl pointer-events-none z-30"
                   >
                     <p className="font-bold text-primary">{hotspot.label}</p>
                     <p className="text-slate-300 text-[9px] mt-0.5">
@@ -434,14 +433,14 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
 
       {/* Top Left Compass & 360 Guidance Overlay */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-        <div className="px-3 py-1.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-2">
-          <Compass className="w-3.5 h-3.5 text-primary animate-spin" style={{ animationDuration: "12s" }} />
+        <div className="px-3 py-1.5 rounded-xl bg-slate-950/90 border border-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-2">
+          <Compass className="w-3.5 h-3.5 text-primary" />
           <span>Drag to look around (360° Scene)</span>
         </div>
 
         <button
           onClick={handleResetCamera}
-          className="p-1.5 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+          className="p-1.5 rounded-xl bg-slate-950/90 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
           title="Reset Camera View"
         >
           <RotateCcw className="w-3.5 h-3.5" />
@@ -449,7 +448,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
       </div>
 
       {/* Top Right Quick View Jump Buttons */}
-      <div className="absolute top-4 right-4 z-20 hidden sm:flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-800">
+      <div className="absolute top-4 right-4 z-20 hidden sm:flex items-center gap-1.5 bg-slate-950/90 p-1 rounded-xl border border-slate-800">
         <button
           onClick={() => jumpToView(-80, 0)}
           className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-400 hover:text-white hover:bg-slate-900"
@@ -479,7 +478,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
             onClick={onTransform}
             className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-extrabold text-xs sm:text-sm shadow-lg flex items-center gap-2 border border-primary/40 hover:bg-primary/90 transition-colors"
           >
-            <Sparkles className="w-4 h-4" />
+            <CheckCircle2 className="w-4 h-4" />
             <span>TRANSFORM WITH QBLINK</span>
             <ArrowRight className="w-4 h-4" />
           </motion.button>
@@ -493,7 +492,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
             ? "bg-success-soft text-success border-success/40"
             : "bg-red-500/20 text-red-300 border-red-500/40"
         }`}>
-          {isAfter ? "✨ THE QBLINK WAY (Visible Digital Flow)" : "⚠️ THE OLD WAY (Physical Uncertainty & Chaos)"}
+          {isAfter ? "THE QBLINK WAY (Visible Digital Flow)" : "THE OLD WAY (Physical Uncertainty & Chaos)"}
         </div>
       </div>
     </div>
