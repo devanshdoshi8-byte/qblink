@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  filterRowsAfterInactivityGap,
+  shouldCancelAvgWait,
+} from "@/lib/queueInactivity";
 
 export interface SyncedQueue {
   id: string;
@@ -64,23 +68,29 @@ interface UseQueueSyncOptions {
 
 const emptyStats: QueueStats = { waiting: 0, called: 0, served: 0, skipped: 0, removed: 0, avgWait: 0 };
 
-const avgWaitFromDetails = (rows: DetailQueueVisitor[]) => {
-  const waits = rows
+const avgWaitFromDetails = (rows: DetailQueueVisitor[], queue?: SyncedQueue) => {
+  const activeRows = filterRowsAfterInactivityGap(rows, queue);
+  const waits = activeRows
     .filter((v) => v.status === "served" && v.served_at)
     .map((v) => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000)
     .filter((n) => Number.isFinite(n) && n >= 0 && n < 600);
   return waits.length ? Math.round(waits.reduce((a, b) => a + b, 0) / waits.length) : 0;
 };
 
-const buildStats = (publicRows: PublicQueueVisitor[], detailRows: DetailQueueVisitor[]): QueueStats => {
+const buildStats = (
+  publicRows: PublicQueueVisitor[],
+  detailRows: DetailQueueVisitor[],
+  queue?: SyncedQueue
+): QueueStats => {
   const rows = detailRows.length ? detailRows : publicRows;
+  const cancelAvgWait = shouldCancelAvgWait(queue, detailRows);
   return {
     waiting: publicRows.filter((v) => v.status === "waiting").length,
     called: rows.filter((v) => v.status === "called").length,
     served: rows.filter((v) => v.status === "served").length,
     skipped: rows.filter((v) => v.status === "skipped").length,
     removed: rows.filter((v) => v.status === "removed").length,
-    avgWait: detailRows.length ? avgWaitFromDetails(detailRows) : 0,
+    avgWait: !cancelAvgWait && detailRows.length ? avgWaitFromDetails(detailRows, queue) : 0,
   };
 };
 
@@ -233,7 +243,7 @@ export const useQueueSync = ({
     queues.forEach((queue) => {
       const pub = publicVisitors.filter((v) => v.queue_id === queue.id);
       const det = detailVisitors.filter((v) => v.queue_id === queue.id);
-      map[queue.id] = buildStats(pub, det);
+      map[queue.id] = buildStats(pub, det, queue);
     });
     return map;
   }, [detailVisitors, publicVisitors, queues]);

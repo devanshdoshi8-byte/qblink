@@ -42,6 +42,7 @@ import QueueHealthAlerts from "@/components/QueueHealthAlerts";
 import QueueIntegrityPanel from "@/components/business/QueueIntegrityPanel";
 import { useQueueSync } from "@/hooks/useQueueSync";
 import { useAutoDaySync } from "@/hooks/useAutoDaySync";
+import { isQueueInactiveForPause } from "@/lib/queueInactivity";
 import RestaurantTableConfig, { TableSize, COMMON_PARTY_SIZES, PartySizeMode } from "@/components/business/RestaurantTableConfig";
 import EmptyState from "@/components/EmptyState";
 import InfoHint from "@/components/InfoHint";
@@ -165,6 +166,38 @@ const QueueManager = ({
     visitors,
     onDayReset: refresh,
   });
+
+  // Auto-pause any active queue inactive for more than 60 minutes
+  useEffect(() => {
+    if (!queues.length) return;
+    let cancelled = false;
+    const checkInactivity = async () => {
+      const nowMs = Date.now();
+      const stale = queues.filter((q) =>
+        isQueueInactiveForPause(q, getDetailVisitors(q.id), nowMs)
+      );
+      if (!stale.length || cancelled) return;
+      await Promise.all(
+        stale.map((q) =>
+          supabase.from("queues").update({ status: "paused" }).eq("id", q.id)
+        )
+      );
+      if (!cancelled) {
+        toast.info(
+          stale.length === 1
+            ? `"${stale[0].name}" paused after 60 min of inactivity`
+            : `${stale.length} queues paused after 60 min of inactivity`
+        );
+        refresh();
+      }
+    };
+    checkInactivity();
+    const timer = setInterval(checkInactivity, 60_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [queues, getDetailVisitors, refresh]);
 
   const waiting = visitors.filter((v) => v.status === "waiting");
   const called = visitors.filter((v) => v.status === "called");

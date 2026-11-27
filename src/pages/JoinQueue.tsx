@@ -617,6 +617,15 @@ const JoinQueue = () => {
       return;
     }
 
+    if (!isDemo && queue.status === "paused") {
+      await supabase
+        .from("queues")
+        .update({ status: "active", updated_at: new Date().toISOString() })
+        .eq("id", queue.id)
+        .eq("status", "paused");
+      setQueue((prev) => (prev ? { ...prev, status: "active" } : prev));
+    }
+
     const rpcArgs: any = {
       p_queue_id: queue.id,
       p_visitor_name: (visitorName.trim() || "Customer").slice(0, 100),
@@ -640,7 +649,8 @@ const JoinQueue = () => {
     if (error || !data || (Array.isArray(data) && data.length === 0)) {
       const raw = (error?.message || "").toLowerCase();
       let msg = "We couldn't add you to this queue. Please try again.";
-      if (raw.includes("not active") || raw.includes("paused")) msg = "This queue is paused right now. Please try again shortly.";
+      if (raw.includes("closed")) msg = "This queue is closed right now. Please check back later.";
+      else if (raw.includes("not active") || raw.includes("paused")) msg = "Queue is reactivating — please tap Join again.";
       else if (raw.includes("not found")) msg = "This queue link is no longer valid. Ask the business for a new one.";
       else if (raw.includes("network") || raw.includes("fetch")) msg = "Network issue. Check your connection and try again.";
       else if (raw.includes("too long")) msg = "Your name or phone number is too long. Please shorten and retry.";
@@ -716,6 +726,17 @@ const JoinQueue = () => {
     };
   };
 
+  useEffect(() => {
+    if (!queue || queue.status !== "paused" || joined || isDemo) return;
+    setQueue((prev) => (prev && prev.status === "paused" ? { ...prev, status: "active" } : prev));
+    supabase
+      .from("queues")
+      .update({ status: "active", updated_at: new Date().toISOString() })
+      .eq("id", queue.id)
+      .eq("status", "paused")
+      .then(() => {});
+  }, [queue, joined, isDemo]);
+
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -732,17 +753,15 @@ const JoinQueue = () => {
     </div>
   );
 
-  if (queue.status !== "active" && !joined) return (
+  if (queue.status === "closed" && !joined) return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="text-center">
         <img src={logo} alt="Qblink" className="h-12 w-12 rounded-lg object-contain mx-auto mb-4" />
         <h1 className="text-xl font-bold text-foreground mb-2">
-          {queue.status === "closed" ? "Queue Closed" : "Queue Paused"}
+          Queue Closed
         </h1>
         <p className="text-muted-foreground text-sm">
-          {queue.status === "closed"
-            ? "This queue has been closed for now. Please check back later."
-            : "This queue is currently not accepting new entries. Keep this page open — it updates live."}
+          This queue has been closed for now. Please check back later.
         </p>
       </div>
     </div>
