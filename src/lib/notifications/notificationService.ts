@@ -173,7 +173,12 @@ class NotificationService {
       waitMinutes,
     });
 
-    const enabledChannels = preferences?.enabledChannels || ["push"];
+    // SMS is strictly restricted to OTP verification only to protect the SMS credit quota.
+    // Queue milestones are delivered via browser Web Push and in-app alerts.
+    const defaultChannels: NotificationChannel[] = ["push"];
+    const enabledChannels = (preferences?.enabledChannels || defaultChannels).filter(
+      (ch) => ch !== "sms"
+    );
     const channelsDispatched: NotificationChannel[] = [];
 
     // 1. Browser Web Push / Web Notification API

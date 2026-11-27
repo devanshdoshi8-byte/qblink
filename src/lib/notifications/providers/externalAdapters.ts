@@ -5,14 +5,17 @@
  * with production webhooks and robust simulation/demo modes.
  */
 
+import { sendFast2Sms, isFast2SmsConfigured } from "../fast2sms";
+
 export interface ExternalDispatchPayload {
   toPhone: string;
   customerName?: string;
   businessName: string;
   queueName: string;
   tokenNumber: number;
-  messageType: "position_5" | "position_2" | "position_1" | "called" | "grace_active" | "grace_expiring";
+  messageType: "position_5" | "position_2" | "position_1" | "called" | "grace_active" | "grace_expiring" | "otp";
   bodyText: string;
+  otpCode?: string;
 }
 
 export interface ExternalDispatchResult {
@@ -89,11 +92,12 @@ export class WhatsAppAdapter {
 }
 
 /**
- * SMS Provider Adapter (Twilio / AWS SNS / MessageBird)
+ * SMS Provider Adapter (Fast2SMS / Twilio / AWS SNS)
  */
 export class SMSAdapter {
   static isConfigured(): boolean {
     return Boolean(
+      isFast2SmsConfigured() ||
       import.meta.env.VITE_SMS_API_KEY ||
       import.meta.env.VITE_TWILIO_ACCOUNT_SID
     );
@@ -101,7 +105,55 @@ export class SMSAdapter {
 
   static async send(payload: ExternalDispatchPayload): Promise<ExternalDispatchResult> {
     if (!payload.toPhone) {
-      return { success: false, channel: "sms", provider: "twilio", mode: "disabled", error: "Missing phone number" };
+      return { success: false, channel: "sms", provider: "sms", mode: "disabled", error: "Missing phone number" };
+    }
+
+    // Policy Guard: SMS transmission is strictly restricted to OTP verification to preserve SMS quota.
+    // General queue milestones (position_5, position_2, position_1, called, grace) are blocked from SMS.
+    if ((payload.messageType as string) !== "otp") {
+      return {
+        success: false,
+        channel: "sms",
+        provider: "fast2sms",
+        mode: "disabled",
+        error: "SMS is restricted strictly to OTP verification to preserve SMS balance. Queue milestones use push and in-app alerts.",
+      };
+    }
+
+    if (isFast2SmsConfigured()) {
+      try {
+        const res = await sendFast2Sms({
+          phone: payload.toPhone,
+          message: payload.bodyText,
+          isOtp: true,
+        });
+
+        if (res.success) {
+          return {
+            success: true,
+            channel: "sms",
+            provider: "fast2sms",
+            messageId: res.requestId || `f2s_${Date.now()}`,
+            mode: "production",
+          };
+        } else {
+          return {
+            success: false,
+            channel: "sms",
+            provider: "fast2sms",
+            mode: "production",
+            error: res.error || "Fast2SMS dispatch failed",
+          };
+        }
+      } catch (err: any) {
+        return {
+          success: false,
+          channel: "sms",
+          provider: "fast2sms",
+          mode: "production",
+          error: err?.message || "Fast2SMS connection error",
+        };
+      }
     }
 
     if (!this.isConfigured()) {
