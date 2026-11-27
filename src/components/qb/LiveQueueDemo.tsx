@@ -47,10 +47,6 @@ export const LiveQueueDemo = () => {
 
   return (
     <section id="demo" className="relative py-24 md:py-32 overflow-hidden bg-[hsl(var(--surface-warm)/0.4)]" aria-label="Interactive demo">
-      {/* Background kinetic ambient halos */}
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 rounded-full bg-[hsl(var(--brand-glow)/0.07)] blur-3xl animate-pulse-halo pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-[hsl(var(--brand-blue)/0.08)] blur-3xl animate-float-reverse pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Context & Interactive Controls */}

@@ -12,7 +12,7 @@ const demoLinks = [
     desc: "Interactive live sync between phone pass & staff terminal",
     icon: Play,
     badge: "Stage Ready",
-    badgeColor: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    badgeColor: "bg-success-soft text-success border-success/30",
   },
   {
     title: "Chaos to Clarity Story",
@@ -20,7 +20,7 @@ const demoLinks = [
     desc: "10-second visual before & after walk-in transformation",
     icon: Sparkles,
     badge: "10s Pitch",
-    badgeColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    badgeColor: "bg-warning-soft text-warning border-warning/30",
   },
   {
     title: "4-Industry Spatial Morphing",
@@ -28,7 +28,7 @@ const demoLinks = [
     desc: "Clinic, Restaurant, Salon & Civic preset simulator",
     icon: Layers,
     badge: "Multi-Industry",
-    badgeColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
+    badgeColor: "bg-info-soft text-info border-info/30",
   },
   {
     title: "Illustrative ROI Calculator",
@@ -36,7 +36,7 @@ const demoLinks = [
     desc: "Interactive footfall recovery & economic model",
     icon: DollarSign,
     badge: "Business Model",
-    badgeColor: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+    badgeColor: "bg-primary/10 text-primary border-primary/25",
   },
   {
     title: "Scan & Go Public TV Display",
@@ -44,7 +44,7 @@ const demoLinks = [
     desc: "Full-screen kiosk mode with voice announcer & live QR",
     icon: Tv,
     badge: "Kiosk Mode",
-    badgeColor: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30",
+    badgeColor: "bg-primary/10 text-primary border-primary/25",
   },
 ];
 
@@ -129,8 +129,8 @@ export const TopNav = () => {
                       <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
                         Interactive Pitch & Product Demos
                       </span>
-                      <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="inline-flex items-center gap-1 text-[10px] text-success font-mono">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Live
                       </span>
                     </div>
@@ -195,7 +195,7 @@ export const TopNav = () => {
                   : "border-primary/40 bg-primary/20 text-[hsl(var(--brand-cream))] hover:bg-primary/30"
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-success" />
               <span>Pitch Demo</span>
             </Link>
             <Link

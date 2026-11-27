@@ -41,7 +41,7 @@ export const ProblemInfographic = () => {
         <div className="mt-16 relative aspect-[16/7] rounded-2xl bg-gradient-to-b from-deep/40 via-deep/10 to-transparent border border-glow/20 overflow-hidden shadow-2xl backdrop-blur-sm">
           {/* Animated Sonar Radar Sweep */}
           <div className="absolute inset-0 pointer-events-none opacity-30">
-            <div className="absolute -left-1/4 -top-1/2 w-[150%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_320deg,hsl(var(--glow)/0.4)_360deg)] animate-radar-sweep origin-center" />
+
           </div>
 
           <svg viewBox="0 0 100 44" className="w-full h-full relative z-10" preserveAspectRatio="none">

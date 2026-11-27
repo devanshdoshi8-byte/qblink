@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
-import FloatingOrbs from "@/components/onboarding/FloatingOrbs";
 import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
 import StepIdentity from "@/components/onboarding/StepIdentity";
 import StepProfile from "@/components/onboarding/StepProfile";
@@ -78,7 +77,6 @@ const Onboarding = () => {
         description="A personalized walkthrough of how Qblink turns walk-in chaos into controlled flow. Takes about a minute."
         path="/onboarding"
       />
-      <FloatingOrbs />
 
       <header className="relative z-10 flex items-center justify-between px-4 sm:px-6 pt-5 pb-2 max-w-3xl mx-auto w-full">
         <Link to="/" className="flex items-center gap-2" aria-label="Back to Qblink home">

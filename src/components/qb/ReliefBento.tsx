@@ -43,7 +43,7 @@ export const ReliefBento = () => {
             className="md:col-span-4 md:row-span-3 relative deep-surface p-8 sm:p-10 rounded-3xl flex flex-col justify-between border border-glow/25 shadow-2xl overflow-hidden group"
           >
             {/* Animated corner light shimmer */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-glow/10 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
+
 
             <div className="flex justify-between items-center font-mono-caps text-cream/70 text-xs">
               <span className="flex items-center gap-2 font-bold">
@@ -117,7 +117,7 @@ export const ReliefBento = () => {
               <div className="font-display text-3xl sm:text-4xl text-ink/30 line-through leading-none decoration-destructive decoration-2">
                 Sign up.
               </div>
-              <div className="font-display text-3xl sm:text-4xl text-primary font-bold leading-none pt-2 flex items-center gap-2">
+              <div className="font-display text-3xl sm:text-4xl text-ink-accent font-bold leading-none pt-2 flex items-center gap-2">
                 Just a link <ArrowUpRight className="w-7 h-7" />
               </div>
             </div>

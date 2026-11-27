@@ -270,7 +270,7 @@ const Tile = ({ e, i }: { e: Env; i: number }) => {
             <div className="border-t border-cream/20 pt-4 space-y-3 text-sm">
               <motion.div
                 variants={statVariants}
-                className="flex items-baseline gap-2 font-mono-caps text-xs tracking-[0.18em] text-teal"
+                className="flex items-baseline gap-2 font-mono-caps text-xs tracking-[0.18em] text-ink-accent"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-teal animate-pulse" />
                 {e.wait}
@@ -282,7 +282,7 @@ const Tile = ({ e, i }: { e: Env; i: number }) => {
                 {e.pain}
               </motion.p>
               <motion.p variants={statVariants} className="text-cream/85 leading-relaxed">
-                <span className="font-mono-caps text-xs tracking-[0.18em] text-teal/80 block mb-1">
+                <span className="font-mono-caps text-xs tracking-[0.18em] text-ink-accent/80 block mb-1">
                   With Qblink
                 </span>
                 {e.fix}
@@ -345,7 +345,7 @@ export const Environments = () => (
           <br />
           <span className="text-ink/70">Different workflows.</span>
           <br />
-          <span className="text-teal">The same invisible line.</span>
+          <span className="text-ink-accent">The same invisible line.</span>
         </p>
       </motion.div>
     </div>

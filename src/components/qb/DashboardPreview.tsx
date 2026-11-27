@@ -28,15 +28,10 @@ export const DashboardPreview = () => {
 
   return (
     <section className="relative hero-stage py-24 sm:py-32 overflow-hidden">
-      <div className="absolute inset-0 stage-grid" aria-hidden />
-
-      {/* Atmospheric lighting */}
-      <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-[hsl(var(--brand-glow)/0.06)] rounded-full blur-3xl pointer-events-none" />
-
       <div className="relative max-w-7xl mx-auto px-5 sm:px-8 z-10">
         <div className="max-w-2xl">
           <div className="font-mono-caps stage-accent mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--brand-glow))] animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--brand-glow))]" />
             Ch. 06 · The Operator Surface
           </div>
           <h2 className="font-display text-4xl sm:text-5xl md:text-6xl stage-text leading-[1.02]">
@@ -146,7 +141,7 @@ export const DashboardPreview = () => {
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={() => setServingNum((n) => n + 1)}
-                    className="text-xs rounded-xl px-4 py-3 bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-bold shadow-md shadow-[hsl(var(--brand-glow)/0.3)] transition-all flex items-center gap-1.5"
+                    className="text-xs rounded-xl px-4 py-3 bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-bold hover:opacity-95 transition-all flex items-center gap-1.5"
                   >
                     <CheckCircle className="w-3.5 h-3.5" />
                     Serve Next Token
@@ -187,7 +182,7 @@ export const DashboardPreview = () => {
                         style={{
                           background:
                             h > 80
-                              ? "linear-gradient(to top, hsl(var(--brand-glow)), hsl(var(--brand-cyan)))"
+                              ? "hsl(var(--brand-glow))"
                               : "hsl(var(--brand-teal) / 0.45)",
                         }}
                       />

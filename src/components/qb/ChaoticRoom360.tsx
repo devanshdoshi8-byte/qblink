@@ -150,7 +150,7 @@ const HOTSPOTS: HotspotInfo[] = [
     chaosDescription: "No position awareness. Customers feel trapped, constantly checking clocks in frustration.",
     sereneDescription: "Web-native live countdown in browser. No app install, zero registration friction.",
     metric: "100% time certainty",
-    color: "#3fb8bf",
+    color: "#51c2c2",
   },
   {
     id: "waiting-area",
@@ -209,7 +209,7 @@ function CrowdSilhouettes({ transition }: { transition: number }) {
     <group ref={groupRef}>
       {positions.map((p) => {
         const chaosColor = new THREE.Color("#e0684f");
-        const sereneColor = new THREE.Color("#3fb8bf");
+        const sereneColor = new THREE.Color("#51c2c2");
         const baseColor = chaosColor.lerp(sereneColor, transition);
 
         return (
@@ -276,11 +276,11 @@ function FloatingHandset3D({ transition }: { transition: number }) {
         {/* Glow progress ring */}
         <mesh position={[0, -0.45, 0]}>
           <ringGeometry args={[0.35, 0.42, 32]} />
-          <meshBasicMaterial color="#3fb8bf" />
+          <meshBasicMaterial color="#51c2c2" />
         </mesh>
 
         {/* Floating live point light around handset */}
-        <pointLight color="#3fb8bf" intensity={transition * 2.5} distance={3} />
+        <pointLight color="#51c2c2" intensity={transition * 2.5} distance={3} />
       </group>
     </group>
   );
@@ -332,7 +332,7 @@ function HotspotMarker3D({
         >
           <circleGeometry args={[0.38, 32]} />
           <meshBasicMaterial
-            color={transition > 0.5 ? "#3fb8bf" : spot.color}
+            color={transition > 0.5 ? "#51c2c2" : spot.color}
             toneMapped={false}
           />
         </mesh>
@@ -341,7 +341,7 @@ function HotspotMarker3D({
         <mesh ref={ringRef}>
           <ringGeometry args={[0.38, 0.48, 32]} />
           <meshBasicMaterial
-            color={transition > 0.5 ? "#3fb8bf" : spot.color}
+            color={transition > 0.5 ? "#51c2c2" : spot.color}
             transparent
             opacity={0.6}
             side={THREE.DoubleSide}
@@ -408,7 +408,7 @@ function RoomArchitecture({ transition }: { transition: number }) {
             <boxGeometry args={[0.4, 7, 0.4]} />
             <meshStandardMaterial
               color={transition > 0.5 ? "#0e243a" : "#241210"}
-              emissive={transition > 0.5 ? "#3fb8bf" : "#ef4444"}
+              emissive={transition > 0.5 ? "#51c2c2" : "#ef4444"}
               emissiveIntensity={0.12}
             />
           </mesh>
@@ -448,7 +448,7 @@ function FlowParticleField({ transition }: { transition: number }) {
   });
 
   const color = useMemo(() => {
-    return transition > 0.5 ? new THREE.Color("#3fb8bf") : new THREE.Color("#f87171");
+    return transition > 0.5 ? new THREE.Color("#51c2c2") : new THREE.Color("#f87171");
   }, [transition]);
 
   return (
@@ -598,8 +598,7 @@ export const ChaoticRoom360: React.FC = () => {
       className="relative min-h-screen py-24 sm:py-32 bg-[hsl(var(--brand-navy))] overflow-hidden grain"
       aria-label="360 Chaotic Room to Qblink Transition"
     >
-      {/* Ambient background lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-glow/5 blur-[160px] pointer-events-none" />
+      {/* Ambient background lighting removed */}
 
       <div className="relative max-w-7xl mx-auto px-5 sm:px-8 z-10">
         {/* Editorial Section Header */}
@@ -662,7 +661,7 @@ export const ChaoticRoom360: React.FC = () => {
               <pointLight
                 position={[0, 2, 0]}
                 intensity={THREE.MathUtils.lerp(18, 35, transition)}
-                color={transition > 0.5 ? "#3fb8bf" : "#f87171"}
+                color={transition > 0.5 ? "#51c2c2" : "#f87171"}
                 distance={15}
               />
 
@@ -699,7 +698,7 @@ export const ChaoticRoom360: React.FC = () => {
               >
                 <span
                   className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: transition > 0.5 ? "#3fb8bf" : s.color }}
+                  style={{ backgroundColor: transition > 0.5 ? "#51c2c2" : s.color }}
                 />
                 {s.title}
               </button>
@@ -770,7 +769,7 @@ export const ChaoticRoom360: React.FC = () => {
                   step="0.01"
                   value={transition}
                   onChange={(e) => setTransition(parseFloat(e.target.value))}
-                  className="w-full h-3 bg-gradient-to-r from-destructive/60 via-warning/60 to-glow rounded-lg appearance-none cursor-pointer accent-glow shadow-inner"
+                  className="w-full h-2.5 bg-[hsl(var(--brand-cream)/0.18)] rounded-lg appearance-none cursor-pointer accent-glow shadow-inner"
                 />
               </div>
 
@@ -806,7 +805,7 @@ export const ChaoticRoom360: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <span
                     className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: transition > 0.5 ? "#3fb8bf" : activeHotspot.color }}
+                    style={{ backgroundColor: transition > 0.5 ? "#51c2c2" : activeHotspot.color }}
                   />
                   <span className="text-xs font-mono-caps text-glow font-bold tracking-wider uppercase">
                     360° Inspector: {activeHotspot.title}

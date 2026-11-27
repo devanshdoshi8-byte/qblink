@@ -21,7 +21,7 @@ export const ThemeToggle = ({ className = "", size = "md" }: Props) => {
       onClick={toggle}
       aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
       title={theme === "dark" ? "Light theme" : "Dark theme"}
-      className={`no-theme-transition relative inline-flex items-center justify-center ${dim} rounded-full border border-glow/40 bg-ink/40 backdrop-blur-md text-glow hover:text-cream hover:border-glow transition-colors ${className}`}
+      className={`no-theme-transition relative inline-flex items-center justify-center ${dim} rounded-full border border-border bg-card/90 text-foreground hover:border-primary hover:text-primary transition-colors ${className}`}
     >
       <Sun
         className={`${icon} absolute transition-all duration-500 ${

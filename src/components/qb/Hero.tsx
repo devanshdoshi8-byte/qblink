@@ -46,11 +46,11 @@ export const Hero = () => {
 
   return (
     <section id="product" className="relative min-h-[94vh] hero-stage overflow-hidden flex items-center">
-      <div className="absolute inset-0 stage-grid" aria-hidden />
-
-      {/* Atmospheric kinetic glowing orbs */}
-      <div className="absolute top-1/4 left-1/3 w-96 h-96 rounded-full bg-[hsl(var(--brand-glow)/0.08)] blur-3xl animate-pulse-halo pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-[hsl(var(--brand-teal)/0.1)] blur-3xl animate-float-slow pointer-events-none" />
+      {/* Contrast scrim ensuring left-side editorial legibility over 3D right scene */}
+      <div
+        className="absolute inset-y-0 left-0 w-full lg:w-2/3 bg-gradient-to-r from-[hsl(var(--brand-navy)/0.94)] via-[hsl(var(--brand-navy)/0.65)] to-transparent pointer-events-none"
+        aria-hidden
+      />
 
       <div className="absolute inset-0" aria-hidden>
         {showCanvas && (
@@ -102,7 +102,7 @@ export const Hero = () => {
                 initial={{ width: 0 }}
                 animate={{ width: "100%" }}
                 transition={{ duration: 1.2, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute left-0 bottom-1 h-1 bg-gradient-to-r from-[hsl(var(--brand-glow))] to-[hsl(var(--brand-teal))] opacity-75 rounded-full"
+                className="absolute left-0 bottom-1 h-1 bg-[hsl(var(--brand-glow))] opacity-75 rounded-full"
               />
             </span>
           </motion.h1>
@@ -127,9 +127,9 @@ export const Hero = () => {
             <motion.div whileHover={{ scale: 1.04, y: -1 }} whileTap={{ scale: 0.96 }}>
               <Link
                 to="/auth"
-                className="group relative inline-flex items-center gap-2.5 rounded-xl bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-semibold px-6 py-3.5 shadow-lg shadow-[hsl(var(--brand-glow)/0.25)] hover:shadow-[hsl(var(--brand-glow)/0.4)] transition-all"
+                className="group relative inline-flex items-center gap-2.5 rounded-xl bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-semibold px-6 py-3.5 shadow-sm hover:opacity-95 transition-all"
               >
-                <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '8s' }} />
+                <Sparkles className="w-4 h-4" />
                 Start free pilot
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
@@ -140,7 +140,7 @@ export const Hero = () => {
                 to="/pitch"
                 className="inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--brand-glow)/0.15)] text-[hsl(var(--brand-cream))] font-semibold px-5 py-3.5 hover:bg-[hsl(var(--brand-glow)/0.25)] transition-all border border-[hsl(var(--brand-glow)/0.4)] shadow-md"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-success" />
                 Try Pitch Demo
               </Link>
             </motion.div>
