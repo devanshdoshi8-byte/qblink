@@ -7,7 +7,7 @@ import { IndustryMorphingExperience } from "@/features/industryMorphing/Industry
 
 export const IndustryMorphPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between pb-24 selection:bg-primary selection:text-white">
       <SEO
         title="One Platform. Every Queue. — Qblink Industry Solutions"
         description="See how Qblink seamlessly adapts across healthcare clinics, dining restaurants, salons, and public government services with one unified customer flow engine."
@@ -23,7 +23,7 @@ export const IndustryMorphPage: React.FC = () => {
               className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl border border-border bg-card transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Home</span>
+              <span>Back to QBlink</span>
             </Link>
             <div className="h-4 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2">

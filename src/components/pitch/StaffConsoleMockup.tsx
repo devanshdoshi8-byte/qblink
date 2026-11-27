@@ -34,10 +34,10 @@ export const StaffConsoleMockup: React.FC<StaffConsoleMockupProps> = ({
 }) => {
   return (
     <div className="flex flex-col h-full rounded-3xl border border-border/80 bg-card shadow-xl overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-border/60 bg-muted/40 flex items-center justify-between select-none">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold font-mono tracking-tight text-foreground/85">
-            Qblink Counter Terminal · {state.counterName}
+      <div className="px-4 sm:px-5 py-3 border-b border-border/60 bg-muted/40 flex flex-wrap items-center justify-between gap-2 select-none">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xs font-bold font-mono tracking-tight text-foreground/85 truncate">
+            QBlink Counter Terminal · {state.counterName}
           </span>
         </div>
         <div className="flex items-center gap-2">

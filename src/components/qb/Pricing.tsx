@@ -69,25 +69,27 @@ export const Pricing = () => {
     const headingClass = featuredLight
       ? "text-[#0e1e34]"
       : featuredDark
-      ? "text-[#f4f2eb]"
+      ? "text-white"
       : "text-foreground";
     const mutedClass = featuredLight
       ? "text-[#2c4459]"
       : featuredDark
-      ? "text-[#c8d8e6]"
+      ? "text-slate-200"
       : "text-muted-foreground";
     const featureClass = featuredLight
       ? "text-[#0e1e34]"
       : featuredDark
-      ? "text-[#f4f2eb]"
+      ? "text-slate-50"
       : "text-foreground/90";
 
     return (
       <>
         {p.featured && (
-          <span className="absolute -top-3 left-6 z-10 rounded-full bg-[#10637f] text-[#f4f2eb] text-xs font-medium tracking-[0.16em] uppercase px-3 py-1">
-            Most chosen
-          </span>
+          <div className="mb-3">
+            <span className="inline-block rounded-full bg-[#10637f] text-white text-[11px] font-semibold tracking-[0.16em] uppercase px-3 py-1">
+              Most chosen
+            </span>
+          </div>
         )}
         <h3 className={`font-display text-xl ${headingClass}`}>{p.name}</h3>
         <div className="mt-3 flex items-baseline gap-1.5">
@@ -111,7 +113,7 @@ export const Pricing = () => {
         <div className="border-t border-border mt-6" />
         <Link
           to={p.to}
-          className={`mt-7 inline-flex justify-center rounded-xl px-4 py-3 text-sm font-medium transition-opacity ${
+          className={`mt-6 sm:mt-7 inline-flex items-center justify-center min-h-[44px] rounded-xl px-4 py-3 text-sm font-medium transition-opacity ${
             p.featured
               ? "bg-primary text-primary-foreground hover:opacity-90"
               : "border border-border text-foreground hover:bg-muted"
@@ -124,20 +126,20 @@ export const Pricing = () => {
   };
 
   return (
-  <section id="pricing" className="relative py-24 sm:py-32 bg-background/85">
-    <div className="max-w-7xl mx-auto px-5 sm:px-8">
+  <section id="pricing" className="relative py-12 sm:py-24 bg-background/85">
+    <div className="max-w-7xl mx-auto px-4 sm:px-8">
       <div className="max-w-2xl">
-        <div className="font-mono-caps text-primary mb-4">Pricing</div>
-        <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.02]">
+        <div className="font-mono-caps text-primary mb-3 sm:mb-4">Pricing</div>
+        <h2 className="font-display text-3xl sm:text-5xl text-foreground leading-[1.02]">
           Priced against the hour it gives back.
         </h2>
-        <p className="mt-5 text-muted-foreground">
+        <p className="mt-4 sm:mt-5 text-sm sm:text-base text-muted-foreground">
           Start free on a single counter. Move up only when the flow you're managing is worth it.
           No hardware, no setup fee, cancel any time.
         </p>
       </div>
 
-      <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4 items-stretch">
+      <div className="mt-8 sm:mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4 items-stretch">
         {PLANS.map((p) => (
           <div key={p.id} className="relative h-full">
             <BorderGlow

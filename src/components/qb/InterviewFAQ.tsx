@@ -17,9 +17,9 @@ const qa = [
 export const InterviewFAQ = () => {
   const [open, setOpen] = useState(0);
   return (
-    <section className="relative deep-surface py-24 sm:py-32" aria-label="Interview">
-      <div className="max-w-5xl mx-auto px-6 lg:px-24">
-        <h2 className="font-display text-4xl sm:text-5xl text-cream leading-tight max-w-2xl">
+    <section className="relative deep-surface py-12 sm:py-24" aria-label="Interview">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-24">
+        <h2 className="font-display text-3xl sm:text-5xl text-cream leading-tight max-w-2xl">
           Interview with the product, edited for length.
         </h2>
 
@@ -29,7 +29,7 @@ export const InterviewFAQ = () => {
           glowColor="180 54 54"
           colors={["#51c2c2", "#10637f", "#f4f2eb"]}
           surfaceTheme="dark"
-          className="mt-16"
+          className="mt-8 sm:mt-14"
         >
           <GlassSurface
             width="100%"
@@ -40,21 +40,21 @@ export const InterviewFAQ = () => {
             blur={12}
             displace={0.25}
             distortionScale={-100}
-            className="!border-0 p-6 sm:p-10"
+            className="!border-0 p-4 sm:p-10"
           >
-            <div className="w-full space-y-8">
+            <div className="w-full space-y-6 sm:space-y-8">
           {qa.map((row, i) => (
-            <div key={i} className="border-b border-glow/15 pb-8 last:border-b-0 last:pb-0">
+            <div key={i} className="border-b border-glow/15 pb-6 sm:pb-8 last:border-b-0 last:pb-0">
               <button
                 onClick={() => setOpen(open === i ? -1 : i)}
-                className="w-full text-left grid grid-cols-[auto_1fr_auto] gap-6 items-baseline"
+                className="w-full min-h-[44px] text-left grid grid-cols-[auto_1fr_auto] gap-3 sm:gap-6 items-baseline py-1"
                 aria-expanded={open === i}
               >
-                <span className="font-mono-caps text-glow/70">Q · 0{i + 1}</span>
-                <span className="font-display text-xl sm:text-2xl text-cream leading-snug italic">
+                <span className="font-mono-caps text-glow/70 text-[11px] sm:text-xs">Q · 0{i + 1}</span>
+                <span className="font-display text-lg sm:text-2xl text-cream leading-snug italic">
                   {row.q}
                 </span>
-                <span className="font-mono-caps text-glow/60">
+                <span className="font-mono-caps text-glow/60 px-1">
                   {open === i ? "–" : "+"}
                 </span>
               </button>
@@ -68,9 +68,9 @@ export const InterviewFAQ = () => {
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="grid grid-cols-[auto_1fr_auto] gap-6 mt-6">
-                      <span className="font-mono-caps text-cream/40">A ·</span>
-                      <p className="text-cream/75 leading-relaxed text-lg">{row.a}</p>
+                    <div className="grid grid-cols-[auto_1fr_auto] gap-3 sm:gap-6 mt-4 sm:mt-6">
+                      <span className="font-mono-caps text-cream/40 text-[11px] sm:text-xs">A ·</span>
+                      <p className="text-cream/75 leading-relaxed text-sm sm:text-lg">{row.a}</p>
                       <span />
                     </div>
                   </motion.div>

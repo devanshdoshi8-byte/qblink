@@ -154,9 +154,14 @@ const BentoTile: React.FC<BentoTileProps> = ({
     minHeight: `${rowHeight}px`,
     borderRadius: `${radius}px`,
     background: borderBackground,
-    gridColumn: card.colSpan ? `span ${card.colSpan} / span ${card.colSpan}` : undefined,
-    gridRow: card.rowSpan ? `span ${card.rowSpan} / span ${card.rowSpan}` : undefined,
   };
+
+  const spanClasses = [
+    card.colSpan === 2 ? "md:col-span-2" : card.colSpan === 3 ? "lg:col-span-3" : card.colSpan === 4 ? "lg:col-span-4" : "",
+    card.rowSpan === 2 ? "md:row-span-2" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div
@@ -177,7 +182,7 @@ const BentoTile: React.FC<BentoTileProps> = ({
           : undefined
       }
       style={spanStyle}
-      className={`relative min-w-0 p-[1.5px] transition-shadow duration-200 ${
+      className={`relative w-full min-w-0 h-auto overflow-visible p-[1.5px] transition-shadow duration-200 ${spanClasses} ${
         card.onClick ? "cursor-pointer" : ""
       }`}
     >
@@ -185,7 +190,7 @@ const BentoTile: React.FC<BentoTileProps> = ({
         style={{
           borderRadius: `${Math.max(0, radius - 1.5)}px`,
         }}
-        className={`relative flex h-full min-w-0 flex-col justify-between overflow-hidden p-5 ${
+        className={`relative flex h-full w-full min-w-0 flex-col justify-between overflow-visible md:overflow-hidden p-5 ${
           card.accent ? "bg-primary/10" : "bg-card"
         }`}
       >
@@ -277,7 +282,7 @@ export const MagicBento: React.FC<MagicBentoProps> = ({
     return (
       <div
         style={gridStyle}
-        className={`grid grid-cols-1 sm:grid-cols-2 lg:[grid-template-columns:repeat(var(--mb-cols),minmax(0,1fr))] ${className}`}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:repeat(var(--mb-cols),minmax(0,1fr))] ${className}`}
       >
         {children}
       </div>
@@ -288,11 +293,11 @@ export const MagicBento: React.FC<MagicBentoProps> = ({
     <div
       style={
         {
-          gap: `${gap}px`,
+          gap: `${Math.max(16, gap)}px`,
           "--mb-cols": Math.max(1, columns),
         } as CSSProperties
       }
-      className={`grid grid-cols-1 sm:grid-cols-2 lg:[grid-template-columns:repeat(var(--mb-cols),minmax(0,1fr))] ${className}`}
+      className={`grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:repeat(var(--mb-cols),minmax(0,1fr))] ${className}`}
     >
       {cards.map((card, index) => (
         <BentoTile

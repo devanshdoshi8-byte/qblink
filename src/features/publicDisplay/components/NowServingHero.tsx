@@ -100,10 +100,11 @@ export const NowServingHero: React.FC<NowServingHeroProps> = ({ displayData }) =
             {currentToken ? (
               <SplitFlapText
                 text={`#${currentToken}`}
+                padTo={5}
                 charset="alphanumeric"
                 tileColor="#0e1e34"
                 textColor="#f4f2eb"
-                fontSize="clamp(3.5rem, 11vw, 8.5rem)"
+                fontSize="clamp(2.25rem, 11vw, 8.5rem)"
                 tileRadius={14}
                 gap={8}
                 flipsPerChar={5}

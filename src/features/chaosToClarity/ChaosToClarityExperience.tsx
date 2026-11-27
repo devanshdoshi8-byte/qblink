@@ -72,10 +72,10 @@ export const ChaosToClarityExperience: React.FC<ChaosToClarityExperienceProps> =
         </div>
 
         {/* 3-Step Interactive Story Stepper */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4 max-w-2xl mx-auto">
           <button
             onClick={() => setQueueState((prev) => ({ ...prev, step: 1 }))}
-            className={`p-3 rounded-2xl border text-center transition-all ${
+            className={`min-h-[44px] p-3 rounded-2xl border text-center transition-all ${
               queueState.step === 1
                 ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 border-primary"
                 : "bg-card border-border text-muted-foreground hover:text-foreground"

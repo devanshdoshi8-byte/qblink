@@ -22,7 +22,7 @@ export interface IndustryConfig {
 export const INDUSTRY_PRESETS: Record<IndustryType, IndustryConfig> = {
   clinic: {
     id: "clinic",
-    label: "🏥 Healthcare Clinic",
+    label: "Healthcare Clinic",
     businessName: "Apex Multi-Speciality Clinic",
     queueName: "Dr. Mehta • General OPD",
     counterName: "Consultation Room 3",
@@ -31,7 +31,7 @@ export const INDUSTRY_PRESETS: Record<IndustryType, IndustryConfig> = {
   },
   cafe: {
     id: "cafe",
-    label: "☕ Dining & Cafe",
+    label: "Dining & Cafe",
     businessName: "Blue Harbor Artisan Roastery",
     queueName: "Table Seating • Main Dining",
     counterName: "Host Stand",
@@ -40,7 +40,7 @@ export const INDUSTRY_PRESETS: Record<IndustryType, IndustryConfig> = {
   },
   salon: {
     id: "salon",
-    label: "💇 Salon & Spa",
+    label: "Salon & Spa",
     businessName: "Luxe Studio & Spa",
     queueName: "Senior Stylist • Hair & Spa",
     counterName: "Styling Station 2",
@@ -49,7 +49,7 @@ export const INDUSTRY_PRESETS: Record<IndustryType, IndustryConfig> = {
   },
   counter: {
     id: "counter",
-    label: "🏛️ Citizen Counter",
+    label: "Citizen Counter",
     businessName: "City Civil Administration",
     queueName: "Document Verification & Permits",
     counterName: "Counter 4",
@@ -105,7 +105,7 @@ export function createInitialPitchState(industry: IndustryType = "clinic"): Pitc
     { id: "sim-1", token: `${prefix}${startNum + 1}`, name: "Aarav Sharma", status: "waiting", isUser: false },
     { id: "sim-2", token: `${prefix}${startNum + 2}`, name: "Priya Patel", status: "waiting", isUser: false },
     { id: "sim-3", token: `${prefix}${startNum + 3}`, name: "Vikram Malhotra", status: "waiting", isUser: false },
-    { id: "sim-4", token: `${prefix}${startNum + 4}`, name: "You (Judge Demo)", status: "waiting", isUser: true },
+    { id: "sim-4", token: `${prefix}${startNum + 4}`, name: "Rohan Deshmukh", status: "waiting", isUser: true },
     { id: "sim-5", token: `${prefix}${startNum + 5}`, name: "Rohan Verma", status: "waiting", isUser: false },
   ];
 

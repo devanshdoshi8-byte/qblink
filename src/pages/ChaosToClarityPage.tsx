@@ -7,7 +7,7 @@ import { ChaosToClarityExperience } from "@/features/chaosToClarity/ChaosToClari
 
 export const ChaosToClarityPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between pb-24 selection:bg-primary selection:text-white">
       <SEO
         title="From Waiting Chaos to Customer Flow — Qblink Simulation"
         description="Experience the interactive transformation from physical waiting room chaos to calm, synchronized digital customer flow with Qblink."
@@ -23,7 +23,7 @@ export const ChaosToClarityPage: React.FC = () => {
               className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl border border-border bg-card transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Qblink</span>
+              <span>Back to QBlink</span>
             </Link>
             <div className="h-4 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2">

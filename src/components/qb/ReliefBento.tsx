@@ -18,24 +18,18 @@ export const ReliefBento = () => {
 
   return (
     <section
-      className="relative ink-surface py-24 sm:py-32 overflow-hidden grain"
+      className="relative ink-surface py-12 sm:py-24 overflow-hidden grain"
       aria-label="The relief layer"
     >
       {/* Ambient background glow */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-24 relative z-10">
-        <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 relative z-10">
+        <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl text-cream leading-[0.98] max-w-3xl">
           What replaces the anxiety
           <br />
           <span className="text-glow italic font-normal">of standing in line.</span>
         </h2>
 
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-6 md:grid-rows-4 gap-4 md:gap-5"
-        >
+        <div className="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-5">
           {/* Big Live Position Widget */}
           <div className="md:col-span-4 md:row-span-3">
             <BorderGlow
@@ -52,21 +46,21 @@ export const ReliefBento = () => {
               fillOpacity={0.32}
               className="h-full shadow-2xl"
             >
-              <div className="p-8 sm:p-10 flex flex-col justify-between h-full">
-                <div className="flex justify-between items-center font-mono-caps text-cream/70 text-xs">
+              <div className="p-5 sm:p-10 flex flex-col justify-between h-full">
+                <div className="flex justify-between items-center font-mono-caps text-cream/70 text-[11px] sm:text-xs gap-2">
                   <span className="flex items-center gap-2 font-bold">
-                    <Radio className="w-4 h-4 text-glow" /> LIVE STREAMING POSITION
+                    <Radio className="w-4 h-4 text-glow shrink-0" /> LIVE STREAMING POSITION
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-glow/15 border border-glow/30 text-glow font-bold text-[11px] flex items-center gap-1.5">
+                  <span className="px-2.5 sm:px-3 py-1 rounded-full bg-glow/15 border border-glow/30 text-glow font-bold text-[10px] sm:text-[11px] flex items-center gap-1.5 shrink-0">
                     <span className="w-2 h-2 rounded-full bg-glow" /> Realtime
                   </span>
                 </div>
 
-                <div className="flex items-end gap-6 sm:gap-10 my-8">
+                <div className="flex flex-wrap sm:flex-nowrap items-end gap-4 sm:gap-10 my-5 sm:my-8">
                   <div className="font-display text-cream font-black leading-none tracking-tighter">
                     <Counter
                       value={pos}
-                      fontSize="clamp(4.5rem, 10vw, 9rem)"
+                      fontSize="clamp(3.25rem, 12vw, 8.5rem)"
                       fontWeight={900}
                       textColor="hsl(var(--cream))"
                       duration={550}
@@ -74,14 +68,14 @@ export const ReliefBento = () => {
                     />
                   </div>
 
-                  <div className="pb-4 sm:pb-8">
+                  <div className="pb-2 sm:pb-8">
                     <div className="font-mono-caps text-cream/50 text-xs sm:text-sm font-semibold tracking-wider">AHEAD OF YOU</div>
-                    <div className="font-display text-3xl sm:text-4xl text-glow font-bold mt-1 tabular-nums flex items-baseline">
+                    <div className="font-display text-2xl sm:text-4xl text-glow font-bold mt-1 tabular-nums flex items-baseline">
                       <Counter
                         value={pos * 2 + 2}
                         prefix="~"
                         suffix=" min"
-                        fontSize="2.25rem"
+                        fontSize="clamp(1.5rem, 6vw, 2.25rem)"
                         fontWeight={700}
                         textColor="hsl(var(--glow))"
                         duration={500}
@@ -93,11 +87,11 @@ export const ReliefBento = () => {
 
                 {/* Dynamic Step Progress Track */}
                 <div>
-                  <div className="flex gap-1.5 sm:gap-2">
+                  <div className="flex gap-1 sm:gap-2">
                     {Array.from({ length: 20 }).map((_, i) => (
                       <motion.span
                         key={i}
-                        className={`h-7 flex-1 rounded-md transition-colors duration-500 ${
+                        className={`h-5 sm:h-7 flex-1 rounded-md transition-colors duration-500 ${
                           i < 20 - pos * 4 ? "bg-gradient-to-t from-glow to-teal shadow-sm shadow-glow/30" : "bg-cream/10"
                         }`}
                       />
@@ -142,10 +136,10 @@ export const ReliefBento = () => {
             <div className="w-10 h-10 rounded-2xl bg-glow/15 border border-glow/30 flex items-center justify-center text-glow">
               <Radio className="w-5 h-5" />
             </div>
-            <div className="font-display text-xl sm:text-2xl text-cream italic leading-relaxed my-3 font-medium">
-              "The moment the number ticks down on your phone, the whole room breathes. That's the product."
+            <div className="font-display text-lg sm:text-xl text-cream italic leading-relaxed my-3 font-medium">
+              "Staff can finally focus on patient registrations instead of answering repetitive queue questions."
             </div>
-            <div className="font-mono-caps text-glow/70 text-xs font-semibold">— Human Design Principle 01</div>
+            <div className="font-mono-caps text-glow/80 text-xs font-semibold">— Dr. Ambrish Patange, Sterling Care Clinic</div>
           </div>
 
           {/* Zero Hardware Card */}
@@ -180,12 +174,12 @@ export const ReliefBento = () => {
             </div>
           </SpotlightCard>
 
-          {/* Autonomous Insights Card */}
+          {/* Autonomous Insights Card — spans full width to eliminate grid void */}
           <SpotlightCard
             theme={isDark ? "dark" : "light"}
             spotlightColor={isDark ? "#51c2c2" : "#10637f"}
             intensity={0.14}
-            className="md:col-span-2 md:row-span-1 border border-glow/20 !p-6 !rounded-2xl flex items-center justify-between shadow-lg [--spotlight-card-surface:hsl(var(--deep))]"
+            className="md:col-span-6 border border-glow/20 !p-6 !rounded-2xl flex items-center justify-between shadow-lg [--spotlight-card-surface:hsl(var(--deep))]"
           >
             <div>
               <div className="font-mono-caps text-cream/50 text-xs font-semibold">INTELLIGENCE</div>
@@ -199,7 +193,7 @@ export const ReliefBento = () => {
               <span className="w-1 rounded-full bg-glow animate-bar-5" />
             </div>
           </SpotlightCard>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

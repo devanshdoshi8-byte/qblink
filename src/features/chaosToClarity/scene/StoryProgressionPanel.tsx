@@ -56,7 +56,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
       {/* Top Strip: Industry & Simulation Mode Switchers */}
       <div className="flex flex-col lg:flex-row items-center justify-between gap-4 pb-5 border-b border-border/60">
         {/* Industry Preset Selector */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0 scrollbar-none">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 w-full lg:w-auto">
           {(Object.keys(INDUSTRY_CONFIGS) as IndustryKey[]).map((key) => {
             const ind = INDUSTRY_CONFIGS[key];
             const isSelected = state.industry === key;
@@ -64,7 +64,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
               <button
                 key={key}
                 onClick={() => onSetIndustry(key)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                   isSelected
                     ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                     : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -132,7 +132,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
         </div>
 
         {/* 7 Step Indicators */}
-        <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5 sm:gap-2">
           {STORY_STEPS.map((step) => {
             const isActive = currentStep.number === step.number;
             const isCompleted = currentStep.number > step.number;
@@ -140,7 +140,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
               <button
                 key={step.number}
                 onClick={() => onSetStep(step.number)}
-                className={`py-2 px-1 rounded-xl text-center flex flex-col items-center justify-center transition-all ${
+                className={`min-h-[40px] py-2 px-1 rounded-xl text-center flex flex-col items-center justify-center transition-all ${
                   isActive
                     ? "bg-primary text-primary-foreground font-extrabold shadow-sm ring-2 ring-primary/40"
                     : isCompleted

@@ -17,17 +17,17 @@ export const ProblemInfographic = () => {
   return (
     <section
       id="act-move"
-      className="relative ink-surface py-24 sm:py-32 overflow-hidden grain"
+      className="relative ink-surface py-12 sm:py-24 overflow-hidden grain"
       aria-label="The problem"
     >
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-24">
-        <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-24">
+        <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl text-cream leading-[0.98] max-w-3xl">
           Uncertainty has a shape.
           <br />
           <span className="text-glow italic font-normal">This is it.</span>
         </h2>
-        <p className="text-cream/60 mt-6 max-w-xl text-base sm:text-lg leading-relaxed">
-          Hover across the waiting room. Every hotspot represents a quantifiable leak in footfall,
+        <p className="text-cream/60 mt-4 sm:mt-6 max-w-xl text-sm sm:text-lg leading-relaxed">
+          Tap or hover across the waiting room. Every hotspot represents a quantifiable leak in footfall,
           patience, and counter throughput when queues are invisible.
         </p>
 
@@ -38,9 +38,9 @@ export const ProblemInfographic = () => {
           glowColor="180 54 54"
           colors={["#51c2c2", "#10637f", "#f4f2eb"]}
           surfaceTheme="dark"
-          className="mt-16"
+          className="mt-8 sm:mt-14"
         >
-          <div className="relative aspect-[16/7] overflow-hidden rounded-[14px]">
+          <div className="relative aspect-[16/9] sm:aspect-[16/7] overflow-hidden rounded-[14px]">
           {/* Animated Sonar Radar Sweep */}
           <div className="absolute inset-0 pointer-events-none opacity-30">
 
@@ -71,6 +71,7 @@ export const ProblemInfographic = () => {
             {spots.map((s, i) => (
               <g
                 key={i}
+                onClick={() => setActive((prev) => (prev === i ? null : i))}
                 onMouseEnter={() => setActive(i)}
                 onMouseLeave={() => setActive(null)}
                 onFocus={() => setActive(i)}
@@ -142,14 +143,15 @@ export const ProblemInfographic = () => {
         </BorderGlow>
 
         {/* Interactive Legend Grid */}
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {spots.map((s, i) => (
             <button
               key={i}
               type="button"
+              onClick={() => setActive((prev) => (prev === i ? null : i))}
               onMouseEnter={() => setActive(i)}
               onMouseLeave={() => setActive(null)}
-              className={`p-3.5 rounded-xl border text-left transition-colors ${
+              className={`p-3.5 min-h-[44px] rounded-xl border text-left transition-colors ${
                 active === i
                   ? "bg-glow/20 border-glow text-cream shadow-lg shadow-glow/10"
                   : "bg-deep/20 border-glow/15 hover:border-glow/40 text-cream/70"

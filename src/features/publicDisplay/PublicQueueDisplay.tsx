@@ -59,7 +59,7 @@ export const PublicQueueDisplay: React.FC<PublicQueueDisplayProps> = ({ queueId:
 
   return (
     <div
-      className={`min-h-screen w-full transition-colors duration-300 flex flex-col justify-between p-4 sm:p-8 md:p-10 ${
+      className={`min-h-screen w-full transition-colors duration-300 flex flex-col justify-between p-4 sm:p-8 md:p-10 pb-24 sm:pb-24 md:pb-24 ${
         isDarkMode
           ? "dark bg-slate-950 text-slate-100"
           : "bg-slate-50 text-slate-900"

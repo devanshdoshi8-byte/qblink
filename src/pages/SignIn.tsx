@@ -7,7 +7,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Mail, Lock, Phone, AlertCircle } from "lucide-react";
 import GlideSelect from "@/components/reactbits/GlideSelect";
-import logo from "@/assets/qblink-logo.png";
+import { QBlinkWordmark } from "@/components/qb/QBlinkWordmark";
 import SEO from "@/components/SEO";
 import { COUNTRY_CODES, normalizePhone, phoneToEmail, isValidPhone } from "@/lib/phoneAuth";
 import { GoogleButton, AuthDivider } from "@/components/auth/GooglePickerModal";
@@ -29,8 +29,9 @@ const SignIn = () => {
   const { isAdmin, loading: adminLoading } = useIsAdmin();
 
   const nextUrl = searchParams.get("next");
+  const roleParam = searchParams.get("role") === "business" ? "business" : "customer";
   const safeNext = nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
-  const signupHref = safeNext ? `/auth/customer?next=${encodeURIComponent(safeNext)}` : "/auth";
+  const signupHref = safeNext ? `/auth/customer?next=${encodeURIComponent(safeNext)}` : roleParam === "business" ? "/auth/business" : "/auth";
 
   useEffect(() => {
     if (user && !authLoading && !roleLoading && !adminLoading) {
@@ -55,7 +56,7 @@ const SignIn = () => {
     setGoogleBusy(true);
     setErrorMsg(null);
     try {
-      await signInWithGoogle("customer", safeNext ?? undefined);
+      await signInWithGoogle(roleParam, safeNext ?? undefined);
     } catch (err: any) {
       const msg = err?.message ?? "Couldn't sign in with Google";
       setErrorMsg(msg);
@@ -113,9 +114,8 @@ const SignIn = () => {
       <SEO title="Sign in — Qblink" description="Sign in to your Qblink account to manage queues or track your spot." path="/auth/signin" />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <img src={logo} alt="Qblink" className="h-10 w-10 rounded-lg object-contain" />
-            <span className="text-2xl font-bold text-foreground">Qblink</span>
+          <Link to="/" className="inline-flex items-center mb-6" aria-label="QBlink home">
+            <QBlinkWordmark iconClassName="h-10 w-10" textClassName="text-2xl text-foreground" />
           </Link>
           <h1 className="text-2xl font-bold text-foreground mb-2">Welcome back</h1>
           <p className="text-sm text-muted-foreground">Sign in to your Qblink account</p>

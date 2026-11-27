@@ -1,7 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Stethoscope, Coffee, Scissors, Landmark } from "lucide-react";
 import { MorphIndustryKey } from "../types";
 import { MORPH_INDUSTRIES } from "../data/industryMorphData";
+
+const INDUSTRY_ICONS: Record<MorphIndustryKey, React.ComponentType<{ className?: string }>> = {
+  clinic: Stethoscope,
+  cafe: Coffee,
+  salon: Scissors,
+  gov: Landmark,
+};
 
 interface IndustrySelectorPillsProps {
   selectedIndustry: MorphIndustryKey;
@@ -30,10 +38,11 @@ export const IndustrySelectorPills: React.FC<IndustrySelectorPillsProps> = ({
     <div
       role="tablist"
       aria-label="Industry Presets"
-      className="flex items-center justify-center gap-2 p-1.5 rounded-2xl bg-muted/80 border border-border/80 max-w-2xl mx-auto overflow-x-auto"
+      className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl bg-muted/80 border border-border/80 max-w-3xl mx-auto"
     >
       {industries.map((ind, index) => {
         const isSelected = selectedIndustry === ind.id;
+        const Icon = INDUSTRY_ICONS[ind.id] ?? Stethoscope;
         return (
           <button
             key={ind.id}
@@ -53,7 +62,7 @@ export const IndustrySelectorPills: React.FC<IndustrySelectorPillsProps> = ({
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
               />
             )}
-            <span className="text-base relative z-10">{ind.icon}</span>
+            <Icon className="w-4 h-4 relative z-10" />
             <span className="relative z-10">{ind.label}</span>
           </button>
         );

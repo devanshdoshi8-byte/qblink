@@ -63,9 +63,14 @@ const InstallAppPrompt = () => {
     };
   }, [isIOS]);
 
-  // Don't show on home/kiosk/public/onboarding routes
+  // Don't show on home, Pitch Hub demo routes, kiosk, or onboarding routes
   const blocked =
     pathname === "/" ||
+    pathname === "/pitch" ||
+    pathname === "/chaos-to-clarity" ||
+    pathname === "/industries" ||
+    pathname === "/roi" ||
+    pathname === "/calculator" ||
     pathname.startsWith("/display/") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/install");

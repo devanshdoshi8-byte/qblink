@@ -189,7 +189,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                   <User className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">Anya (Patient Protagonist)</h4>
+                  <h4 className="text-xs font-bold text-white">Priya Kulkarni</h4>
                   <span className="text-[10px] text-slate-400">
                     {isTransformed ? "Relaxing at Terrace Cafe" : "Trapped in Crowded Waiting Room"}
                   </span>
@@ -263,7 +263,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-bold text-success">
                   <Smartphone className="w-4 h-4" />
-                  <span>Anya's Pocket Ticket: #A-{queueState.protagonistToken}</span>
+                  <span>Priya's Pocket Ticket: #A-{queueState.protagonistToken}</span>
                 </div>
                 <span className="font-mono text-xs font-bold text-white bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800">
                   {queueState.isCalled ? "IT'S YOUR TURN" : `~${queueState.estimatedWaitMinutes}m wait`}
@@ -282,7 +282,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                   }`}
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>{queueState.isCalled ? "Doctor is Serving Anya" : "Call Next Patient (Advance Queue)"}</span>
+                  <span>{queueState.isCalled ? "Doctor is Serving Priya" : "Call Next Patient (Advance Queue)"}</span>
                 </button>
               </div>
             </motion.div>

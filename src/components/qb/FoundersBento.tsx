@@ -2,26 +2,20 @@ import { Award, Cpu, Smartphone } from "lucide-react";
 import MagicBento from "@/components/reactbits/MagicBento";
 import GlassSurface from "@/components/reactbits/GlassSurface";
 
-const AvatarMark = ({ letter }: { letter: string }) => (
-  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
-    {letter}
-  </span>
-);
-
 export const FoundersBento = () => {
   return (
     <section
       id="founders"
-      className="relative py-24 sm:py-32 bg-background/85"
+      className="relative py-12 sm:py-24 bg-background/85"
       aria-label="Founding leadership and recognition"
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end mb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-12 lg:items-end mb-8 sm:mb-12">
           <div className="lg:col-span-7">
             <div className="font-mono-caps text-primary mb-3">
               Founding Leadership
             </div>
-            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.02]">
+            <h2 className="font-display text-3xl sm:text-5xl text-foreground leading-[1.02]">
               Built from conviction,
               <br />
               <span className="text-primary italic font-normal">
@@ -65,6 +59,9 @@ export const FoundersBento = () => {
                   <div className="text-sm font-semibold text-foreground mt-0.5">
                     Incubated at Inventure · IIT Gandhinagar
                   </div>
+                  <div className="text-xs text-primary font-medium mt-0.5">
+                    2nd Globally · International Design Championship 2026
+                  </div>
                   <div className="text-xs text-muted-foreground mt-0.5">
                     Social &amp; Healthcare Flow Initiative
                   </div>
@@ -76,7 +73,7 @@ export const FoundersBento = () => {
 
         <MagicBento
           columns={4}
-          rowHeight={220}
+          rowHeight={160}
           gap={12}
           radius={20}
           enableBorderGlow={true}
@@ -86,50 +83,38 @@ export const FoundersBento = () => {
           cards={[
             {
               id: "founder-devansh",
-              label: "Founder & Creator · Started Qblink",
-              title: "Devansh",
+              label: "Founder · Product & Core",
+              title: "Devansh Doshi",
               accent: true,
-              icon: <AvatarMark letter="D" />,
               description:
-                "Devansh started Qblink after watching people waste hours standing in chaotic, disorganized waiting lines. He conceived the vision of hardware-free customer flow intelligence and built the core foundation so anyone can wait remotely without buying hardware or downloading apps.",
+                "Started QBlink after watching people lose hours in disorganized waiting lines. Built the core hardware-free flow engine so anyone can wait remotely in any browser.",
             },
             {
               id: "cofounder-mithil",
-              label: "Co-founder · Joined Devansh",
-              title: "Mithil",
-              icon: <AvatarMark letter="M" />,
+              label: "Co-founder · Platform & Ops",
+              title: "Mithil Nirav Shah",
               description:
-                "Joined Devansh as co-founder to lead platform scale, merchant counter reliability, and operational deployment across clinics, salons, and food businesses.",
+                "Leads platform scale, merchant counter reliability, and operational deployment across clinics, salons, and food businesses.",
             },
             {
               id: "cofounder-aarav",
-              label: "Co-founder · Joined Devansh",
-              title: "Aarav",
-              icon: <AvatarMark letter="A" />,
+              label: "Co-founder · Realtime & UX",
+              title: "Aarav Mehta",
               description:
-                "Joined Devansh as co-founder to engineer high-frequency real-time queue signals, live browser notifications, and frictionless smartphone experiences.",
+                "Engineers high-frequency real-time queue signals, live browser notifications, and zero-friction smartphone experiences.",
             },
             {
-              id: "cofounder-vihan",
-              label: "Co-founder · Joined Devansh",
+              id: "cofounder-vihaan",
+              label: "Co-founder · Flow Intelligence",
               title: "Vihaan Patange",
-              icon: <AvatarMark letter="V" />,
               description:
-                "Joined Devansh as co-founder to spearhead predictive wait-time algorithms, customer flow intelligence, and multi-counter analytics.",
-            },
-            {
-              id: "recognition-iitgn",
-              label: "Official Recognition",
-              title: "Inventure · IIT Gandhinagar",
-              colSpan: 2,
-              icon: <Award className="w-4 h-4" />,
-              description:
-                "Incubated and supported at IIT Gandhinagar as a social and commercial customer flow innovation.",
+                "Spearheads predictive wait-time algorithms, customer flow intelligence, and multi-counter analytics.",
             },
             {
               id: "pillar-hardware-free",
               label: "Architecture",
               title: "100% Hardware-Free",
+              colSpan: 2,
               icon: <Cpu className="w-4 h-4" />,
               description:
                 "Eliminates expensive paper slips, kiosk machines, and clunky hardware with pure browser tech.",
@@ -138,6 +123,7 @@ export const FoundersBento = () => {
               id: "pillar-zero-app",
               label: "Customer Experience",
               title: "Zero-App Remote Waiting",
+              colSpan: 2,
               icon: <Smartphone className="w-4 h-4" />,
               description:
                 "Customers join with a simple QR scan and hold their place from home, car, or a nearby cafe.",

@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useOptionalTheme } from "@/hooks/useTheme";
 import PillNav from "@/components/reactbits/PillNav";
 import GlassSurface from "@/components/reactbits/GlassSurface";
-import logo from "@/assets/qblink-logo.png";
+import { QBlinkWordmark } from "@/components/qb/QBlinkWordmark";
 import { motion, AnimatePresence } from "framer-motion";
 
 const demoLinks = [
@@ -97,12 +97,9 @@ export const TopNav = () => {
           scrolled ? "bg-background/95 border-b border-border shadow-sm" : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 h-[4.5rem] flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="Qblink home">
-            <img src={logo} alt="" className="w-8 h-8 object-contain" draggable={false} />
-            <span className={`font-serif font-semibold text-xl tracking-tight ${scrolled ? "text-foreground" : "stage-text"}`}>
-              Qblink
-            </span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-[4.5rem] flex items-center gap-3 sm:gap-6">
+          <Link to="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="QBlink home">
+            <QBlinkWordmark textClassName={`text-lg sm:text-xl ${scrolled ? "text-foreground" : "stage-text"}`} />
           </Link>
 
           <div className="hidden md:flex items-center gap-4 text-sm">
@@ -131,14 +128,14 @@ export const TopNav = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.98 }}
                     transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="absolute left-0 mt-2 w-96 rounded-2xl bg-card border border-border p-2.5 shadow-xl z-50"
+                    className="absolute left-0 mt-2 w-[min(24rem,calc(100vw-2rem))] rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-800 p-2.5 shadow-2xl z-50"
                   >
-                    <div className="px-3 py-2 border-b border-border/60 mb-1 flex items-center justify-between">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                    <div className="px-3 py-2 border-b border-slate-800 mb-1 flex items-center justify-between">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
                         Interactive Pitch & Product Demos
                       </span>
-                      <span className="inline-flex items-center gap-1 text-[10px] text-success font-mono">
-                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                      <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-mono">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                         Live
                       </span>
                     </div>
@@ -151,21 +148,21 @@ export const TopNav = () => {
                             key={demo.href}
                             to={demo.href}
                             onClick={() => setDemosOpen(false)}
-                            className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-muted/70 transition-colors"
+                            className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-900/90 transition-colors"
                           >
-                            <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <div className="p-2 rounded-lg bg-primary/15 text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                               <Icon className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-1 mb-0.5">
-                                <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                                <span className="text-xs font-semibold text-slate-100 group-hover:text-primary transition-colors truncate">
                                   {demo.title}
                                 </span>
                                 <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-full border ${demo.badgeColor}`}>
                                   {demo.badge}
                                 </span>
                               </div>
-                              <p className="text-[11px] text-muted-foreground line-clamp-1 leading-snug">
+                              <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug">
                                 {demo.desc}
                               </p>
                             </div>
@@ -213,7 +210,7 @@ export const TopNav = () => {
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <div className="hidden sm:block">
-              <ThemeToggle />
+              <ThemeToggle overStage={!scrolled} />
             </div>
             <Link
               to="/pitch"
@@ -236,16 +233,22 @@ export const TopNav = () => {
             </Link>
             <Link
               to="/auth"
-              className="text-sm font-medium px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+              className="hidden sm:inline-flex items-center text-sm font-medium px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
             >
               Start free
+            </Link>
+            <Link
+              to="/join"
+              className="sm:hidden inline-flex items-center text-xs font-semibold px-3 py-2 min-h-[40px] rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              Join queue
             </Link>
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className={`md:hidden p-2 rounded-lg ${scrolled ? "text-foreground" : "stage-text"}`}
+              className={`md:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg ${scrolled ? "text-foreground" : "stage-text"}`}
             >
               {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -290,7 +293,7 @@ export const TopNav = () => {
                     key={l.href}
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className="block py-2 text-sm text-foreground hover:text-primary transition-colors"
+                    className="flex items-center min-h-[44px] py-2 text-sm text-foreground hover:text-primary transition-colors"
                   >
                     {l.label}
                   </a>
@@ -299,8 +302,11 @@ export const TopNav = () => {
             </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-border">
-              <ThemeToggle />
-              <Link to="/auth/signin" className="text-sm font-medium text-foreground">
+              <div className="flex items-center gap-2.5">
+                <ThemeToggle />
+                <span className="text-xs font-medium text-muted-foreground">Appearance</span>
+              </div>
+              <Link to="/auth/signin" onClick={() => setOpen(false)} className="inline-flex items-center min-h-[44px] px-2 text-sm font-medium text-foreground">
                 Sign in
               </Link>
             </div>
@@ -309,17 +315,17 @@ export const TopNav = () => {
       </header>
 
       {/* Sticky Mobile Action Bar on Home */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 p-3 bg-background/90 backdrop-blur-lg border-t border-border flex items-center gap-2.5">
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-background/95 backdrop-blur-lg border-t border-border flex items-center gap-2.5">
         <Link
           to="/pitch"
-          className="flex-1 py-2.5 px-3 rounded-xl border border-primary/30 bg-primary/10 text-primary font-semibold text-xs text-center flex items-center justify-center gap-1.5 shadow-sm"
+          className="flex-1 min-h-[44px] px-3 rounded-xl border border-primary/30 bg-primary/10 text-primary font-semibold text-xs text-center flex items-center justify-center gap-1.5 shadow-sm"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-success" />
           <span>Try Pitch Demo</span>
         </Link>
         <Link
-          to="/auth"
-          className="flex-1 py-2.5 px-3 rounded-xl bg-primary text-primary-foreground font-semibold text-xs text-center flex items-center justify-center gap-1 shadow-sm"
+          to="/auth/signin?role=business"
+          className="flex-1 min-h-[44px] px-3 rounded-xl bg-primary text-primary-foreground font-semibold text-xs text-center flex items-center justify-center gap-1 shadow-sm"
         >
           <span>Start Free</span>
           <ArrowRight className="w-3.5 h-3.5" />

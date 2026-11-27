@@ -21,7 +21,23 @@ export const LiveQueueDemo = () => {
   const [ticketKey, setTicketKey] = useState(0);
   const [ticketTorn, setTicketTorn] = useState(false);
   const [tokenNum] = useState("A-42");
+  const [ticketWidth, setTicketWidth] = useState(340);
+  const ticketBoxRef = useRef<HTMLDivElement>(null);
   const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (ticketBoxRef.current) {
+        const w = ticketBoxRef.current.clientWidth;
+        if (w > 0) setTicketWidth(Math.min(340, w));
+      } else if (typeof window !== "undefined") {
+        setTicketWidth(Math.min(340, Math.max(260, window.innerWidth - 48)));
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   const estWait = Math.max(1, position * 3);
 
@@ -69,9 +85,9 @@ export const LiveQueueDemo = () => {
   const strokeDashoffset = circumference - progressFraction * circumference;
 
   return (
-    <section id="demo" className="relative py-24 md:py-32 overflow-hidden bg-[hsl(var(--surface-warm)/0.4)]" aria-label="Interactive demo">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <section id="customer-journey" className="relative py-12 md:py-24 overflow-hidden bg-[hsl(var(--surface-warm)/0.4)]" aria-label="Interactive demo">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* Left Column: Context & Interactive Controls */}
           <div className="lg:col-span-6">
             <motion.div
@@ -80,7 +96,7 @@ export const LiveQueueDemo = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground leading-[1.02]">
+              <h2 className="font-display text-3xl sm:text-5xl md:text-6xl text-foreground leading-[1.02]">
                 Watch the wait
                 <br />
                 <span className={isDark ? "text-[hsl(var(--brand-cream))] italic font-normal" : "text-foreground italic font-normal"}>
@@ -114,7 +130,7 @@ export const LiveQueueDemo = () => {
                   <button
                     type="button"
                     onClick={() => setPaused((v) => !v)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-xl bg-primary text-primary-foreground hover:brightness-110 active:scale-95 transition-all shadow-sm"
+                    className="inline-flex items-center justify-center gap-1.5 min-h-[44px] text-xs font-semibold px-4 py-2.5 rounded-xl bg-primary text-primary-foreground hover:brightness-110 active:scale-95 transition-all shadow-sm"
                   >
                     {paused ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5" />}
                     {paused ? "Resume Flow" : "Pause"}
@@ -124,7 +140,7 @@ export const LiveQueueDemo = () => {
                     type="button"
                     onClick={advanceOne}
                     disabled={phase === "done"}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted active:scale-95 transition-all disabled:opacity-40"
+                    className="inline-flex items-center justify-center gap-1.5 min-h-[44px] text-xs font-medium px-3.5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted active:scale-95 transition-all disabled:opacity-40"
                   >
                     <FastForward className="w-3.5 h-3.5" />
                     Call Next
@@ -133,7 +149,7 @@ export const LiveQueueDemo = () => {
                   <button
                     type="button"
                     onClick={reset}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
+                    className="inline-flex items-center justify-center gap-1.5 min-h-[44px] text-xs font-medium px-3.5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     Reset
@@ -141,15 +157,19 @@ export const LiveQueueDemo = () => {
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
                   <span className="text-[11px] font-medium text-muted-foreground">
-                    Customer turn alert
+                    {notifyEnabled ? (
+                      <span className="text-emerald-400 font-semibold">Turn alert active</span>
+                    ) : (
+                      "Customer turn alert"
+                    )}
                   </span>
                   <BellToggle
                     offLabel="Notify me"
-                    onLabel="You'll be notified"
-                    color={isDark ? "#f4f2eb" : "#f4f2eb"}
+                    onLabel="Turn alert active"
+                    color="#f4f2eb"
                     background="#0e1e34"
-                    onColor="#0e1e34"
-                    onBackground="#51c2c2"
+                    onColor="#ecfdf5"
+                    onBackground="#059669"
                     size="sm"
                     radius={22}
                     ringAmplitude={17}
@@ -172,15 +192,15 @@ export const LiveQueueDemo = () => {
               </BorderGlow>
 
               {/* Tactile Perforated TearTicket */}
-              <div className="mt-6 max-w-md">
-                <div className="text-[11px] font-mono-caps text-muted-foreground mb-2">
+              <div ref={ticketBoxRef} className="mt-6 w-full max-w-md overflow-visible">
+                <div className="text-[11px] font-mono-caps text-muted-foreground mb-5">
                   {ticketTorn ? "Stub torn · Ticket #A-42 active on phone" : "Pull perforated stub to draw ticket"}
                 </div>
                 <TearTicket
                   key={ticketKey}
-                  width={340}
+                  width={ticketWidth}
                   height={118}
-                  stubSize={92}
+                  stubSize={Math.round(ticketWidth * 0.27)}
                   radius={14}
                   background={isDark ? "#1a3552" : "#f4f2eb"}
                   stubBackground={isDark ? "#13273d" : "#eae5d9"}
@@ -227,7 +247,7 @@ export const LiveQueueDemo = () => {
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-[340px] sm:max-w-[360px]"
+              className="relative w-full max-w-[320px] sm:max-w-[360px]"
             >
               {/* Kinetic Atmospheric Outer Halo */}
               <div className={`absolute -inset-4 rounded-[3.5rem] opacity-60 blur-xl transition-colors duration-1000 ${
@@ -270,124 +290,119 @@ export const LiveQueueDemo = () => {
                     </div>
                   </div>
 
-                  {/* Central Position Ring Display */}
+                  {/* Central Position Ring Display — unmount called layer immediately on Reset */}
                   <div className="my-auto py-6 flex flex-col items-center justify-center relative">
-                    <AnimatePresence mode="wait">
-                      {phase === "called" || phase === "done" ? (
-                        <motion.div
-                          key="called"
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.8, opacity: 0 }}
-                          transition={{ type: "spring", damping: 15, stiffness: 200 }}
-                          className="text-center space-y-4"
-                        >
-                          <div className="relative mx-auto w-24 h-24 rounded-full bg-success/15 flex items-center justify-center">
-                            <div className="absolute inset-0 rounded-full border-2 border-success/40" />
-                            <CheckCircle2 className="w-12 h-12 text-success" />
-                          </div>
+                    {phase === "called" || phase === "done" ? (
+                      <div
+                        key={`called-${ticketKey}`}
+                        className="text-center space-y-4"
+                      >
+                        <div className="relative mx-auto w-24 h-24 rounded-full bg-success/15 flex items-center justify-center">
+                          <div className="absolute inset-0 rounded-full border-2 border-success/40" />
+                          <CheckCircle2 className="w-12 h-12 text-success" />
+                        </div>
 
-                          <div>
-                            <div className="font-display text-2xl font-bold text-success">It's Your Turn!</div>
-                            <p className="text-xs text-muted-foreground mt-1 max-w-[200px] mx-auto">
-                              Please proceed to Counter 2 with Token <strong className="text-foreground">#{tokenNum}</strong>
-                            </p>
-                          </div>
+                        <div>
+                          <div className="font-display text-2xl font-bold text-success">It's Your Turn!</div>
+                          <p className="text-xs text-muted-foreground mt-1 max-w-[200px] mx-auto">
+                            Please proceed to Counter 2 with Token <strong className="text-foreground">#{tokenNum}</strong>
+                          </p>
+                        </div>
 
-                          {phase === "done" ? (
-                            <div
-                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-success text-white text-xs font-bold shadow-md shadow-success/30"
-                            >
-                              <Bell className="w-3.5 h-3.5" /> Check-in Confirmed
-                            </div>
-                          ) : (
-                            <div className="flex justify-center pt-1">
-                              <SlideCommit
-                                label="Slide to confirm arrival"
-                                doneLabel="Checked in"
-                                errorLabel="Try again"
-                                width={236}
-                                height={44}
-                                radius={22}
-                                trackColor="#0e1e34"
-                                handleColor="#51c2c2"
-                                successColor="#1a7a53"
-                                holdMs={0}
-                                onConfirm={() => new Promise((resolve) => setTimeout(resolve, 350))}
-                                onDone={() => {
-                                  if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
-                                  confirmTimerRef.current = setTimeout(() => setPhase("done"), 700);
-                                }}
+                        {phase === "done" ? (
+                          <div
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-success text-white text-xs font-bold shadow-md shadow-success/30"
+                          >
+                            <Bell className="w-3.5 h-3.5" /> Check-in Confirmed
+                          </div>
+                        ) : (
+                          <div className="flex justify-center pt-1">
+                            <SlideCommit
+                              label="Slide to confirm arrival"
+                              doneLabel="Checked in"
+                              errorLabel="Try again"
+                              width={236}
+                              height={44}
+                              radius={22}
+                              trackColor="#0e1e34"
+                              handleColor="#51c2c2"
+                              successColor="#1a7a53"
+                              holdMs={0}
+                              onConfirm={() => new Promise((resolve) => setTimeout(resolve, 350))}
+                              onDone={() => {
+                                if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+                                confirmTimerRef.current = setTimeout(() => setPhase("done"), 700);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div
+                        key={`position-${ticketKey}`}
+                        className="relative flex flex-col items-center justify-center"
+                      >
+                        {/* Circular SVG Progress Ring */}
+                        <div className="relative w-44 h-44 flex items-center justify-center">
+                          <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                            {/* Background Track */}
+                            <circle
+                              cx="60"
+                              cy="60"
+                              r={radius}
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="7"
+                              className="text-muted/40"
+                            />
+                            {/* Animated Progress Stroke */}
+                            <motion.circle
+                              cx="60"
+                              cy="60"
+                              r={radius}
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="7"
+                              strokeLinecap="round"
+                              strokeDasharray={circumference}
+                              animate={{ strokeDashoffset }}
+                              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                              className={phase === "almost" ? "text-warning" : "text-primary"}
+                            />
+                          </svg>
+
+                          {/* Centered Number synced to aheadCount + 1 */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-[10px] font-mono-caps text-muted-foreground uppercase tracking-widest font-semibold">
+                              Position
+                            </span>
+                            <div className="font-display font-extrabold tracking-tighter my-0.5">
+                              <Counter
+                                key={`pos-${ticketKey}`}
+                                value={position + 1}
+                                fontSize="3.25rem"
+                                fontWeight={800}
+                                textColor="hsl(var(--foreground))"
+                                duration={480}
+                                bounce={0.22}
                               />
                             </div>
-                          )}
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key="position"
-                          className="relative flex flex-col items-center justify-center"
-                        >
-                          {/* Circular SVG Progress Ring */}
-                          <div className="relative w-44 h-44 flex items-center justify-center">
-                            <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                              {/* Background Track */}
-                              <circle
-                                cx="60"
-                                cy="60"
-                                r={radius}
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="7"
-                                className="text-muted/40"
-                              />
-                              {/* Animated Progress Stroke */}
-                              <motion.circle
-                                cx="60"
-                                cy="60"
-                                r={radius}
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="7"
-                                strokeLinecap="round"
-                                strokeDasharray={circumference}
-                                animate={{ strokeDashoffset }}
-                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                className={phase === "almost" ? "text-warning" : "text-primary"}
-                              />
-                            </svg>
-
-                            {/* Centered Number */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                              <span className="text-[10px] font-mono-caps text-muted-foreground uppercase tracking-widest font-semibold">
-                                Position
-                              </span>
-                              <div className="font-display font-extrabold tracking-tighter my-0.5">
-                                <Counter
-                                  value={position}
-                                  fontSize="3.25rem"
-                                  fontWeight={800}
-                                  textColor="hsl(var(--foreground))"
-                                  duration={480}
-                                  bounce={0.22}
-                                />
-                              </div>
-                              <span className="text-[11px] text-muted-foreground font-medium">
-                                {position === 1 ? "1 person ahead" : `${position} people ahead`}
-                              </span>
-                            </div>
+                            <span className="text-[11px] text-muted-foreground font-medium">
+                              {position === 1 ? "1 person ahead" : `${position} people ahead`}
+                            </span>
                           </div>
+                        </div>
 
-                          {/* Sound wave activity bars */}
-                          <div className="flex items-center gap-1 mt-4 h-4">
-                            <span className="w-1 rounded-full bg-primary/70 animate-bar-1" />
-                            <span className="w-1 rounded-full bg-primary/70 animate-bar-2" />
-                            <span className="w-1 rounded-full bg-primary/70 animate-bar-3" />
-                            <span className="w-1 rounded-full bg-primary/70 animate-bar-4" />
-                            <span className="w-1 rounded-full bg-primary/70 animate-bar-5" />
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                        {/* Sound wave activity bars */}
+                        <div className="flex items-center gap-1 mt-4 h-4">
+                          <span className="w-1 rounded-full bg-primary/70 animate-bar-1" />
+                          <span className="w-1 rounded-full bg-primary/70 animate-bar-2" />
+                          <span className="w-1 rounded-full bg-primary/70 animate-bar-3" />
+                          <span className="w-1 rounded-full bg-primary/70 animate-bar-4" />
+                          <span className="w-1 rounded-full bg-primary/70 animate-bar-5" />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Bottom Status Card */}

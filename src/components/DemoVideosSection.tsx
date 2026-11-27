@@ -14,7 +14,7 @@ type DemoVideo = {
 const videos: DemoVideo[] = [
   {
     title: "Customer Experience",
-    sub: "Scan, join, and track your spot — no app, no waiting in line.",
+    sub: "Scan, join, and track your spot with no app and no waiting in line.",
     src: "/videos/qblink-customer-demo.mp4",
   },
   {
@@ -66,13 +66,13 @@ const DemoCard = ({ v, i }: { v: DemoVideo; i: number }) => {
   };
 
   return (
-    <AnimatedSection delay={i * 0.1}>
+    <AnimatedSection delay={i * 0.1} className="h-full">
       <motion.div
         whileHover={{ y: -4 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         onMouseEnter={pause}
         onMouseLeave={play}
-        className="group relative rounded-3xl overflow-hidden bg-card border border-border elevated-shadow focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background"
+        className="group relative h-full flex flex-col rounded-3xl overflow-hidden bg-card border border-slate-800/80 elevated-shadow focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background"
       >
         <button
           type="button"
@@ -80,7 +80,7 @@ const DemoCard = ({ v, i }: { v: DemoVideo; i: number }) => {
           aria-label={isPlaying ? `Pause ${v.title} demo` : `Play ${v.title} demo`}
           aria-pressed={isPlaying}
           aria-describedby={v.captions ? captionsId : undefined}
-          className="relative block w-full aspect-video bg-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset"
+          className="relative block w-full aspect-video bg-slate-950 border-b border-slate-800/70 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset"
         >
           <video
             ref={videoRef}
@@ -175,13 +175,8 @@ const DemoCard = ({ v, i }: { v: DemoVideo; i: number }) => {
               {captionsOn ? <Captions className="w-4 h-4" /> : <CaptionsOff className="w-4 h-4" />}
             </button>
           )}
-          {!v.captions && (
-            <span className="ml-auto text-xs text-muted-foreground" aria-live="polite">
-              Captions unavailable
-            </span>
-          )}
         </div>
-        <div className="p-6 md:p-7">
+        <div className="p-6 md:p-7 flex-1">
           <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">
             {v.title}
           </h3>
@@ -197,17 +192,17 @@ const DemoCard = ({ v, i }: { v: DemoVideo; i: number }) => {
 const DemoVideosSection = () => (
   <section id="demo" className="relative w-full max-w-full overflow-hidden">
     <div className="absolute inset-0 soft-bg opacity-50" />
-    <div className="section-container section-padding relative z-10">
-      <div className="mb-12">
-        <div className="font-mono-caps text-primary mb-4 text-xs tracking-[0.18em]">See it in action</div>
-        <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.02] max-w-2xl">
+    <div className="section-container px-4 sm:px-6 lg:px-8 py-12 sm:py-24 relative z-10">
+      <div className="mb-8 sm:mb-12">
+        <div className="font-mono-caps text-primary mb-3 sm:mb-4 text-xs tracking-[0.18em]">See it in action</div>
+        <h2 className="font-display text-3xl sm:text-5xl text-foreground leading-[1.02] max-w-2xl">
           A walk-through of both sides.
         </h2>
-        <p className="mt-5 text-muted-foreground max-w-lg">
-          Two short product demos — one from the customer's phone, one from the business dashboard.
+        <p className="mt-4 sm:mt-5 text-sm sm:text-base text-muted-foreground max-w-lg">
+          Two short product demos: one from the customer's phone, one from the business dashboard.
         </p>
       </div>
-      <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
+      <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
         {videos.map((v, i) => (
           <DemoCard key={v.title} v={v} i={i} />
         ))}

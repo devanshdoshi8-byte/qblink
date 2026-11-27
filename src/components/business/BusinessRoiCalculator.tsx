@@ -125,7 +125,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
         {/* Industry & Currency Controls */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 mb-8 border-b border-border/60">
           {/* Industry Preset Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 w-full sm:w-auto">
             {(Object.keys(ROI_INDUSTRY_PRESETS) as IndustryPresetKey[]).map((key) => {
               const item = ROI_INDUSTRY_PRESETS[key];
               const isSelected = industry === key;
@@ -133,7 +133,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                 <button
                   key={key}
                   onClick={() => handleIndustryChange(key)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                  className={`min-h-[40px] px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                     isSelected
                       ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                       : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -358,7 +358,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-5 mt-5 border-t border-slate-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-5 mt-5 border-t border-slate-800">
                 <div>
                   <span className="text-[11px] text-slate-400 block">Monthly Exposure</span>
                   <span className="font-mono font-bold text-lg text-white">
@@ -366,9 +366,9 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                   </span>
                 </div>
                 <div>
-                  <span className="text-[11px] text-slate-400 block">Monthly Lost {preset.visitorTerm}</span>
+                  <span className="text-[11px] text-slate-400 block">Estimated Monthly Walk-Aways</span>
                   <span className="font-mono font-bold text-lg text-white">
-                    ~{outputs.monthlyLostCustomers} guests
+                    ~{outputs.monthlyLostCustomers} visitors
                   </span>
                 </div>
               </div>
@@ -385,7 +385,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div>
                   <span className="text-[11px] text-muted-foreground block">Potential Annual Opportunity</span>
                   <span className="font-mono font-extrabold text-xl text-success">

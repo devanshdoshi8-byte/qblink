@@ -1,17 +1,15 @@
-import { motion } from "framer-motion";
 import { ArrowRight, UserCheck, Clock, ShieldCheck } from "lucide-react";
-import BorderGlow from "@/components/reactbits/BorderGlow";
 
 export const ThreeMotions = () => (
   <section
     id="act-relief"
-    className="relative ink-surface py-24 sm:py-32 overflow-hidden grain"
+    className="relative ink-surface py-12 sm:py-24 overflow-hidden grain"
     aria-label="How it works"
   >
-    <div className="max-w-7xl mx-auto px-6 lg:px-24 relative z-10">
-      <div className="flex items-end justify-between flex-wrap gap-6 mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24 relative z-10">
+      <div className="flex items-end justify-between flex-wrap gap-4 sm:gap-6 mb-6 sm:mb-8">
         <div>
-          <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
+          <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl text-cream leading-[0.98] max-w-3xl">
             One thread.
             <br />
             <span className="text-glow italic font-normal">Three fluid motions.</span>
@@ -23,19 +21,8 @@ export const ThreeMotions = () => (
         </p>
       </div>
 
-      {/* Interactive Timeline Pipeline (Desktop) */}
-      <BorderGlow
-        backgroundColor="#0d1b2e"
-        borderRadius={24}
-        glowColor="180 54 54"
-        glowRadius={48}
-        glowIntensity={1}
-        coneSpread={35}
-        animated
-        colors={["#51c2c2", "#10637f", "#f4f2eb"]}
-        surfaceTheme="dark"
-        className="mt-16 hidden md:block"
-      >
+      {/* Interactive Timeline Pipeline (Desktop) — matte card without animated neon border */}
+      <div className="mt-12 hidden md:block rounded-3xl bg-[#0d1b2e] border border-[hsl(var(--brand-cream)/0.1)]">
         <div className="relative p-8">
         <svg viewBox="0 0 1200 240" className="w-full">
           <defs>
@@ -123,50 +110,37 @@ export const ThreeMotions = () => (
           </g>
         </svg>
         </div>
-      </BorderGlow>
+      </div>
 
       {/* Mobile Vertical Timeline */}
-      <div className="md:hidden mt-12 space-y-6">
+      <div className="md:hidden mt-10 space-y-5">
         {[
           { n: "01", label: "Join", sub: "Scan QR code · instant token in browser" },
           { n: "02", label: "Wait", sub: "Live position updates anywhere · zero line standing" },
           { n: "03", label: "Serve", sub: "Proactive alert when turn approaches · smooth arrival" },
         ].map((s, i) => (
-          <motion.div
+          <div
             key={i}
-            initial={{ opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
+            className="rounded-2xl bg-[#0d1b2e] border border-[hsl(var(--brand-cream)/0.1)]"
           >
-            <BorderGlow
-              backgroundColor="#0d1b2e"
-              borderRadius={16}
-              glowColor="180 54 54"
-              glowRadius={40}
-              glowIntensity={1}
-              colors={["#51c2c2", "#10637f", "#f4f2eb"]}
-              surfaceTheme="dark"
-            >
-              <div className="flex items-start gap-4 p-4">
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-xl bg-glow/15 border border-glow flex items-center justify-center text-glow font-bold text-sm">
-                    {s.n}
-                  </div>
-                  {i < 2 && <div className="w-0.5 h-10 bg-gradient-to-b from-glow to-transparent mt-2" />}
+            <div className="flex items-start gap-4 p-4">
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 rounded-xl bg-glow/15 border border-glow flex items-center justify-center text-glow font-bold text-sm">
+                  {s.n}
                 </div>
-                <div>
-                  <div className="font-display text-xl text-cream font-bold">{s.label}</div>
-                  <div className="text-cream/70 text-xs mt-1 leading-relaxed">{s.sub}</div>
-                </div>
+                {i < 2 && <div className="w-0.5 h-10 bg-gradient-to-b from-glow to-transparent mt-2" />}
               </div>
-            </BorderGlow>
-          </motion.div>
+              <div>
+                <div className="font-display text-xl text-cream font-bold">{s.label}</div>
+                <div className="text-cream/70 text-xs mt-1 leading-relaxed">{s.sub}</div>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Interactive 3-Perspective Cards */}
-      <div className="mt-16 grid md:grid-cols-3 gap-6 lg:gap-8">
+      {/* Interactive 3-Perspective Cards — instant render without sluggish scroll dimming */}
+      <div className="mt-12 grid md:grid-cols-3 gap-6 lg:gap-8">
         {[
           {
             icon: UserCheck,
@@ -177,7 +151,7 @@ export const ThreeMotions = () => (
           {
             icon: Clock,
             h: "For the staff",
-            b: "A single unified counter dashboard combines physical walk-ins with remote joiners seamlessly.",
+            b: "A single unified counter dashboard combines physical walk-ins with remote joiners.",
             tag: "One honest flow",
           },
           {
@@ -187,40 +161,28 @@ export const ThreeMotions = () => (
             tag: "Operational intelligence",
           },
         ].map((c, i) => (
-          <motion.div
+          <div
             key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.15 }}
+            className="rounded-2xl bg-[#0d1b2e] border border-[hsl(var(--brand-cream)/0.1)] h-full"
           >
-            <BorderGlow
-              backgroundColor="#0d1b2e"
-              borderRadius={16}
-              glowColor="180 54 54"
-              colors={["#51c2c2", "#10637f", "#f4f2eb"]}
-              surfaceTheme="dark"
-              className="h-full"
-            >
-              <div className="relative p-7 group h-full flex flex-col">
-                <div className="w-12 h-12 rounded-xl bg-glow/10 border border-glow/30 flex items-center justify-center mb-5 group-hover:bg-glow/20 transition-colors">
-                  <c.icon className="w-6 h-6 text-glow" />
-                </div>
-
-                <div className="font-mono-caps text-glow text-xs font-bold tracking-wider mb-2">
-                  PERSPECTIVE 0{i + 1}
-                </div>
-
-                <h3 className="font-display text-2xl text-cream font-bold leading-snug">{c.h}</h3>
-                <p className="text-cream/70 mt-3 text-sm leading-relaxed flex-1">{c.b}</p>
-
-                <div className="mt-6 pt-4 border-t border-glow/15 flex items-center justify-between text-xs text-glow/80 font-mono-caps">
-                  <span>{c.tag}</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
+            <div className="relative p-7 group h-full flex flex-col">
+              <div className="w-12 h-12 rounded-xl bg-glow/10 border border-glow/30 flex items-center justify-center mb-5 group-hover:bg-glow/20 transition-colors">
+                <c.icon className="w-6 h-6 text-glow" />
               </div>
-            </BorderGlow>
-          </motion.div>
+
+              <div className="font-mono-caps text-glow text-xs font-bold tracking-wider mb-2">
+                PERSPECTIVE 0{i + 1}
+              </div>
+
+              <h3 className="font-display text-2xl text-cream font-bold leading-snug">{c.h}</h3>
+              <p className="text-cream/70 mt-3 text-sm leading-relaxed flex-1">{c.b}</p>
+
+              <div className="mt-6 pt-4 border-t border-glow/15 flex items-center justify-between text-xs text-glow/80 font-mono-caps">
+                <span>{c.tag}</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>

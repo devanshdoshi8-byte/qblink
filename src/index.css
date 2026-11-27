@@ -278,6 +278,7 @@ html, body {
     @apply bg-background text-foreground antialiased;
     font-family: 'DM Sans', system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -291,6 +292,7 @@ html, body {
      Excludes transforms so Framer Motion / animations are untouched. */
   html {
     transition: background-color 380ms ease, color 380ms ease;
+    overflow-x: clip;
   }
   body,
   section, header, footer, aside, nav, main, article, div,
@@ -311,7 +313,7 @@ html, body {
 
 @layer components {
   .section-padding {
-    @apply px-4 sm:px-6 lg:px-8 py-20 md:py-28;
+    @apply px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24;
   }
 
   .section-container {

@@ -7,7 +7,7 @@ import { BusinessRoiCalculator } from "@/components/business/BusinessRoiCalculat
 
 export const RoiCalculatorPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-primary selection:text-white">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between pb-24 selection:bg-primary selection:text-white">
       <SEO
         title="Illustrative Business ROI Calculator — Qblink"
         description="Estimate the potential economic opportunity of reducing physical walk-in waiting room congestion with Qblink."
@@ -23,7 +23,7 @@ export const RoiCalculatorPage: React.FC = () => {
               className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl border border-border bg-card transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Qblink</span>
+              <span>Back to QBlink</span>
             </Link>
             <div className="h-4 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2">

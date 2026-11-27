@@ -58,7 +58,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
               <div className="font-mono font-black text-3xl text-white">
                 {isAfter ? "#A-27" : "Paper Slip #18"}
               </div>
-              <span className="text-[11px] text-slate-400">Anya (You)</span>
+              <span className="text-[11px] text-slate-400">Priya Kulkarni</span>
             </div>
 
             {/* Live Progress Status */}

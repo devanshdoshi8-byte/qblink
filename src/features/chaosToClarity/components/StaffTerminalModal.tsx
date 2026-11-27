@@ -82,7 +82,7 @@ export const StaffTerminalModal: React.FC<StaffTerminalModalProps> = ({
                 <span className="text-[10px] text-slate-400">Terrace Cafe</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-success-soft border border-success/30">
-                <span className="font-mono font-bold text-foreground">A-27 • Anya (Protagonist)</span>
+                <span className="font-mono font-bold text-foreground">A-27 • Priya Kulkarni</span>
                 <span className="text-[10px] text-success font-bold">Remote Wait (3m away)</span>
               </div>
             </div>

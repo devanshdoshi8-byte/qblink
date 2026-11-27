@@ -147,7 +147,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
               <div className="text-center">
                 <span className="text-[11px] font-bold text-slate-300 block">Terrace Lounge</span>
                 <span className="text-[9px] text-slate-500">
-                  {isAfter ? "Anya working calmly on laptop" : "Patients trapped inside instead"}
+                  {isAfter ? "Priya working calmly on laptop" : "Patients trapped inside instead"}
                 </span>
               </div>
 
@@ -306,7 +306,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                   <User className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">Anya (Protagonist)</h4>
+                  <h4 className="text-xs font-bold text-white">Priya Kulkarni</h4>
                   <span className="text-[10px] text-slate-400">{industryConfig.customerTitle}</span>
                 </div>
               </div>
@@ -465,7 +465,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           onClick={() => jumpToView(80, 0)}
           className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-400 hover:text-white hover:bg-slate-900"
         >
-          Anya & Terrace
+          Priya & Terrace
         </button>
       </div>
 

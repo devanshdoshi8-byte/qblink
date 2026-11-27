@@ -86,7 +86,8 @@ export const StageDemoSwitcher = () => {
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-auto select-none print:hidden">
+    <div className="fixed bottom-3 sm:bottom-4 inset-x-0 z-50 flex justify-center px-2 pointer-events-none select-none print:hidden pb-[env(safe-area-inset-bottom)]">
+      <div className="pointer-events-auto max-w-full">
       <AnimatePresence mode="wait">
         {collapsed ? (
           <motion.button
@@ -95,7 +96,7 @@ export const StageDemoSwitcher = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => setCollapsed(false)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-primary/30 shadow-xl text-primary text-xs font-semibold hover:bg-muted transition-all"
+            className="flex items-center gap-2 px-3.5 min-h-[44px] py-2 rounded-full bg-card border border-primary/30 shadow-xl text-primary text-xs font-semibold hover:bg-muted transition-all"
             title="Expand Pitch Presenter Toolbar"
           >
             <Presentation className="w-3.5 h-3.5" />
@@ -109,7 +110,7 @@ export const StageDemoSwitcher = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-card border border-border shadow-lg"
+            className="flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-2xl bg-card/95 backdrop-blur-lg border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
           >
             {/* Stage Mode Label */}
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold border-r border-border/80">
@@ -126,7 +127,8 @@ export const StageDemoSwitcher = () => {
                   <Link
                     key={scene.id}
                     to={scene.path}
-                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                    aria-label={scene.label}
+                    className={`flex items-center justify-center gap-1.5 min-w-[40px] min-h-[40px] px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       active
                         ? "bg-primary text-primary-foreground shadow-md"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
@@ -155,7 +157,7 @@ export const StageDemoSwitcher = () => {
               type="button"
               onClick={handleResetStage}
               disabled={resetting}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition-colors"
+              className="flex items-center justify-center gap-1 min-w-[40px] min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition-colors"
               title="Reset live demo data to pristine initial state"
             >
               <RotateCcw className={`w-3.5 h-3.5 ${resetting ? "animate-spin" : ""}`} />
@@ -166,7 +168,7 @@ export const StageDemoSwitcher = () => {
             <button
               type="button"
               onClick={() => setCollapsed(true)}
-              className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+              className="min-w-[40px] min-h-[40px] flex items-center justify-center p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
               title="Minimize Toolbar"
               aria-label="Minimize Toolbar"
             >
@@ -175,6 +177,7 @@ export const StageDemoSwitcher = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 };

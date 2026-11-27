@@ -6,14 +6,11 @@
  * state is only ever read from the auth server, never asserted by the client.
  */
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 
 export type AuthRole = "customer" | "business";
 
 /**
- * Real Google OAuth sign-in. Redirects to Google (or completes in-place in the
- * preview popup flow). The desired role is stashed so the post-login bootstrap
- * can provision role/profile rows once the session exists.
+ * Direct Supabase Google OAuth sign-in.
  */
 export async function signInWithGoogle(role: AuthRole, redirectPath?: string): Promise<void> {
   try {
@@ -21,14 +18,18 @@ export async function signInWithGoogle(role: AuthRole, redirectPath?: string): P
     if (redirectPath) sessionStorage.setItem("qblink.pendingNext", redirectPath);
   } catch { /* storage unavailable */ }
 
-  const result = await lovable.auth.signInWithOAuth("google", {
-    redirect_uri: window.location.origin,
+  const redirectTo = redirectPath
+    ? `${window.location.origin}${redirectPath}`
+    : `${window.location.origin}/dashboard`;
+
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+    },
   });
 
-  if (result.error) throw result.error instanceof Error ? result.error : new Error(String(result.error));
-  if (result.redirected) return;
-
-  await ensureRoleAndProfile();
+  if (error) throw error;
 }
 
 /**

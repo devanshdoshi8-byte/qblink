@@ -43,7 +43,7 @@ export const CustomerMobileMockup: React.FC<CustomerMobileMockupProps> = ({
   }, [metrics.status, metrics.aheadCount, state.counterName, state.userToken]);
 
   return (
-    <div className="relative mx-auto w-full max-w-[340px] sm:max-w-[360px] aspect-[9/18.5] rounded-[48px] p-3.5 bg-slate-900 border-[7px] border-slate-800 shadow-2xl flex flex-col justify-between overflow-hidden select-none">
+    <div className="relative mx-auto w-full max-w-[320px] sm:max-w-[360px] min-h-[540px] sm:aspect-[9/18.5] rounded-[40px] sm:rounded-[48px] p-3 sm:p-3.5 bg-slate-900 border-[6px] sm:border-[7px] border-slate-800 shadow-2xl flex flex-col justify-between overflow-hidden select-none">
       {/* Dynamic Island / Top Notch Area */}
       <div className="relative z-30 pt-2 pb-1 px-4 flex items-center justify-between text-[11px] font-semibold text-slate-300">
         <span className="font-mono">9:41</span>
@@ -58,20 +58,20 @@ export const CustomerMobileMockup: React.FC<CustomerMobileMockupProps> = ({
         </div>
       </div>
 
-      {/* Simulated Notification Dropper */}
+      {/* Simulated Notification Dropper — offset below the Digital Queue Pass header */}
       <AnimatePresence>
         {notificationToast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            initial={{ opacity: 0, y: -12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="absolute top-11 inset-x-4 z-40 p-3 rounded-2xl bg-[hsl(var(--brand-navy))] border border-primary/40 text-[hsl(var(--brand-cream))] shadow-xl flex items-center gap-2.5"
+            exit={{ opacity: 0, y: -12, scale: 0.96 }}
+            className="absolute top-[108px] inset-x-5 z-40 p-3 rounded-2xl bg-[hsl(var(--brand-navy))] border border-primary/40 text-[hsl(var(--brand-cream))] shadow-xl flex items-center gap-2.5"
           >
             <div className="w-7 h-7 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
               <Bell className="w-3.5 h-3.5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold text-primary uppercase tracking-wide">Qblink Alert</p>
+              <p className="text-[10px] font-bold text-primary uppercase tracking-wide">QBlink Alert</p>
               <p className="text-xs font-semibold truncate">{notificationToast}</p>
             </div>
           </motion.div>

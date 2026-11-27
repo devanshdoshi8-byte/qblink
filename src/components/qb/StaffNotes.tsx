@@ -27,22 +27,22 @@ const notes = [
 
 export const StaffNotes = () => (
   <section
-    className="relative deep-surface py-24 sm:py-32 overflow-hidden"
+    className="relative deep-surface py-12 sm:py-24 overflow-hidden"
     aria-label="Operational reality"
   >
-    <div className="max-w-7xl mx-auto px-6 lg:px-24">
-      <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-24">
+      <div className="flex items-end justify-between flex-wrap gap-4 sm:gap-6 mb-10 sm:mb-16">
         <div>
-          <h2 className="font-display text-4xl sm:text-5xl text-cream max-w-2xl leading-tight">
+          <h2 className="font-display text-3xl sm:text-5xl text-cream max-w-2xl leading-tight">
             The notes we heard, pinned to the back of the counter.
           </h2>
         </div>
-        <div className="font-mono-caps text-cream/40 max-w-xs">
+        <div className="font-mono-caps text-cream/50 max-w-xs">
           Field interviews · 42 businesses · Mumbai + Pune + Bangalore
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 lg:gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-10">
         {notes.map((n, i) => (
           <motion.article
             initial={{ opacity: 0, y: 24 }}
@@ -50,8 +50,7 @@ export const StaffNotes = () => (
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             key={i}
-            className={`${n.offset}`}
-            style={{ transform: `rotate(${n.rot})` }}
+            className={`md:${n.offset.split(" ")[0]} ${n.rot === "-3deg" ? "md:-rotate-3" : n.rot === "2deg" ? "md:rotate-2" : "md:-rotate-1"}`}
           >
             <BorderGlow
               backgroundColor="#f3f1ec"
@@ -61,13 +60,13 @@ export const StaffNotes = () => (
               colors={["#10637f", "#51c2c2", "#0e1e34"]}
               className="h-full"
             >
-              <div className="p-8 h-full flex flex-col">
-                <div className="font-mono-caps text-ink/50 mb-4">Note 0{i + 1}</div>
-                <div className="font-display text-2xl text-ink leading-snug italic">
+              <div className="p-6 sm:p-8 h-full flex flex-col">
+                <div className="font-mono-caps text-ink/50 mb-3 sm:mb-4">Note 0{i + 1}</div>
+                <div className="font-display text-xl sm:text-2xl text-ink leading-snug italic">
                   {n.title}
                 </div>
-                <p className="text-ink/70 mt-4 leading-relaxed flex-1">{n.body}</p>
-                <div className="mt-8 pt-4 border-t border-dashed border-ink/25 font-mono-caps text-ink/50">
+                <p className="text-ink/75 text-sm sm:text-base mt-3 sm:mt-4 leading-relaxed flex-1">{n.body}</p>
+                <div className="mt-6 sm:mt-8 pt-4 border-t border-dashed border-ink/25 font-mono-caps text-ink/50">
                   — {n.tag}
                 </div>
               </div>

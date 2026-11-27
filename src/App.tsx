@@ -12,6 +12,7 @@ import InstallAppPrompt from "./components/InstallAppPrompt";
 import StageDemoSwitcher from "./components/pitch/StageDemoSwitcher";
 import Index from "./pages/Index.tsx";
 import JoinQueue from "./pages/JoinQueue.tsx";
+const CustomerJoinEntry = lazy(() => import("./pages/CustomerJoinEntry.tsx"));
 import AdminRoute from "./components/admin/AdminRoute.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -62,6 +63,7 @@ const PitchDemo = lazy(() => import("./pages/PitchDemo.tsx"));
 const RoiCalculatorPage = lazy(() => import("./pages/RoiCalculatorPage.tsx"));
 const ChaosToClarityPage = lazy(() => import("./pages/ChaosToClarityPage.tsx"));
 const IndustryMorphPage = lazy(() => import("./pages/IndustryMorphPage.tsx"));
+const LegalPage = lazy(() => import("./pages/LegalPage.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -134,11 +136,14 @@ const App = () => (
             <Route path="/dashboard/history" element={<QueueHistory />} />
             <Route path="/dashboard/pickup" element={<Pickup />} />
             <Route path="/dashboard/menu" element={<MenuManagement />} />
+            <Route path="/join" element={<CustomerJoinEntry />} />
             <Route path="/join/:queueId" element={<JoinQueue />} />
             <Route path="/display/:queueId" element={<PublicDisplay />} />
             <Route path="/pickup/:businessId" element={<PickupOrder />} />
             <Route path="/pickup/track/:orderId" element={<PickupTrack />} />
             <Route path="/affiliate" element={<AffiliatePage />} />
+            <Route path="/privacy" element={<LegalPage type="privacy" />} />
+            <Route path="/terms" element={<LegalPage type="terms" />} />
             <Route path="/install" element={<Install />} />
             <Route path="/pwa-status" element={<PwaStatus />} />
             <Route path="/cache-diagnostics" element={<CacheDiagnostics />} />
