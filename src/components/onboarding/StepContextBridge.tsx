@@ -230,7 +230,7 @@ const StepContextBridge = ({ data, onNext }: Props) => {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 18 }}
-            className="relative w-24 h-24 rounded-3xl gradient-bg elevated-shadow flex flex-col items-center justify-center text-primary-foreground"
+            className="relative w-24 h-24 rounded-3xl bg-primary elevated-shadow flex flex-col items-center justify-center text-primary-foreground"
           >
             <CenterIcon className="w-7 h-7 mb-1" aria-hidden="true" />
             <span className="text-[11px] font-bold tracking-wide uppercase px-2 text-center leading-tight">
@@ -351,7 +351,7 @@ const StepContextBridge = ({ data, onNext }: Props) => {
       <button
         type="button"
         onClick={onNext}
-        className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
+        className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
       >
         Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />
       </button>

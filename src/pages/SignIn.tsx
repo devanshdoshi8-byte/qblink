@@ -199,7 +199,7 @@ const SignIn = () => {
           )}
 
           <button type="submit" disabled={loading}
-            className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
+            className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
             {loading ? "Signing in..." : "Sign In"}
           </button>
 

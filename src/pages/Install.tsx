@@ -77,7 +77,7 @@ const Install = () => {
         ) : deferred ? (
           <button
             onClick={handleInstall}
-            className="w-full gradient-bg text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
+            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
           >
             <Download className="w-4 h-4" /> Install App
           </button>

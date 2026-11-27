@@ -48,13 +48,13 @@ const FounderContact = () => {
       className="mb-8"
     >
       <div className="bg-card rounded-2xl card-shadow border border-border/60 overflow-hidden">
-        {/* Top gradient accent */}
-        <div className="h-1.5 gradient-bg w-full" />
+        {/* Top accent bar */}
+        <div className="h-1.5 bg-primary w-full" />
 
         <div className="p-5 sm:p-6">
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-sm">
               <UserCircle2 className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
@@ -154,8 +154,8 @@ const FounderContact = () => {
             {/* Business email */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-                  <Mail className="w-4 h-4 text-secondary" />
+                <div className="w-9 h-9 rounded-lg bg-info-soft flex items-center justify-center shrink-0">
+                  <Mail className="w-4 h-4 text-info" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs text-muted-foreground">Business Email</p>

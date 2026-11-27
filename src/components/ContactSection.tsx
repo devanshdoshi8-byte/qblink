@@ -178,7 +178,7 @@ const ContactSection = () => {
             </select>
             <textarea placeholder="Tell us about your needs..." rows={4} value={form.message} onChange={e => setForm({...form, message: e.target.value})} className={inputClass + " resize-none"} />
             <div className="flex flex-wrap gap-4">
-              <button type="submit" disabled={loading} className="gradient-bg text-primary-foreground px-7 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity elevated-shadow flex items-center gap-2 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-7 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity elevated-shadow flex items-center gap-2 disabled:opacity-50">
                 <Send className="w-4 h-4" /> Book a Demo
               </button>
               <button type="button" disabled={loading} onClick={(e) => handleSubmit(e as any, "early_access")} className="border border-border bg-background text-foreground px-7 py-3.5 rounded-xl text-sm font-semibold hover:bg-muted transition-colors disabled:opacity-50">

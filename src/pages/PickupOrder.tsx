@@ -206,7 +206,7 @@ const PickupOrder = () => {
                   <div className="flex items-center gap-2">
                     <button onClick={() => bump(m.id, -1)} disabled={q === 0} className="w-8 h-8 rounded-lg bg-muted text-foreground disabled:opacity-40 flex items-center justify-center"><Minus className="w-3.5 h-3.5" /></button>
                     <span className="w-6 text-center text-sm font-bold">{q}</span>
-                    <button onClick={() => bump(m.id, 1)} className="w-8 h-8 rounded-lg gradient-bg text-primary-foreground flex items-center justify-center"><Plus className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => bump(m.id, 1)} className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center"><Plus className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
               );
@@ -232,7 +232,7 @@ const PickupOrder = () => {
             <p className="text-xs text-muted-foreground">Total</p>
             <p className="font-bold text-foreground">₹{total} · {items.reduce((s, i) => s + i.qty, 0)} items</p>
           </div>
-          <button onClick={placeOrder} disabled={submitting || items.length === 0 || !name.trim() || !phone.trim()} className="gradient-bg text-primary-foreground px-5 py-3 rounded-xl text-sm font-semibold disabled:opacity-50 flex items-center gap-2">
+          <button onClick={placeOrder} disabled={submitting || items.length === 0 || !name.trim() || !phone.trim()} className="bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-semibold disabled:opacity-50 flex items-center gap-2">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Confirm <ArrowRight className="w-4 h-4" /></>}
           </button>
         </div>

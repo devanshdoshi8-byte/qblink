@@ -42,7 +42,7 @@ const AdminSupport = () => {
         {TABS.map((t) => {
           const Icon = t.icon;
           return (
-            <button key={t.key} onClick={() => setTab(t.key)} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm whitespace-nowrap ${tab === t.key ? "gradient-bg text-primary-foreground font-semibold" : "bg-card text-foreground hover:bg-muted"}`}>
+            <button key={t.key} onClick={() => setTab(t.key)} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm whitespace-nowrap ${tab === t.key ? "bg-primary text-primary-foreground font-semibold" : "bg-card text-foreground hover:bg-muted"}`}>
               <Icon className="w-4 h-4" /> {t.label}
             </button>
           );

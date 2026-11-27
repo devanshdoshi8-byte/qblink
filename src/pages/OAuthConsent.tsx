@@ -82,7 +82,7 @@ export default function OAuthConsent() {
           </div>
         ) : (
           <>
-            <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mb-4">
+            <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mb-4">
               <ShieldCheck className="w-6 h-6 text-primary-foreground" />
             </div>
             <h1 className="text-xl font-bold text-foreground mb-2">Connect {clientName} to Qblink</h1>
@@ -94,7 +94,7 @@ export default function OAuthConsent() {
               <button
                 disabled={busy}
                 onClick={() => decide(true)}
-                className="flex-1 gradient-bg text-primary-foreground font-semibold py-2.5 rounded-xl text-sm disabled:opacity-50"
+                className="flex-1 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl text-sm disabled:opacity-50"
               >
                 Approve
               </button>

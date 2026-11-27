@@ -93,7 +93,7 @@ const PickupTrack = () => {
               const current = !isDone && i === stageIdx;
               return (
                 <div key={s.key} className={`flex items-center gap-3 ${reached ? "" : "opacity-40"}`}>
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${current ? "gradient-bg text-primary-foreground" : reached ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${current ? "bg-primary text-primary-foreground" : reached ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1">

@@ -32,7 +32,7 @@ const AdminAIKnowledge = () => {
           <input placeholder="Question / trigger" value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} className="input" />
           <textarea placeholder="Answer / response" rows={4} value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} className="input" />
           <input type="number" placeholder="Priority" value={form.priority} onChange={(e) => setForm({ ...form, priority: Number(e.target.value) || 0 })} className="input" />
-          <button onClick={create} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Add</button>
+          <button onClick={create} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Add</button>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">
           <h2 className="font-bold text-foreground mb-4">All entries ({rows.length})</h2>

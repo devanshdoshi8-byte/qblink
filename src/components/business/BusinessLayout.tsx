@@ -87,7 +87,7 @@ const BusinessLayout = ({ children }: Props) => {
         </Link>
 
         <div className="bg-muted/50 rounded-xl p-3 mb-6 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg gradient-bg flex items-center justify-center text-primary-foreground font-bold text-sm shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm shrink-0">
             {business.name[0]}
           </div>
           <div className="min-w-0">
@@ -106,7 +106,7 @@ const BusinessLayout = ({ children }: Props) => {
                 to={item.to}
                 end
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  active ? "gradient-bg text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
                 <Icon className="w-4 h-4" /> {item.label}
@@ -135,7 +135,7 @@ const BusinessLayout = ({ children }: Props) => {
             const active = location.pathname === item.to;
             return (
               <NavLink key={item.to} to={item.to} end className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
-                active ? "gradient-bg text-primary-foreground" : "bg-muted text-muted-foreground"
+                active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}>
                 <Icon className="w-3.5 h-3.5" /> {item.label}
               </NavLink>

@@ -130,7 +130,7 @@ const ForgotPassword = () => {
               </div>
               {errorMsg && <ErrorBox msg={errorMsg} />}
               <button onClick={sendCode} disabled={loading}
-                className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
+                className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
                 {loading ? "Sending..." : "Send code"}
               </button>
               <Link to="/auth/signin" className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
@@ -173,7 +173,7 @@ const ForgotPassword = () => {
               </div>
               {errorMsg && <ErrorBox msg={errorMsg} />}
               <button onClick={verifyAndReset} disabled={loading}
-                className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
+                className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
                 {loading ? "Updating..." : "Update password"}
               </button>
               <div className="text-center text-sm text-muted-foreground">

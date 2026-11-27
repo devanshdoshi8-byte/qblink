@@ -207,30 +207,12 @@ const LiveWaitingExperience = ({
 
   return (
     <section className="relative w-full" aria-label="Live queue status">
-      {/* Ambient motion background */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl">
-        <motion.div
-          aria-hidden
-          className="absolute -top-16 -left-10 h-56 w-56 rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, hsl(var(--primary)/0.35), transparent 70%)" }}
-          animate={{ x: [0, 30, -10, 0], y: [0, 20, -15, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          aria-hidden
-          className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, hsl(var(--secondary)/0.30), transparent 70%)" }}
-          animate={{ x: [0, -25, 15, 0], y: [0, -20, 10, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </div>
-
-      {/* Tactile Boarding Pass Container with Notch Cutouts */}
+      {/* Tactile Boarding Pass Container */}
       <motion.div
         initial={{ opacity: 0, y: 14, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative rounded-3xl border-2 border-primary/20 bg-card/85 backdrop-blur-2xl p-5 sm:p-6 shadow-[0_24px_70px_-20px_hsl(var(--primary)/0.35)] dark:bg-[hsl(215_50%_14%)] dark:border-primary/40 overflow-hidden"
+        className="relative rounded-3xl border border-primary/25 bg-card p-5 sm:p-6 card-shadow overflow-hidden"
       >
         {/* Ticket Watermark */}
         <div className="absolute right-3 top-2 text-[6.5rem] font-black tracking-tighter text-primary/5 select-none pointer-events-none -rotate-12">
@@ -241,7 +223,7 @@ const LiveWaitingExperience = ({
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-bold tracking-wider uppercase border border-primary/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-success" />
               Live Queue Pass
             </span>
             <span className="text-[11px] text-muted-foreground font-medium hidden sm:inline">
@@ -259,7 +241,7 @@ const LiveWaitingExperience = ({
               <Share2 className="w-4 h-4" />
             </button>
             <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-mono">
-              <Wifi className="w-3 h-3 text-emerald-500" />
+              <Wifi className="w-3 h-3 text-success" />
               <span>Synced</span>
             </div>
           </div>
@@ -296,7 +278,7 @@ const LiveWaitingExperience = ({
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-sm ${
                   currentStep >= 2
-                    ? "bg-amber-500 text-white ring-4 ring-amber-500/20 animate-pulse"
+                    ? "bg-warning text-warning-foreground ring-4 ring-warning/20"
                     : "bg-muted text-muted-foreground"
                 }`}
               >
@@ -310,7 +292,7 @@ const LiveWaitingExperience = ({
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-sm ${
                   currentStep >= 3
-                    ? "bg-emerald-600 text-white ring-4 ring-emerald-500/30 animate-bounce"
+                    ? "bg-success text-success-foreground ring-4 ring-success/25"
                     : "bg-muted text-muted-foreground"
                 }`}
               >
@@ -333,19 +315,13 @@ const LiveWaitingExperience = ({
             aria-valuenow={progressPct}
           >
             <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90" aria-hidden="true" focusable="false">
-              <defs>
-                <linearGradient id="qb-ring" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" />
-                  <stop offset="100%" stopColor="hsl(var(--secondary))" />
-                </linearGradient>
-              </defs>
               <circle cx="60" cy="60" r="50" stroke="hsl(var(--muted))" strokeWidth="8" fill="none" opacity="0.7" />
               <motion.circle
                 cx="60"
                 cy="60"
                 r="50"
                 fill="none"
-                stroke="url(#qb-ring)"
+                stroke="hsl(var(--primary))"
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={2 * Math.PI * 50}
@@ -390,12 +366,12 @@ const LiveWaitingExperience = ({
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-5 p-4 rounded-2xl bg-gradient-to-br from-primary/15 via-primary/5 to-transparent border-2 border-primary/30"
+            className="mt-5 p-4 rounded-2xl bg-primary/5 border border-primary/25"
           >
             {graceStatus === "active" || graceStatus === "requested" ? (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center animate-pulse shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-warning-soft text-warning flex items-center justify-center shrink-0">
                     <Hourglass className="w-5 h-5" />
                   </div>
                   <div>
@@ -406,7 +382,7 @@ const LiveWaitingExperience = ({
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="font-mono text-base font-black text-amber-500 block">
+                  <span className="font-mono text-base font-black text-warning block">
                     {formatGraceCountdown(graceRemaining)}
                   </span>
                   <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Remaining</span>
@@ -442,13 +418,7 @@ const LiveWaitingExperience = ({
             <span>Counter</span>
             <span>Your Position</span>
           </div>
-          <div className="relative h-10 rounded-xl bg-gradient-to-r from-primary/15 via-primary/8 to-transparent overflow-hidden border border-primary/15 dark:border-primary/30">
-            <motion.div
-              aria-hidden
-              className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-primary/40 to-transparent"
-              animate={{ x: ["-20%", "120%"] }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: "linear" }}
-            />
+          <div className="relative h-10 rounded-xl bg-muted/50 overflow-hidden border border-border">
             <div className="absolute inset-0 flex items-center justify-between px-3">
               <div className="h-6 w-6 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold shadow-md">
                 {nowServing ?? "•"}
@@ -477,7 +447,7 @@ const LiveWaitingExperience = ({
         <dl className="mt-4 grid grid-cols-2 gap-3">
           <motion.div
             whileHover={{ y: -2 }}
-            className="rounded-2xl border border-border bg-background/70 backdrop-blur p-3.5 dark:bg-[hsl(215_45%_18%)] dark:border-primary/25 shadow-sm"
+            className="rounded-2xl border border-border bg-muted/40 p-3.5 shadow-sm"
           >
             <dt className="flex items-center gap-1.5 text-[10px] uppercase font-mono tracking-wider text-muted-foreground dark:text-foreground/70 mb-1">
               <Users className="w-3.5 h-3.5 text-primary" /> Ahead of you
@@ -488,14 +458,14 @@ const LiveWaitingExperience = ({
           </motion.div>
           <motion.div
             whileHover={{ y: -2 }}
-            className="rounded-2xl border border-border bg-background/70 backdrop-blur p-3.5 dark:bg-[hsl(215_45%_18%)] dark:border-primary/25 shadow-sm"
+            className="rounded-2xl border border-border bg-muted/40 p-3.5 shadow-sm"
           >
             <dt className="flex items-center justify-between text-[10px] uppercase font-mono tracking-wider text-muted-foreground dark:text-foreground/70 mb-1">
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-primary" /> Est. wait
               </span>
               {velocityConfidence && velocityConfidence >= 70 && (
-                <span className="text-[9px] text-emerald-500 font-semibold flex items-center gap-0.5">
+                <span className="text-[9px] text-success font-semibold flex items-center gap-0.5">
                   <Zap className="w-2.5 h-2.5" /> Live
                 </span>
               )}
@@ -533,7 +503,7 @@ const LiveWaitingExperience = ({
         {joinedAt && (
           <motion.div
             layout
-            className="mt-3.5 rounded-2xl border border-primary/15 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-3.5 flex items-center gap-3 dark:border-primary/35"
+            className="mt-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-3.5 flex items-center gap-3"
           >
             <div className="h-9 w-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
               <Timer className="w-4 h-4 text-primary" />

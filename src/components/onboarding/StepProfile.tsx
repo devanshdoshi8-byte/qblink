@@ -81,7 +81,7 @@ const StepProfile = ({ data, onChange, onNext }: Props) => {
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute top-3 right-3 w-5 h-5 rounded-full gradient-bg flex items-center justify-center"
+                  className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
                 >
                   <Check className="w-3 h-3 text-primary-foreground" aria-hidden="true" />
                 </motion.span>
@@ -115,7 +115,7 @@ const StepProfile = ({ data, onChange, onNext }: Props) => {
                 onClick={() => toggleTag(tag)}
                 className={`px-3.5 py-2 rounded-full text-xs font-semibold border transition-all duration-200 hover:scale-105 active:scale-95 ${
                   selected
-                    ? "gradient-bg text-primary-foreground border-transparent elevated-shadow"
+                    ? "bg-primary text-primary-foreground border-transparent elevated-shadow"
                     : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                 }`}
               >
@@ -141,7 +141,7 @@ const StepProfile = ({ data, onChange, onNext }: Props) => {
         type="button"
         onClick={submit}
         disabled={saving}
-        className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:opacity-60 disabled:pointer-events-none"
+        className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:opacity-60 disabled:pointer-events-none"
       >
         {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
         Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />

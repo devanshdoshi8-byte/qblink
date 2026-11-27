@@ -22,7 +22,7 @@ const AffiliateSection = () => (
         {perks.map((p, i) => (
           <AnimatedSection key={p.title} delay={i * 0.1}>
             <div className="bg-background rounded-2xl p-6 card-shadow h-full">
-              <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mb-4">
+              <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mb-4">
                 <p.icon className="w-5 h-5 text-primary-foreground" />
               </div>
               <h3 className="font-semibold text-foreground mb-2">{p.title}</h3>
@@ -32,7 +32,7 @@ const AffiliateSection = () => (
         ))}
       </div>
       <AnimatedSection className="text-center">
-        <Link to="/affiliate" className="gradient-bg text-primary-foreground px-8 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity elevated-shadow inline-block">
+        <Link to="/affiliate" className="bg-primary text-primary-foreground px-8 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity elevated-shadow inline-block">
           Join Affiliate Program
         </Link>
       </AnimatedSection>

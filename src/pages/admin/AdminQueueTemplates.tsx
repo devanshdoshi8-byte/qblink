@@ -41,7 +41,7 @@ const AdminQueueTemplates = () => {
             </div>
             <Input label="Category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
             <Select label="Seating policy" value={form.seating_policy || ""} options={["", "strict", "flexible"]} onChange={(v) => setForm({ ...form, seating_policy: v })} />
-            <button onClick={create} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create template</button>
+            <button onClick={create} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create template</button>
           </div>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">

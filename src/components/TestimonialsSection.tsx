@@ -42,7 +42,7 @@ const TestimonialsSection = () => (
             <div className="bg-card rounded-2xl p-6 card-shadow h-full flex flex-col">
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, j) => (
-                  <Star key={j} className="w-4 h-4 fill-accent text-accent" />
+                  <Star key={j} className="w-4 h-4 fill-warning text-warning" />
                 ))}
               </div>
               <p className="text-foreground leading-relaxed mb-5 flex-1">"{t.text}"</p>

@@ -24,7 +24,7 @@ const OnboardingProgress = ({ step }: Props) => {
         aria-label="Onboarding progress"
       >
         <motion.div
-          className="h-full rounded-full gradient-bg"
+          className="h-full rounded-full bg-primary"
           initial={false}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}

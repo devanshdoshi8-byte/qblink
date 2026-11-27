@@ -31,7 +31,7 @@ const AdminNotifications = () => {
           <input placeholder="Key (e.g. queue.joined)" value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} className="input" />
           <input placeholder="Subject (email only)" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="input" />
           <textarea placeholder="Body — use {{variables}}" rows={5} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="input" />
-          <button onClick={create} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Save template</button>
+          <button onClick={create} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Save template</button>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">
           <h2 className="font-bold text-foreground mb-4">All templates ({rows.length})</h2>

@@ -9,7 +9,7 @@ interface Props {
 const SectionHeading = ({ badge, title, subtitle }: Props) => (
   <AnimatedSection className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
     {badge && (
-      <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase gradient-bg text-primary-foreground mb-4">
+      <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary text-primary-foreground mb-4">
         {badge}
       </span>
     )}

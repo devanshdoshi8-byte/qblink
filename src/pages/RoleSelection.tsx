@@ -54,16 +54,16 @@ const RoleSelection = () => {
 
         <Link
           to="/auth/business"
-          className="group bg-card rounded-3xl p-10 card-shadow hover:elevated-shadow transition-all border border-border hover:border-secondary/40 flex flex-col min-h-[320px]"
+          className="group bg-card rounded-3xl p-10 card-shadow hover:elevated-shadow transition-all border border-border hover:border-info/40 flex flex-col min-h-[320px]"
         >
-          <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 shrink-0">
-            <Building2 className="w-8 h-8 text-secondary" />
+          <div className="w-16 h-16 rounded-2xl bg-info-soft flex items-center justify-center mb-6 shrink-0">
+            <Building2 className="w-8 h-8 text-info" />
           </div>
           <h2 className="text-2xl font-bold text-foreground mb-3">Business</h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-8 flex-1">
             Manage your customer queue digitally, reduce crowding, and provide a better experience.
           </p>
-          <span className="inline-flex items-center gap-2 text-secondary font-semibold text-sm group-hover:gap-3 transition-all min-h-[44px]">
+          <span className="inline-flex items-center gap-2 text-info font-semibold text-sm group-hover:gap-3 transition-all min-h-[44px]">
             Register Business <ArrowRight className="w-4 h-4" />
           </span>
         </Link>

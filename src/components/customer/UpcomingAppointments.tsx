@@ -133,7 +133,7 @@ const UpcomingAppointments = ({ businesses = [], customerName = "" }: { business
               />
               <button
                 onClick={book} disabled={saving}
-                className="w-full gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold disabled:opacity-60"
+                className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold disabled:opacity-60"
               >
                 {saving ? "Scheduling…" : "Confirm appointment"}
               </button>

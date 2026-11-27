@@ -75,7 +75,7 @@ export default function AIInsights({ insight, mode, businessId, payload, title, 
   return (
     <div className={`rounded-2xl border ${urgencyColor} p-4 ${className ?? ""}`}>
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-7 h-7 rounded-lg gradient-bg flex items-center justify-center">
+        <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
           <Icon className="w-3.5 h-3.5 text-primary-foreground" />
         </div>
         <p className="text-sm font-bold text-foreground flex-1">{title ?? TITLES[insight]}</p>

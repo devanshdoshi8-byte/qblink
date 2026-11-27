@@ -97,7 +97,7 @@ const AdminCustomers = () => {
         <div className="flex gap-1.5">
           {["All", "active", "inactive", "banned"].map(s => (
             <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize ${
-              filter === s ? "gradient-bg text-primary-foreground" : "bg-muted text-muted-foreground"
+              filter === s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}>{s}</button>
           ))}
         </div>
@@ -122,7 +122,7 @@ const AdminCustomers = () => {
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-4 py-3 font-medium text-foreground">
                     <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-full gradient-bg flex items-center justify-center text-primary-foreground text-xs font-bold">{r.name[0]}</span>
+                      <span className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">{r.name[0]}</span>
                       {r.name}
                     </div>
                   </td>

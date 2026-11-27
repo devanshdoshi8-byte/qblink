@@ -218,7 +218,7 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
                   type="button"
                   onClick={saveSettings}
                   disabled={saving}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-bg text-primary-foreground text-xs font-semibold hover:opacity-90 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 disabled:opacity-50"
                 >
                   <Save className="w-3.5 h-3.5" />
                   {saving ? "Saving…" : "Save settings"}

@@ -20,7 +20,7 @@ const AboutSection = () => (
 
             {/* Founder */}
             <div className="flex items-start gap-5 bg-muted/50 rounded-xl p-6">
-              <div className="w-14 h-14 rounded-full gradient-bg flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                 <User className="w-7 h-7 text-primary-foreground" />
               </div>
               <div>
@@ -36,21 +36,21 @@ const AboutSection = () => (
 
             <div className="grid sm:grid-cols-3 gap-5 pt-2">
               <div className="text-center">
-                <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mx-auto mb-3">
+                <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mx-auto mb-3">
                   <Target className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h4 className="font-semibold text-foreground text-sm mb-1">Mission</h4>
                 <p className="text-xs">Make waiting smarter and less chaotic for everyone.</p>
               </div>
               <div className="text-center">
-                <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mx-auto mb-3">
+                <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mx-auto mb-3">
                   <Rocket className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h4 className="font-semibold text-foreground text-sm mb-1">Vision</h4>
                 <p className="text-xs">Build a scalable SaaS platform for walk-in businesses worldwide.</p>
               </div>
               <div className="text-center">
-                <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mx-auto mb-3">
+                <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mx-auto mb-3">
                   <Users className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h4 className="font-semibold text-foreground text-sm mb-1">Team</h4>

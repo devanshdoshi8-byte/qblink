@@ -213,7 +213,7 @@ const FavoriteBusinesses = () => {
               {isActive && it.queue_id ? (
                 <Link
                   to={`/join/${it.queue_id}`}
-                  className="mt-auto w-full text-center gradient-bg text-primary-foreground py-2 rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                  className="mt-auto w-full text-center bg-primary text-primary-foreground py-2 rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
                 >
                   <Users className="w-3.5 h-3.5" />
                   {it.remote_join ? "Rejoin Queue" : "Visit Business"}

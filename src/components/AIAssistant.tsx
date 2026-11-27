@@ -397,7 +397,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
     <>
       <motion.button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-50 gradient-bg text-primary-foreground rounded-full p-4 shadow-lg flex items-center gap-2"
+        className="fixed bottom-5 right-5 z-50 bg-primary text-primary-foreground rounded-full p-4 shadow-lg flex items-center gap-2"
         aria-label="Open AI assistant"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{
@@ -431,7 +431,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-primary-foreground" />
               </div>
               <div>
@@ -460,7 +460,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
                 transition={{ duration: 0.3 }}
                 className="text-center py-6"
               >
-                <div className="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-3">
                   <Sparkles className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Hi! How can I help?</p>
@@ -483,7 +483,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
               >
                 <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm ${
                   m.role === "user"
-                    ? "gradient-bg text-primary-foreground rounded-br-sm"
+                    ? "bg-primary text-primary-foreground rounded-br-sm"
                     : "bg-muted text-foreground rounded-bl-sm"
                 }`}>
                   {m.role === "assistant"
@@ -559,7 +559,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="gradient-bg text-primary-foreground rounded-xl px-3 disabled:opacity-50"
+              className="bg-primary text-primary-foreground rounded-xl px-3 disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>

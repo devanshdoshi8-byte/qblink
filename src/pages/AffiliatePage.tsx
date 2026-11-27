@@ -100,11 +100,11 @@ const AffiliatePage = () => {
       {/* Hero */}
       <section className="pt-28 pb-16 px-4 sm:px-6 text-center">
         <div className="max-w-3xl mx-auto">
-          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase gradient-bg text-primary-foreground mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary text-primary-foreground mb-4">
             Affiliate Program
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight mb-4">
-            Earn by Helping Businesses <span className="gradient-text">Modernize Their Queue Flow</span>
+            Earn by Helping Businesses <span className="text-primary">Modernize Their Queue Flow</span>
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             Join our partner network and earn recurring commissions for every successful referral. No upfront costs, no complicated contracts.
@@ -119,7 +119,7 @@ const AffiliatePage = () => {
             {perks.map((p, i) => (
               <AnimatedSection key={p.title} delay={i * 0.1}>
                 <div className="bg-background rounded-2xl p-6 card-shadow h-full">
-                  <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mb-4">
                     <p.icon className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2">{p.title}</h3>
@@ -139,7 +139,7 @@ const AffiliatePage = () => {
             {steps.map((s, i) => (
               <AnimatedSection key={s.num} delay={i * 0.1}>
                 <div className="text-center">
-                  <div className="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mx-auto mb-3 text-primary-foreground font-bold text-lg">{s.num}</div>
+                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mx-auto mb-3 text-primary-foreground font-bold text-lg">{s.num}</div>
                   <h3 className="font-semibold text-foreground mb-1">{s.title}</h3>
                   <p className="text-sm text-muted-foreground">{s.desc}</p>
                 </div>
@@ -176,7 +176,7 @@ const AffiliatePage = () => {
                   <input type="email" placeholder="Email Address *" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className={inputClass} />
                   <input type="tel" required placeholder="Phone *" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className={inputClass} />
                   <input type="text" placeholder="Company / Organization (optional)" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} className={inputClass} />
-                  <button type="submit" disabled={loading} className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
+                  <button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
                     <Send className="w-4 h-4" /> {loading ? "Submitting..." : "Join Affiliate Program"}
                   </button>
                 </form>

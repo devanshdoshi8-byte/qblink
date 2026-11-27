@@ -80,7 +80,7 @@ const AdminLeads = () => {
                 key={k}
                 onClick={() => setFilter(k)}
                 className={`px-3 py-1.5 rounded-full font-semibold transition-colors ${
-                  filter === k ? "gradient-bg text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"
+                  filter === k ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"
                 }`}
               >
                 {k === "all" ? `All (${leads.length})` : k === "demo" ? `Demo (${demoCount})` : `Early Access (${earlyCount})`}
@@ -114,7 +114,7 @@ const AdminLeads = () => {
                       <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold ${
                         lead.submission_type === "demo"
                           ? "bg-primary/10 text-primary"
-                          : "bg-accent/10 text-accent-foreground"
+                          : "bg-secondary text-secondary-foreground"
                       }`}>
                         {lead.submission_type === "demo" ? "Demo" : "Early Access"}
                       </span>
@@ -187,7 +187,7 @@ const AdminLeads = () => {
                 <span className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold ${
                   selectedLead.submission_type === "demo"
                     ? "bg-primary/10 text-primary"
-                    : "bg-accent/10 text-accent-foreground"
+                    : "bg-secondary text-secondary-foreground"
                 }`}>
                   {selectedLead.submission_type === "demo" ? "Demo Request" : "Early Access Signup"}
                 </span>

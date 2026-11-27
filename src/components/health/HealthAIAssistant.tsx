@@ -193,24 +193,24 @@ export default function HealthAIAssistant({ businessId, businessName, variant = 
 
   return (
     <div className="bg-card rounded-2xl card-shadow overflow-hidden flex flex-col" style={{ minHeight: variant === "compact" ? 420 : 560 }}>
-      <div className="px-5 py-4 border-b border-border flex items-center justify-between gradient-bg">
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-primary text-primary-foreground">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-            <Brain className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 rounded-xl bg-primary-foreground/15 backdrop-blur flex items-center justify-center">
+            <Brain className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <h3 className="font-bold text-white text-sm leading-tight">Qblink Health Coach</h3>
-            <p className="text-[11px] text-white/80">AI ops specialist for {businessName || "your queue"}</p>
+            <h3 className="font-bold text-primary-foreground text-sm leading-tight">Qblink Health Coach</h3>
+            <p className="text-[11px] text-primary-foreground/80">AI ops specialist for {businessName || "your queue"}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => setShowHistory(s => !s)} className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition relative" title="Chat history">
+          <button onClick={() => setShowHistory(s => !s)} className="text-primary-foreground/80 hover:text-primary-foreground p-1.5 rounded-lg hover:bg-primary-foreground/10 transition relative" title="Chat history">
             <History className="w-4 h-4" />
             {sessions.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-white text-primary text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{sessions.length}</span>
+              <span className="absolute -top-0.5 -right-0.5 bg-card text-primary text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{sessions.length}</span>
             )}
           </button>
-          <button onClick={startNewChat} className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition" title="New conversation" aria-label="New conversation">
+          <button onClick={startNewChat} className="text-primary-foreground/80 hover:text-primary-foreground p-1.5 rounded-lg hover:bg-primary-foreground/10 transition" title="New conversation" aria-label="New conversation">
             <Plus className="w-4 h-4" />
           </button>
         </div>
@@ -250,14 +250,14 @@ export default function HealthAIAssistant({ businessId, businessName, variant = 
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[600px]">
         {!initialized && (
           <div className="text-center py-8">
-            <div className="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-3">
-              <Sparkles className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-3">
+              <Sparkles className="w-7 h-7 text-primary-foreground" />
             </div>
             <h4 className="font-bold text-foreground">Get a personalised health diagnosis</h4>
             <p className="text-sm text-muted-foreground mt-1 mb-4 max-w-sm mx-auto">
               Your dedicated AI analyst will look at your live data and tell you exactly what to fix first.
             </p>
-            <button onClick={initialize} disabled={loading} className="gradient-bg text-white font-semibold px-5 py-2.5 rounded-xl text-sm hover:opacity-90 transition disabled:opacity-50 inline-flex items-center gap-2">
+            <button onClick={initialize} disabled={loading} className="bg-primary text-primary-foreground font-semibold px-5 py-2.5 rounded-xl text-sm hover:bg-primary/90 transition disabled:opacity-50 inline-flex items-center gap-2">
               <Brain className="w-4 h-4" /> Analyse my Queue Health
             </button>
             {sessions.length > 0 && (
@@ -270,7 +270,7 @@ export default function HealthAIAssistant({ businessId, businessName, variant = 
 
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[88%] px-3.5 py-2.5 rounded-2xl text-sm ${m.role === "user" ? "gradient-bg text-white rounded-br-sm" : "bg-muted text-foreground rounded-bl-sm"}`}>
+            <div className={`max-w-[88%] px-3.5 py-2.5 rounded-2xl text-sm ${m.role === "user" ? "bg-primary text-primary-foreground rounded-br-sm" : "bg-muted text-foreground rounded-bl-sm"}`}>
               {m.role === "assistant" ? (
                 <div className="prose prose-sm max-w-none [&_p]:my-1.5 [&_ul]:my-1.5 [&_ol]:my-1.5 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_strong]:text-foreground">
                   <ReactMarkdown>{m.content}</ReactMarkdown>
@@ -305,7 +305,7 @@ export default function HealthAIAssistant({ businessId, businessName, variant = 
 
       <form onSubmit={e => { e.preventDefault(); send(input); }} className="p-3 border-t border-border flex gap-2">
         <input value={input} onChange={e => setInput(e.target.value)} placeholder="Ask anything about improving your queue…" disabled={loading} className="flex-1 px-3 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
-        <button type="submit" disabled={loading || !input.trim()} className="gradient-bg text-white rounded-xl px-3 disabled:opacity-50">
+        <button type="submit" disabled={loading || !input.trim()} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-3 disabled:opacity-50">
           <Send className="w-4 h-4" />
         </button>
       </form>

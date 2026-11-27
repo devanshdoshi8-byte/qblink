@@ -129,7 +129,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
         <div className="flex gap-1 bg-card rounded-xl p-1 card-shadow">
           {(["week", "month", "90d"] as const).map(r => (
             <button key={r} onClick={() => setRange(r)} className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              range === r ? "gradient-bg text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              range === r ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}>
               {r === "week" ? "This Week" : r === "month" ? "This Month" : "Last 90 Days"}
             </button>

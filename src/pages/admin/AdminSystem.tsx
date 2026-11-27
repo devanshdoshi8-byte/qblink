@@ -43,7 +43,7 @@ const Group = ({ group, value, onSave }: any) => {
             <input value={local[f] || ""} onChange={(e) => setLocal({ ...local, [f]: e.target.value })} className="w-full px-3 py-2 rounded-xl bg-background border border-border text-sm" />
           </div>
         ))}
-        <button onClick={() => onSave(local)} className="gradient-bg text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold self-start flex items-center gap-2"><Save className="w-4 h-4" /> Save</button>
+        <button onClick={() => onSave(local)} className="bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold self-start flex items-center gap-2"><Save className="w-4 h-4" /> Save</button>
       </div>
     </div>
   );

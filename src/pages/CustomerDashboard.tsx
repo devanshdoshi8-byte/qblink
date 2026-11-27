@@ -290,7 +290,7 @@ const CustomerDashboard = () => {
           </div>
           <NotificationBell />
           <div className="hidden sm:flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-primary-foreground text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
               {profileName?.[0]?.toUpperCase() || "C"}
             </div>
           </div>
@@ -458,7 +458,7 @@ const CustomerDashboard = () => {
                         return (
                           <button
                             onClick={() => setPickerBiz(b)}
-                            className="w-full text-center gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                            className="w-full text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
                           >
                             <Users className="w-4 h-4" /> Choose Counter ({activeQs.length})
                           </button>
@@ -472,7 +472,7 @@ const CustomerDashboard = () => {
                         <div className="space-y-1.5">
                           <Link
                             to={`/join/${targetId}`}
-                            className="w-full text-center gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                            className="w-full text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
                           >
                             <Users className="w-4 h-4" /> Join {targetName || "Counter"}
                           </Link>
@@ -669,7 +669,7 @@ const LiveDiscoveryStrip = ({
                   </span>
                   <Link
                     to={`/join/${targetId}`}
-                    className="text-[11px] font-semibold gradient-bg text-primary-foreground px-2.5 py-1 rounded-lg hover:opacity-90"
+                    className="text-[11px] font-semibold bg-primary text-primary-foreground px-2.5 py-1 rounded-lg hover:opacity-90"
                   >
                     {row.remoteJoin ? "Join" : "Visit"}
                   </Link>

@@ -28,6 +28,7 @@ export default {
         foreground: "hsl(var(--foreground))",
         "surface-warm": "hsl(var(--surface-warm))",
         "text-secondary": "hsl(var(--text-secondary))",
+        "ink-accent": "hsl(var(--ink-accent))",
         ink: "hsl(var(--ink))",
         deep: "hsl(var(--deep))",
         teal: "hsl(var(--teal))",
@@ -81,6 +82,14 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        chart: {
+          1: "hsl(var(--chart-1))",
+          2: "hsl(var(--chart-2))",
+          3: "hsl(var(--chart-3))",
+          4: "hsl(var(--chart-4))",
+          5: "hsl(var(--chart-5))",
+          6: "hsl(var(--chart-6))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

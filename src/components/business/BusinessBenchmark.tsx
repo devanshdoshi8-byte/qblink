@@ -43,7 +43,7 @@ export default function BusinessBenchmark({ businessId }: { businessId: string }
   return (
     <div className={`rounded-2xl border p-4 ${faster ? "border-success/30 bg-success-soft/40" : data?.direction === "slower" ? "border-warning/30 bg-warning-soft/40" : "border-primary/20 bg-primary/5"}`}>
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg gradient-bg flex items-center justify-center">
+        <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
           <Gauge className="w-3.5 h-3.5 text-primary-foreground" />
         </div>
         <p className="text-sm font-bold text-foreground flex-1">Business Benchmarking</p>

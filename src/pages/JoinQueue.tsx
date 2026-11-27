@@ -757,7 +757,7 @@ const JoinQueue = () => {
       />
       {celebrate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background/80 to-primary/20 backdrop-blur-sm animate-in fade-in duration-300" />
+          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm animate-in fade-in duration-300" />
           {/* Floating emoji confetti */}
           {Array.from({ length: 24 }).map((_, i) => {
             const emojis = ["🎉", "✨", "🎊", "🔔", "⭐", "🥳", "💫"];
@@ -963,7 +963,7 @@ const JoinQueue = () => {
                   />
                 )}
                 <button onClick={handleJoin} disabled={joining || !profileLoaded}
-                  className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
+                  className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:bg-primary/90 active:scale-[0.99] transition-all disabled:opacity-50">
                   {joining ? "Joining..." : "Join Queue"}
                 </button>
               </>
@@ -1017,16 +1017,12 @@ const JoinQueue = () => {
                   />
                 )}
                 <button onClick={handleJoin} disabled={joining}
-                  className={`w-full py-3.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 shadow-md ${
-                    prefilled && visitorName && phone
-                      ? "bg-gradient-to-r from-primary via-primary/90 to-amber-500 text-primary-foreground hover:shadow-lg active:scale-[0.99]"
-                      : "gradient-bg text-primary-foreground hover:opacity-90 active:scale-[0.99]"
-                  }`}>
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.99]">
                   {joining ? (
                     "Joining..."
                   ) : prefilled && visitorName && phone ? (
                     <span className="inline-flex items-center justify-center gap-1.5">
-                      <Zap className="w-4 h-4 fill-amber-300 text-amber-300 animate-pulse" />
+                      <Zap className="w-4 h-4 text-primary-foreground" />
                       <span>One-Tap Quick Join</span>
                     </span>
                   ) : (
@@ -1063,7 +1059,7 @@ const JoinQueue = () => {
                     if (error) return toast.error(error.message || "Check-in failed");
                     toast.success("Checked in — the counter has been notified");
                   }}
-                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl gradient-bg text-primary-foreground text-sm font-semibold hover:opacity-90"
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90"
                   aria-label="Confirm arrival and check in"
                 >
                   <CheckCircle className="w-4 h-4" /> I've arrived — Check in

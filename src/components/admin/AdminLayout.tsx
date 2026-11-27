@@ -85,7 +85,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         </Link>
 
         <div className="bg-muted/50 rounded-xl p-3 mb-6 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg gradient-bg flex items-center justify-center text-primary-foreground font-bold text-sm">
+          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div className="min-w-0">
@@ -174,7 +174,7 @@ const GroupedNav = ({ location, onNavigate }: { location: ReturnType<typeof useL
                   onClick={onNavigate}
                   className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                     active
-                      ? "gradient-bg text-primary-foreground"
+                      ? "bg-primary text-primary-foreground"
                       : item.highlight
                         ? "text-primary bg-primary/10 hover:bg-primary/15 font-semibold"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"

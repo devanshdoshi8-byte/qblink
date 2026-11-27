@@ -140,7 +140,7 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
             <label className="text-sm font-medium text-foreground mb-1.5 block">Description</label>
             <textarea value={biz.description} onChange={e => setBiz({ ...biz, description: e.target.value })} rows={3} className="input resize-none" />
           </div>
-          <button onClick={saveProfile} disabled={saving} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
+          <button onClick={saveProfile} disabled={saving} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
             <Save className="w-4 h-4" /> {saving ? "Saving…" : "Save Changes"}
           </button>
         </Card>
@@ -276,7 +276,7 @@ const Toggle = ({ label, desc, value, onChange }: { label: string; desc: string;
       <p className="text-sm font-medium text-foreground">{label}</p>
       <p className="text-xs text-muted-foreground">{desc}</p>
     </div>
-    <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors ${value ? "gradient-bg" : "bg-muted"}`}>
+    <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors ${value ? "bg-primary" : "bg-muted"}`}>
       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${value ? "translate-x-5" : ""}`} />
     </button>
   </div>
@@ -314,7 +314,7 @@ const VisibilityRow = ({
       <button
         onClick={() => onChange(!value)}
         aria-label={`Toggle ${label}`}
-        className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? "gradient-bg" : "bg-muted"}`}
+        className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? "bg-primary" : "bg-muted"}`}
       >
         <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${value ? "translate-x-5" : ""}`} />
       </button>
@@ -337,7 +337,7 @@ const VisibilityPreview = ({
   const { discovery_enabled, remote_joining_enabled, show_live_queue_info } = visibility;
 
   return (
-    <div className="mt-2 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-background p-4">
+    <div className="mt-2 rounded-2xl border border-primary/20 bg-primary/5 p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Customer preview</p>
         <span className="text-[10px] text-muted-foreground">Live</span>
@@ -374,7 +374,7 @@ const VisibilityPreview = ({
           )}
 
           {remote_joining_enabled ? (
-            <button className="w-full gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold">
+            <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold">
               Join Queue
             </button>
           ) : (

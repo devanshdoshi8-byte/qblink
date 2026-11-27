@@ -93,7 +93,7 @@ const InstallAppPrompt = () => {
     <>
       <button
         onClick={handleClick}
-        className="fixed z-40 bottom-24 right-4 mb-[env(safe-area-inset-bottom)] md:bottom-6 md:right-6 gradient-bg text-primary-foreground rounded-full shadow-lg px-4 py-2.5 text-sm font-semibold flex items-center gap-2 hover:opacity-90 active:scale-95 transition"
+        className="fixed z-40 bottom-24 right-4 mb-[env(safe-area-inset-bottom)] md:bottom-6 md:right-6 bg-primary text-primary-foreground rounded-full shadow-lg px-4 py-2.5 text-sm font-semibold flex items-center gap-2 hover:opacity-90 active:scale-95 transition"
         aria-label="Install Qblink app"
       >
         <Download className="w-4 h-4" />

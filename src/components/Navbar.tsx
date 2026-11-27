@@ -57,7 +57,7 @@ const Navbar = () => {
               <Shield size={14} /> Admin
             </Link>
           )}
-          <Link to="/auth" className="gradient-bg text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+          <Link to="/auth" className="bg-primary text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
             Dashboard
           </Link>
         </div>
@@ -92,7 +92,7 @@ const Navbar = () => {
                   <Shield size={14} /> Admin
                 </Link>
               )}
-              <Link to="/auth" onClick={() => setOpen(false)} className="gradient-bg text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold text-center">
+              <Link to="/auth" onClick={() => setOpen(false)} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold text-center">
                 Dashboard
               </Link>
             </div>

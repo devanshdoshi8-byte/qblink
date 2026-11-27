@@ -43,7 +43,7 @@ const AdminExports = () => {
           <div key={e.key} className="bg-card rounded-2xl p-5 card-shadow">
             <p className="font-bold text-foreground">{e.label}</p>
             <p className="text-xs text-muted-foreground mb-4">{e.desc}</p>
-            <button onClick={() => exportCsv(e.key)} disabled={loading === e.key} className="w-full gradient-bg text-primary-foreground py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
+            <button onClick={() => exportCsv(e.key)} disabled={loading === e.key} className="w-full bg-primary text-primary-foreground py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
               <Download className="w-4 h-4" /> {loading === e.key ? "Exporting…" : "Export CSV"}
             </button>
           </div>

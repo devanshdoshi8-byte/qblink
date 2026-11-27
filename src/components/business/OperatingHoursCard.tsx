@@ -101,7 +101,7 @@ const OperatingHoursCard = ({ businessId }: { businessId: string }) => {
                   type="button"
                   onClick={() => setDay(i, { closed: !d.closed })}
                   aria-label={`Toggle ${DAY_LABELS[i]} ${d.closed ? "open" : "closed"}`}
-                  className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${!d.closed ? "gradient-bg" : "bg-muted"}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${!d.closed ? "bg-primary" : "bg-muted"}`}
                 >
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${!d.closed ? "translate-x-5" : ""}`} />
                 </button>
@@ -190,7 +190,7 @@ const OperatingHoursCard = ({ businessId }: { businessId: string }) => {
           <button
             onClick={save}
             disabled={saving}
-            className="mt-5 gradient-bg text-primary-foreground py-2.5 px-4 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 inline-flex items-center gap-2"
+            className="mt-5 bg-primary text-primary-foreground py-2.5 px-4 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 inline-flex items-center gap-2"
           >
             <Save className="w-4 h-4" /> {saving ? "Saving…" : "Save Hours"}
           </button>

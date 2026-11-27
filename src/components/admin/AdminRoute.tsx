@@ -30,7 +30,7 @@ const AdminRoute = ({ children }: { children: ReactNode }) => {
           <p className="text-sm text-muted-foreground mb-5">
             This area is restricted to Qblink platform administrators.
           </p>
-          <Link to="/" replace className="inline-block gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold">
+          <Link to="/" replace className="inline-block bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold">
             Back to Home
           </Link>
         </div>

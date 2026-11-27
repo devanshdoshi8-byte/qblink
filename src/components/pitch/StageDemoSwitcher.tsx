@@ -109,11 +109,11 @@ export const StageDemoSwitcher = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-card/90 dark:bg-[hsl(215_50%_12%/0.92)] backdrop-blur-2xl border border-primary/25 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]"
+            className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-card/95 backdrop-blur-md border border-border shadow-lg"
           >
             {/* Stage Mode Label */}
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold border-r border-border/80">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-success" />
               <span>Pitch Hub</span>
             </div>
 
@@ -128,7 +128,7 @@ export const StageDemoSwitcher = () => {
                     to={scene.path}
                     className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       active
-                        ? "gradient-bg text-primary-foreground shadow-md"
+                        ? "bg-primary text-primary-foreground shadow-md"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
                     }`}
                   >

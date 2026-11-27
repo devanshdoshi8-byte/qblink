@@ -138,7 +138,7 @@ const AdminDiscovery = () => {
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              tab === t ? "gradient-bg text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+              tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
             }`}
           >
             {t === "ranking" ? "Ranking & Promotion" : `Reviews (${reviews.length})`}

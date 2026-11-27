@@ -603,7 +603,7 @@ const QueueManager = ({
                 onClick={() => setSelectedQueueId(q.id)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                   selectedQueue?.id === q.id
-                    ? "gradient-bg text-primary-foreground shadow-sm"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-card text-muted-foreground hover:bg-muted card-shadow"
                 }`}
               >
@@ -622,7 +622,7 @@ const QueueManager = ({
                   onClick={() => setSelectedQueueId(c.id)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
                     selectedQueue?.id === c.id
-                      ? "gradient-bg text-primary-foreground border-transparent shadow-sm"
+                      ? "bg-primary text-primary-foreground border-transparent shadow-sm"
                       : "bg-card text-foreground/80 border-border hover:border-primary/40 card-shadow"
                   }`}
                 >
@@ -729,7 +729,7 @@ const QueueManager = ({
                     key={t.seats}
                     onClick={() => serveTable(t.seats)}
                     disabled={callingNext}
-                    className="gradient-bg text-primary-foreground px-5 py-3 rounded-xl text-base font-semibold hover:opacity-90 transition-opacity flex items-center gap-1.5 disabled:opacity-60 shadow-sm"
+                    className="bg-primary text-primary-foreground px-5 py-3 rounded-xl text-base font-semibold hover:opacity-90 transition-opacity flex items-center gap-1.5 disabled:opacity-60 shadow-sm"
                   >
                     <Phone className="w-3.5 h-3.5" /> {t.seats}-seat
                   </button>
@@ -739,11 +739,11 @@ const QueueManager = ({
               <button
                 onClick={callNext}
                 disabled={callingNext}
-                className="gradient-bg text-primary-foreground px-6 py-3 rounded-xl text-base font-bold hover:opacity-90 transition-all flex items-center gap-2 shadow-md active:scale-95 disabled:opacity-60"
+                className="bg-primary text-primary-foreground px-6 py-3 rounded-xl text-base font-bold hover:opacity-90 transition-all flex items-center gap-2 shadow-md active:scale-95 disabled:opacity-60"
               >
                 <Phone className="w-4 h-4" />
                 <span>Call Next</span>
-                <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-mono text-white">
+                <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-primary-foreground/20 text-[10px] font-mono text-primary-foreground">
                   Space
                 </kbd>
               </button>
@@ -820,7 +820,7 @@ const QueueManager = ({
 
           {/* Now Serving Hero Block */}
           {called.length > 0 && (
-            <div className="gradient-bg rounded-2xl p-6 mb-6 text-primary-foreground shadow-lg">
+            <div className="bg-primary rounded-2xl p-6 mb-6 text-primary-foreground shadow-lg">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-xs uppercase tracking-widest opacity-85 font-semibold">Now Serving At Counter</p>
                 <span className="text-[10px] font-mono opacity-80">Press [Enter] or [S] to Serve</span>
@@ -839,16 +839,16 @@ const QueueManager = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => skipVisitor(v.id, v.token_number)}
-                      className="bg-white/10 hover:bg-white/20 backdrop-blur px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                      className="bg-primary-foreground/15 hover:bg-primary-foreground/25 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
                       title="Skip customer [K]"
                     >
                       <SkipForward className="w-3.5 h-3.5" /> Skip [K]
                     </button>
                     <button
                       onClick={() => markServed(v.id, v.token_number)}
-                      className="bg-white text-primary hover:bg-white/90 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95"
+                      className="bg-card text-card-foreground hover:bg-card/90 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95"
                     >
-                      <CheckCircle className="w-4 h-4 text-emerald-600" /> Mark Served [Enter]
+                      <CheckCircle className="w-4 h-4 text-success" /> Mark Served [Enter]
                     </button>
                   </div>
                 </div>
@@ -955,7 +955,7 @@ const QueueManager = ({
           <p className="text-muted-foreground mb-4">You haven't created any queues yet.</p>
           <button
             onClick={() => setShowCreate(true)}
-            className="gradient-bg text-primary-foreground px-6 py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="bg-primary text-primary-foreground px-6 py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Create Your First Queue
           </button>
@@ -1004,7 +1004,7 @@ const QueueManager = ({
           </div>
           <button
             onClick={() => setShowHotkeysModal(false)}
-            className="w-full gradient-bg text-primary-foreground py-2.5 rounded-xl text-xs font-bold hover:opacity-90 transition-opacity mt-2"
+            className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-xs font-bold hover:opacity-90 transition-opacity mt-2"
           >
             Got It
           </button>
@@ -1042,7 +1042,7 @@ const QueueManager = ({
           <div className="flex gap-3">
             <button
               onClick={createQueue}
-              className="flex-1 gradient-bg text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               Create
             </button>
@@ -1073,7 +1073,7 @@ const QueueManager = ({
               navigator.clipboard.writeText(joinUrl);
               toast.success("Link copied!");
             }}
-            className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Copy Link
           </button>
@@ -1101,7 +1101,7 @@ const QueueManager = ({
           <div className="flex gap-3">
             <button
               onClick={addWalkin}
-              className="flex-1 gradient-bg text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               Add to Queue
             </button>

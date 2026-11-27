@@ -122,7 +122,7 @@ const TokensContent = ({ businessId }: { businessId: string }) => {
         <div className="flex gap-1.5 flex-wrap">
           {FILTERS.map(f => (
             <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-              filter === f ? "gradient-bg text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+              filter === f ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
             }`}>
               {f}
             </button>

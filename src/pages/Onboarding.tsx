@@ -125,7 +125,7 @@ const Onboarding = () => {
             )}
             {step === "outro" && (
               <div className="w-full max-w-md mx-auto text-center">
-                <div className="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6 elevated-shadow">
+                <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-6 elevated-shadow">
                   <Sparkles className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight mb-4">
@@ -148,7 +148,7 @@ const Onboarding = () => {
                 >
                   <Link
                     to="/auth"
-                    className="gradient-bg text-primary-foreground px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] transition-all elevated-shadow"
+                    className="bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] transition-all elevated-shadow"
                   >
                     Start Free
                   </Link>

@@ -47,7 +47,7 @@ const AdminAnnouncements = () => {
               <Input label="Starts" type="datetime-local" value={form.starts_at} onChange={(v) => setForm({ ...form, starts_at: v })} />
               <Input label="Ends" type="datetime-local" value={form.ends_at} onChange={(v) => setForm({ ...form, ends_at: v })} />
             </div>
-            <button onClick={save} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create</button>
+            <button onClick={save} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create</button>
           </div>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">

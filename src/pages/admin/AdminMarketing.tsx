@@ -46,7 +46,7 @@ const AdminMarketing = () => {
               <Select label="Applies to" value={form.applies_to} options={["all", "business", "customer"]} onChange={(v) => setForm({ ...form, applies_to: v })} />
             </div>
             <Input type="datetime-local" label="Expires" value={form.expires_at} onChange={(v) => setForm({ ...form, expires_at: v })} />
-            <button onClick={create} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create coupon</button>
+            <button onClick={create} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create coupon</button>
           </div>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">

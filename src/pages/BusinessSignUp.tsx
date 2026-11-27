@@ -273,7 +273,7 @@ const BusinessSignUp = () => {
           </Field>
 
           <button type="submit" disabled={loading}
-            className="w-full gradient-bg text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+            className="w-full bg-primary text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
             {loading ? "Creating..." : "Create Business Account"}
           </button>
 
