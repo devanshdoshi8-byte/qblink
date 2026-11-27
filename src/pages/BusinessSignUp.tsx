@@ -161,7 +161,7 @@ const BusinessSignUp = () => {
               className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
           </Field>
           <Field icon={<Lock className="w-4 h-4" />} label="Password">
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} placeholder="••••••••"
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••"
               className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
           </Field>
           <Field icon={<Tag className="w-4 h-4" />} label="Industry">

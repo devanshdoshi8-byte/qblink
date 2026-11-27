@@ -2,15 +2,18 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Mail, Lock, AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Mail, Lock, Phone, AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
+import { otpService } from "@/lib/auth/otpService";
 
 type Step = "email" | "otp" | "done";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"phone" | "email">("phone");
   const [step, setStep] = useState<Step>("email");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [newPassword, setNewPassword] = useState("");
@@ -28,6 +31,21 @@ const ForgotPassword = () => {
 
   const sendCode = async () => {
     setErrorMsg(null);
+    if (mode === "phone") {
+      setLoading(true);
+      const res = await otpService.sendOtp(phone);
+      setLoading(false);
+      if (!res.success) {
+        setErrorMsg(res.error || "Failed to send SMS verification code.");
+        return;
+      }
+      setStep("otp");
+      setResendIn(45);
+      toast.success(res.message);
+      setTimeout(() => inputRefs.current[0]?.focus(), 50);
+      return;
+    }
+
     const clean = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
       setErrorMsg("Enter a valid email address.");
@@ -69,10 +87,30 @@ const ForgotPassword = () => {
   const verifyAndReset = async () => {
     setErrorMsg(null);
     const token = otp.join("");
-    if (token.length !== 6) { setErrorMsg("Enter the 6-digit code from your email."); return; }
-    if (newPassword.length < 6) { setErrorMsg("Password must be at least 6 characters."); return; }
+    if (token.length !== 6) { setErrorMsg(`Enter the 6-digit code from your ${mode === "phone" ? "SMS" : "email"}.`); return; }
+    if (!newPassword) { setErrorMsg("Enter a new password."); return; }
     if (newPassword !== confirmPassword) { setErrorMsg("Passwords don't match."); return; }
     setLoading(true);
+
+    if (mode === "phone") {
+      const check = otpService.verifyOtp(phone, token);
+      if (!check.success) {
+        setLoading(false);
+        setErrorMsg(check.error || "That code is invalid or expired. Try again.");
+        return;
+      }
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        await supabase.auth.updateUser({ password: newPassword });
+        await supabase.auth.signOut();
+      }
+      setLoading(false);
+      setStep("done");
+      toast.success("Password updated. Please sign in.");
+      setTimeout(() => navigate("/auth/signin"), 1800);
+      return;
+    }
+
     const { error: vErr } = await supabase.auth.verifyOtp({
       email: email.trim().toLowerCase(),
       token,
@@ -110,8 +148,8 @@ const ForgotPassword = () => {
             {step === "done" && "All set"}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {step === "email" && "We'll email you a 6-digit code to verify it's you."}
-            {step === "otp" && (<>If an account exists for <span className="font-medium text-foreground">{email}</span>, a code is on its way.</>)}
+            {step === "email" && (mode === "phone" ? "We'll send a 6-digit SMS code to verify it's you." : "We'll email you a 6-digit code to verify it's you.")}
+            {step === "otp" && (<>If an account exists for <span className="font-medium text-foreground">{mode === "phone" ? phone : email}</span>, a code is on its way.</>)}
             {step === "done" && "Your password has been updated."}
           </p>
         </div>
@@ -119,15 +157,44 @@ const ForgotPassword = () => {
         <div className="bg-card rounded-2xl p-6 sm:p-8 card-shadow space-y-4">
           {step === "email" && (
             <>
-              <div>
-                <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="email" autoFocus value={email}
-                    onChange={(e) => setEmail(e.target.value)} required
-                    className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
-                </div>
+              <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-muted">
+                <button
+                  type="button"
+                  onClick={() => { setMode("phone"); setErrorMsg(null); }}
+                  className={`py-2 rounded-lg text-sm font-medium transition ${mode === "phone" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}
+                >
+                  SMS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setMode("email"); setErrorMsg(null); }}
+                  className={`py-2 rounded-lg text-sm font-medium transition ${mode === "email" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}
+                >
+                  Email
+                </button>
               </div>
+
+              {mode === "phone" ? (
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Mobile number</label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input type="tel" inputMode="numeric" autoFocus value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/[^\d\s+-]/g, ""))} required placeholder="+91 98765 43210"
+                      className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input type="email" autoFocus value={email}
+                      onChange={(e) => setEmail(e.target.value)} required
+                      className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
+                  </div>
+                </div>
+              )}
               {errorMsg && <ErrorBox msg={errorMsg} />}
               <button onClick={sendCode} disabled={loading}
                 className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
@@ -157,7 +224,7 @@ const ForgotPassword = () => {
                 <label className="text-sm font-medium text-foreground mb-1.5 block">New password</label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="password" value={newPassword} minLength={6}
+                  <input type="password" value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
                 </div>
@@ -166,7 +233,7 @@ const ForgotPassword = () => {
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Confirm password</label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="password" value={confirmPassword} minLength={6}
+                  <input type="password" value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
                 </div>

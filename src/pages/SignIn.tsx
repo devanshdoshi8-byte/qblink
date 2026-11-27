@@ -79,8 +79,8 @@ const SignIn = () => {
       }
       loginEmail = phoneToEmail(normalizePhone(countryCode, phone));
     }
-    if (password.length < 6) {
-      setErrorMsg("Password must be at least 6 characters.");
+    if (!password) {
+      setErrorMsg("Please enter your password.");
       setLoading(false);
       return;
     }
@@ -178,7 +178,7 @@ const SignIn = () => {
             <label className="text-sm font-medium text-foreground mb-1.5 block">Password</label>
             <div className="relative">
               <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} placeholder="••••••••"
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••"
                 className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
             </div>
             {mode === "email" && (
