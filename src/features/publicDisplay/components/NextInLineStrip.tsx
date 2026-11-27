@@ -31,7 +31,7 @@ export const NextInLineStrip: React.FC<NextInLineStripProps> = ({
           </span>
           {estimatedWaitMinutes !== null && (
             <span className="flex items-center gap-1 font-mono">
-              <Clock className="w-3.5 h-3.5 text-amber-500" />
+              <Clock className="w-3.5 h-3.5 text-warning" />
               <span>~{estimatedWaitMinutes}m</span>
             </span>
           )}

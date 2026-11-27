@@ -22,7 +22,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[hsl(var(--brand-navy)/0.82)] backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -39,7 +39,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
 
           {/* Header */}
           <div className="flex items-center gap-2 mb-4">
-            <Smartphone className="w-5 h-5 text-emerald-400" />
+            <Smartphone className="w-5 h-5 text-success" />
             <h3 className="font-extrabold text-sm text-white">Customer Mobile Digital Pass</h3>
           </div>
 
@@ -47,7 +47,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
           <div className="rounded-2xl bg-slate-950 border border-slate-800 p-4 space-y-4">
             <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
               <span>{industryConfig.locationName}</span>
-              <span className="text-emerald-400 font-bold">● Live Sync</span>
+              <span className="text-success font-bold">● Live Sync</span>
             </div>
 
             {/* Token Highlight */}
@@ -65,7 +65,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-semibold">
                 <span className="text-slate-400">Queue Position</span>
-                <span className="font-mono text-emerald-400 font-bold">
+                <span className="font-mono text-success font-bold">
                   {isAfter ? "3 people ahead" : "Unknown (Standing in line)"}
                 </span>
               </div>
@@ -79,7 +79,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
 
               <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                  className="bg-success h-full rounded-full transition-all duration-500"
                   style={{ width: isAfter ? "75%" : "20%" }}
                 />
               </div>
@@ -87,7 +87,7 @@ export const ProtagonistMobileModal: React.FC<ProtagonistMobileModalProps> = ({
 
             {/* Notification Dropper */}
             {isAfter && (
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] text-emerald-300 flex items-start gap-2">
+              <div className="p-2.5 rounded-xl bg-success-soft border border-success/30 text-[11px] text-foreground flex items-start gap-2">
                 <Bell className="w-4 h-4 shrink-0 mt-0.5" />
                 <p>
                   <strong>Alert Ready:</strong> Your phone will vibrate 2 minutes before your turn. You can relax at the terrace cafe!

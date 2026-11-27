@@ -123,21 +123,21 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
         <div
           className={`relative w-[1200px] h-[780px] rounded-3xl transition-all duration-1000 overflow-hidden border ${
             isAfter
-              ? "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-950 border-emerald-500/20"
-              : "bg-gradient-to-b from-slate-950 via-slate-900 to-neutral-950 border-slate-800"
+              ? "bg-[hsl(var(--brand-navy))] border-success/25"
+              : "bg-[hsl(var(--brand-navy))] border-border/40"
           }`}
         >
           {/* Room Architecture: Lighted Walls & Floor */}
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/30 via-slate-900/10 to-transparent" />
+          <div className="absolute inset-0 opacity-30 bg-[hsl(var(--brand-deep)/0.35)]" />
           
           {/* Floor grid perspective */}
-          <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-slate-950 via-slate-900/80 to-transparent border-t border-slate-800/40" />
+          <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-[hsl(var(--brand-navy))] via-[hsl(var(--brand-navy)/0.8)] to-transparent border-t border-[hsl(var(--brand-cream)/0.1)]" />
 
           {/* Large Panoramic Background Windows (Daylight & Outside Terrace) */}
-          <div className="absolute top-12 right-16 w-80 h-60 rounded-2xl bg-gradient-to-b from-blue-950/40 to-slate-900/60 border border-slate-800/80 p-3 shadow-inner flex flex-col justify-between">
+          <div className="absolute top-12 right-16 w-80 h-60 rounded-2xl bg-[hsl(var(--brand-deep)/0.55)] border border-[hsl(var(--brand-cream)/0.12)] p-3 shadow-inner flex flex-col justify-between">
             <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider">
               <span>Outdoor View</span>
-              <span className={isAfter ? "text-emerald-400 font-bold" : "text-slate-600"}>
+              <span className={isAfter ? "text-success font-bold" : "text-slate-400"}>
                 {isAfter ? "Open-Air Cafe (Waiting Zone)" : "Street View"}
               </span>
             </div>
@@ -156,7 +156,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[9px] font-bold"
+                  className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-success-soft border border-success/40 text-success text-[9px] font-bold"
                 >
                   Remote Wait Active
                 </motion.div>
@@ -167,7 +167,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           {/* Wall Clock */}
           <div className="absolute top-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
             <div className="w-14 h-14 rounded-full bg-slate-900 border-2 border-slate-700 flex items-center justify-center shadow-lg relative">
-              <Clock className={`w-6 h-6 ${isAfter ? "text-emerald-400" : "text-amber-400 animate-pulse"}`} />
+              <Clock className={`w-6 h-6 ${isAfter ? "text-success" : "text-warning"}`} />
               <div className="absolute -bottom-5 px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[9px] font-mono font-bold text-slate-400">
                 1:35 PM
               </div>
@@ -189,7 +189,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                 </div>
               </div>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                isAfter ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-red-500/20 text-red-300 border border-red-500/30 animate-pulse"
+                isAfter ? "bg-success-soft text-success border border-success/30" : "bg-danger-soft text-danger border border-danger/30"
               }`}>
                 {isAfter ? "Calm Dispatch" : "Repeatedly Interrupted"}
               </span>
@@ -227,13 +227,13 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           <div className="absolute top-16 left-28 w-64 p-4 rounded-2xl bg-slate-950 border-2 border-primary/40 shadow-xl">
             <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 pb-1 border-b border-slate-800">
               <span>Live Queue Display</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-success" />
             </div>
 
             <div className="flex items-center justify-between py-2">
               <div>
                 <span className="text-[10px] text-slate-500 block">NOW SERVING</span>
-                <span className="font-mono font-black text-2xl text-emerald-400">
+                <span className="font-mono font-black text-2xl text-success">
                   {isAfter ? "Token A-24" : "Token 18 (?)"}
                 </span>
               </div>
@@ -277,7 +277,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                   <motion.div
                     animate={{ y: [-30, 30, -30] }}
                     transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                    className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_10px_#3b82f6]"
+                    className="absolute inset-x-0 h-1 bg-primary/80"
                   />
                 </div>
               </div>
@@ -303,7 +303,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           <div className="absolute right-28 bottom-28 w-72 p-4 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-sm">
+                <div className="w-8 h-8 rounded-lg bg-warning-soft text-warning flex items-center justify-center font-bold text-sm">
                   👩‍💻
                 </div>
                 <div>
@@ -312,7 +312,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                 </div>
               </div>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                isAfter ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"
+                isAfter ? "bg-success-soft text-success" : "bg-warning-soft text-warning"
               }`}>
                 {isAfter ? "Relaxed at Cafe" : "Anxious & Trapped"}
               </span>
@@ -321,7 +321,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
             {/* Human Opportunity Cost Context Bubble */}
             <div className="mt-2.5 space-y-2 text-xs">
               <div className={`p-2.5 rounded-xl border ${
-                isAfter ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-200" : "bg-amber-950/40 border-amber-500/30 text-amber-200"
+                isAfter ? "bg-success-soft border-success/30 text-foreground" : "bg-warning-soft border-warning/30 text-foreground"
               }`}>
                 <span className="text-[9px] uppercase tracking-wider block font-bold opacity-80">
                   {isAfter ? "Reclaimed Time" : "Opportunity Cost Conflict"}
@@ -339,7 +339,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                 className="w-full py-1.5 px-2.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-200 text-[11px] font-bold flex items-center justify-between pointer-events-auto transition-colors"
               >
                 <span className="flex items-center gap-1.5">
-                  <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+                  <Smartphone className="w-3.5 h-3.5 text-success" />
                   <span>{isAfter ? "View Digital Ticket #A-27" : "Simulate Customer Phone"}</span>
                 </span>
                 <ArrowRight className="w-3 h-3 text-slate-400" />
@@ -353,7 +353,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
           <div className="absolute right-16 top-48 w-80 p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80">
             <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider pb-1">
               <span>Waiting Area Seating</span>
-              <span className={isAfter ? "text-emerald-400" : "text-red-400"}>
+              <span className={isAfter ? "text-success" : "text-danger"}>
                 {isAfter ? "4 / 20 Seats Occupied" : "18 / 20 Seats Full (Crowded)"}
               </span>
             </div>
@@ -370,7 +370,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
                         : "bg-slate-950/40 border-slate-900 text-slate-700"
                     }`}
                   >
-                    <User className={`w-3.5 h-3.5 ${isOccupied ? (isAfter ? "text-emerald-400" : "text-amber-400") : "opacity-20"}`} />
+                    <User className={`w-3.5 h-3.5 ${isOccupied ? (isAfter ? "text-success" : "text-warning") : "opacity-20"}`} />
                     <span className="text-[8px] font-mono mt-0.5">
                       {isOccupied ? (isAfter ? `A-${23 + i}` : `#${10 + i}`) : "Empty"}
                     </span>
@@ -477,7 +477,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             onClick={onTransform}
-            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-primary via-indigo-500 to-emerald-500 text-white font-extrabold text-xs sm:text-sm shadow-2xl shadow-primary/40 flex items-center gap-2 border border-white/20 animate-pulse hover:animate-none"
+            className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-extrabold text-xs sm:text-sm shadow-lg flex items-center gap-2 border border-primary/40 hover:bg-primary/90 transition-colors"
           >
             <Sparkles className="w-4 h-4" />
             <span>TRANSFORM WITH QBLINK</span>
@@ -490,7 +490,7 @@ export const SpatialClinicScene: React.FC<SpatialClinicSceneProps> = ({
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
         <div className={`px-4 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest border shadow-lg ${
           isAfter
-            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+            ? "bg-success-soft text-success border-success/40"
             : "bg-red-500/20 text-red-300 border-red-500/40"
         }`}>
           {isAfter ? "✨ THE QBLINK WAY (Visible Digital Flow)" : "⚠️ THE OLD WAY (Physical Uncertainty & Chaos)"}

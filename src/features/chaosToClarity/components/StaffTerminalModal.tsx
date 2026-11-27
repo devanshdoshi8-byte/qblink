@@ -22,7 +22,7 @@ export const StaffTerminalModal: React.FC<StaffTerminalModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[hsl(var(--brand-navy)/0.82)] backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -50,7 +50,7 @@ export const StaffTerminalModal: React.FC<StaffTerminalModalProps> = ({
             <div className="grid grid-cols-3 gap-3">
               <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-center">
                 <span className="text-[10px] text-slate-400 block font-bold">NOW SERVING</span>
-                <span className="font-mono font-black text-xl text-emerald-400">
+                <span className="font-mono font-black text-xl text-success">
                   {isAfter ? "A-24" : "Manual 18"}
                 </span>
               </div>
@@ -81,15 +81,15 @@ export const StaffTerminalModal: React.FC<StaffTerminalModalProps> = ({
                 <span className="font-mono font-bold text-white">A-26 • Priya K.</span>
                 <span className="text-[10px] text-slate-400">Terrace Cafe</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                <span className="font-mono font-bold text-emerald-300">A-27 • Anya (Protagonist)</span>
-                <span className="text-[10px] text-emerald-400 font-bold">Remote Wait (3m away)</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-success-soft border border-success/30">
+                <span className="font-mono font-bold text-foreground">A-27 • Anya (Protagonist)</span>
+                <span className="text-[10px] text-success font-bold">Remote Wait (3m away)</span>
               </div>
             </div>
 
             <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 flex items-center justify-between">
               <span>Reception interruption rate:</span>
-              <span className="font-bold text-emerald-400">{isAfter ? "0 interruptions / hr" : "35 questions / hr"}</span>
+              <span className="font-bold text-success">{isAfter ? "0 interruptions / hr" : "35 questions / hr"}</span>
             </div>
           </div>
 

@@ -60,7 +60,7 @@ export const DisplayTopHeader: React.FC<DisplayTopHeaderProps> = ({
           <div className="flex items-center gap-2 mt-0.5">
             <span
               className={`w-2 h-2 rounded-full ${
-                isLive ? "bg-emerald-500 animate-pulse" : "bg-amber-500 animate-ping"
+                isLive ? "bg-success" : "bg-warning"
               }`}
             />
             <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-muted-foreground">

@@ -22,7 +22,7 @@ export const NowServingHero: React.FC<NowServingHeroProps> = ({ displayData }) =
   return (
     <div className="w-full flex flex-col items-center justify-center p-8 sm:p-12 md:p-16 rounded-3xl bg-card border-2 border-primary/30 shadow-2xl relative overflow-hidden text-center min-h-[360px] md:min-h-[460px]">
       {/* Decorative Ambient Radial Glow */}
-      <div className="absolute inset-0 bg-radial from-primary/10 via-transparent to-transparent pointer-events-none" />
+
 
       {/* PAUSED STATE */}
       {isPaused && (
@@ -31,7 +31,7 @@ export const NowServingHero: React.FC<NowServingHeroProps> = ({ displayData }) =
           animate={{ opacity: 1, scale: 1 }}
           className="space-y-4 max-w-lg z-10"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 text-amber-500 font-black text-sm uppercase tracking-widest border border-amber-500/40">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning-soft text-warning font-black text-sm uppercase tracking-widest border border-warning/40">
             <PauseCircle className="w-5 h-5" />
             <span>QUEUE PAUSED</span>
           </div>
@@ -71,7 +71,7 @@ export const NowServingHero: React.FC<NowServingHeroProps> = ({ displayData }) =
           animate={{ opacity: 1, scale: 1 }}
           className="space-y-4 max-w-lg z-10"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-sm uppercase tracking-widest border border-emerald-500/40">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success-soft text-success font-black text-sm uppercase tracking-widest border border-success/40">
             <CheckCircle2 className="w-5 h-5" />
             <span>COUNTERS READY</span>
           </div>

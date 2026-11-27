@@ -48,7 +48,7 @@ export const IndustryMorphingExperience: React.FC<IndustryMorphingExperienceProp
         {/* Bottom CTA to Pitch Simulator */}
         <div className="p-6 rounded-3xl bg-muted/40 border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-success" />
             <span>Same reliable queue infrastructure across every high-footfall industry</span>
           </div>
 

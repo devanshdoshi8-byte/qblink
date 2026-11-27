@@ -35,12 +35,12 @@ const AdminImpact = () => {
   }, []);
 
   const cards = [
-    { label: "Hours of physical waiting avoided", value: m.totalHours.toLocaleString(), icon: Clock, color: "from-warning to-warning" },
-    { label: "Customers served", value: m.totalServed.toLocaleString(), icon: Users, color: "from-info to-info" },
-    { label: "Businesses onboarded", value: m.businesses.toLocaleString(), icon: Building2, color: "from-success to-primary" },
-    { label: "Active queues", value: m.queues.toLocaleString(), icon: Activity, color: "from-primary to-primary" },
-    { label: "Healthcare queues", value: m.healthcare.toLocaleString(), icon: Stethoscope, color: "from-danger to-danger" },
-    { label: "Government queues", value: m.government.toLocaleString(), icon: Landmark, color: "from-muted-foreground to-muted-foreground" },
+    { label: "Hours of physical waiting avoided", value: m.totalHours.toLocaleString(), icon: Clock, color: "bg-warning-soft text-warning border border-warning/20" },
+    { label: "Customers served", value: m.totalServed.toLocaleString(), icon: Users, color: "bg-info-soft text-info border border-info/20" },
+    { label: "Businesses onboarded", value: m.businesses.toLocaleString(), icon: Building2, color: "bg-success-soft text-success border border-success/20" },
+    { label: "Active queues", value: m.queues.toLocaleString(), icon: Activity, color: "bg-primary/10 text-primary border border-primary/20" },
+    { label: "Healthcare queues", value: m.healthcare.toLocaleString(), icon: Stethoscope, color: "bg-danger-soft text-danger border border-danger/20" },
+    { label: "Government queues", value: m.government.toLocaleString(), icon: Landmark, color: "bg-muted text-muted-foreground border border-border" },
   ];
 
   return (
@@ -54,7 +54,7 @@ const AdminImpact = () => {
           const Icon = c.icon;
           return (
             <div key={c.label} className="bg-card rounded-2xl p-5 card-shadow">
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${c.color} flex items-center justify-center mb-3`}><Icon className="w-5 h-5 text-white" /></div>
+              <div className={`w-10 h-10 rounded-xl ${c.color} flex items-center justify-center mb-3`}><Icon className="w-5 h-5" /></div>
               <p className="text-3xl font-extrabold text-foreground tabular-nums">{c.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{c.label}</p>
             </div>

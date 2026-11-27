@@ -83,8 +83,8 @@ export const MorphingVisualStage: React.FC<MorphingVisualStageProps> = ({ indust
           </span>
           <p className="font-medium leading-relaxed">{industry.frictionProblem}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-1">
+        <div className="p-4 rounded-2xl bg-success-soft border border-success/25 text-xs text-foreground">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-success block mb-1">
             ✨ The Qblink Way (Visible Controlled Flow)
           </span>
           <p className="font-medium leading-relaxed">{industry.qblinkFix}</p>

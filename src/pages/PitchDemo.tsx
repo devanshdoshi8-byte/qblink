@@ -124,7 +124,7 @@ export const PitchDemo: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-primary selection:text-white">
       {/* Top Pitch Navigation & Control Strip */}
-      <header className="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-xl px-5 sm:px-8 py-3.5 sticky top-0 z-50">
+      <header className="border-b border-[hsl(var(--brand-cream)/0.1)] bg-[hsl(var(--brand-navy)/0.92)] backdrop-blur-xl px-5 sm:px-8 py-3.5 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
           {/* Brand & Back Button */}
           <div className="flex items-center gap-3">
@@ -172,8 +172,8 @@ export const PitchDemo: React.FC = () => {
               disabled={autoPlay}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors ${
                 autoPlay
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse"
-                  : "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
+                  ? "bg-warning-soft text-warning border border-warning/40"
+                  : "bg-success-soft border border-success/30 text-success hover:bg-success/15"
               }`}
             >
               <Play className="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ export const PitchDemo: React.FC = () => {
 
           {/* MIDDLE: Realtime WebSocket Sync Cable / Indicator */}
           <div className="hidden lg:flex lg:col-span-1 flex-col items-center justify-center gap-3">
-            <div className="h-20 w-[2px] bg-gradient-to-b from-transparent via-primary/50 to-primary" />
+            <div className="h-20 w-[2px] bg-primary/40" />
             <motion.div
               animate={{
                 scale: syncPulse ? [1, 1.35, 1] : 1,
@@ -240,13 +240,13 @@ export const PitchDemo: React.FC = () => {
             <span className="text-[9px] font-mono text-slate-400 font-bold uppercase tracking-widest text-center">
               Instant Sync
             </span>
-            <div className="h-20 w-[2px] bg-gradient-to-b from-primary via-primary/50 to-transparent" />
+            <div className="h-20 w-[2px] bg-primary/40" />
           </div>
 
           {/* RIGHT: Customer Mobile Phone Mockup (4 cols) */}
           <div className="lg:col-span-4 flex flex-col items-center">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 self-center sm:self-start px-1">
-              <Smartphone className="w-4 h-4 text-emerald-400" />
+              <Smartphone className="w-4 h-4 text-success" />
               <span>Customer Mobile Ticket (Browser)</span>
             </div>
             <CustomerMobileMockup
@@ -261,7 +261,7 @@ export const PitchDemo: React.FC = () => {
       <footer className="border-t border-slate-800/80 bg-slate-900/60 px-5 sm:px-8 py-5">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/60">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <ShieldCheck className="w-4 h-4 text-success shrink-0 mt-0.5" />
             <div>
               <p className="font-bold text-white">100% Zero-App Entry</p>
               <p className="text-slate-400 text-[11px] leading-relaxed">
@@ -271,7 +271,7 @@ export const PitchDemo: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/60">
-            <Zap className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <Zap className="w-4 h-4 text-warning shrink-0 mt-0.5" />
             <div>
               <p className="font-bold text-white">Dynamic Rolling Wait Engine</p>
               <p className="text-slate-400 text-[11px] leading-relaxed">

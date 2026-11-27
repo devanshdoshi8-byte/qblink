@@ -13,7 +13,7 @@ export const MorphCustomerCard: React.FC<MorphCustomerCardProps> = ({ industry }
   return (
     <div className="p-6 rounded-3xl bg-card border border-border shadow-xl flex flex-col justify-between relative overflow-hidden h-full">
       {/* Decorative Accent Glow */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
+
 
       <div>
         {/* Header */}
@@ -59,7 +59,7 @@ export const MorphCustomerCard: React.FC<MorphCustomerCardProps> = ({ industry }
               <span className="font-semibold text-foreground truncate">{customer.queueLabel}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <Clock className="w-3.5 h-3.5 text-warning shrink-0" />
               <span>Target: <strong className="text-foreground">{customer.destinationText}</strong></span>
             </div>
           </div>
@@ -68,8 +68,8 @@ export const MorphCustomerCard: React.FC<MorphCustomerCardProps> = ({ industry }
 
       {/* Human Scenario Callout */}
       <div className="mt-6 pt-4 border-t border-border/60">
-        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300">
-          <span className="text-[10px] font-bold uppercase tracking-wider block text-emerald-600 dark:text-emerald-400">
+        <div className="p-3 rounded-xl bg-success-soft border border-success/25 text-xs text-foreground">
+          <span className="text-[10px] font-bold uppercase tracking-wider block text-success">
             Real-World Human Benefit:
           </span>
           <p className="mt-0.5 leading-relaxed font-medium">

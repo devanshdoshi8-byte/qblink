@@ -91,7 +91,7 @@ export const ChaosToClarityExperience: React.FC<ChaosToClarityExperienceProps> =
               queueState.step === 2
                 ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 border-primary"
                 : queueState.step > 2
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-bold"
+                ? "bg-success-soft text-success border-success/30 font-bold"
                 : "bg-card border-border text-muted-foreground hover:text-foreground"
             }`}
           >

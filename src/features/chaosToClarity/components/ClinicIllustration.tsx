@@ -36,8 +36,8 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
       <motion.div
         animate={{
           background: isTransformed
-            ? "radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.15), transparent 70%)"
-            : "radial-gradient(ellipse at 50% 0%, rgba(239, 68, 68, 0.12), transparent 70%)",
+            ? "none"
+            : "none",
         }}
         transition={{ duration: 0.8 }}
         className="absolute inset-0 pointer-events-none"
@@ -49,7 +49,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
           <div className="flex items-center gap-2">
             <span
               className={`w-2.5 h-2.5 rounded-full ${
-                isTransformed ? "bg-emerald-400 animate-pulse" : "bg-red-500 animate-ping"
+                isTransformed ? "bg-success" : "bg-danger"
               }`}
             />
             <span className="font-mono text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -68,7 +68,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
           <span
             className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
               isTransformed
-                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                ? "bg-success-soft text-success border-success/40"
                 : "bg-red-500/20 text-red-300 border-red-500/40"
             }`}
           >
@@ -93,7 +93,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                 </div>
               </div>
               <span className="font-mono text-xs text-slate-400 flex items-center gap-1">
-                <Clock className="w-3 h-3 text-amber-400" /> 1:30 PM
+                <Clock className="w-3 h-3 text-warning" /> 1:30 PM
               </span>
             </div>
 
@@ -121,9 +121,9 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
-                    className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-200"
+                    className="p-3 rounded-xl bg-success-soft border border-success/30 text-xs text-foreground"
                   >
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-success uppercase tracking-wider block">
                       Digital Terminal Active:
                     </span>
                     <p className="mt-0.5 leading-relaxed font-medium">
@@ -138,7 +138,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
             <div className="mt-3 grid grid-cols-2 gap-2 text-center">
               <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
                 <span className="text-[10px] text-slate-500 font-bold uppercase block">Now Serving</span>
-                <span className="font-mono font-black text-xl text-emerald-400">
+                <span className="font-mono font-black text-xl text-success">
                   {isTransformed ? `#A-${queueState.nowServing}` : "Paper #18"}
                 </span>
               </div>
@@ -152,7 +152,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
           </div>
 
           {/* Interactive QR Standee Callout */}
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-900/80 border-2 border-primary/40 shadow-xl flex items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl bg-[hsl(var(--brand-navy))] border-2 border-primary/40 shadow-xl flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shrink-0">
                 <QrCode className="w-7 h-7" />
@@ -185,7 +185,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
           <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg relative">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-lg">
+                <div className="w-9 h-9 rounded-xl bg-warning-soft text-warning flex items-center justify-center font-bold text-lg">
                   👩‍💻
                 </div>
                 <div>
@@ -198,7 +198,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
 
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  isTransformed ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"
+                  isTransformed ? "bg-success-soft text-success" : "bg-warning-soft text-warning"
                 }`}
               >
                 {isTransformed ? "In Total Control" : "Anxious & Blind"}
@@ -214,9 +214,9 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
-                    className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs text-amber-200 space-y-1"
+                    className="p-3.5 rounded-xl bg-warning-soft border border-warning/30 text-xs text-foreground space-y-1"
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-warning block">
                       Opportunity Cost Dilemma:
                     </span>
                     <p className="leading-relaxed">
@@ -229,9 +229,9 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
-                    className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-200 space-y-1"
+                    className="p-3.5 rounded-xl bg-success-soft border border-success/30 text-xs text-foreground space-y-1"
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-success block">
                       Reclaimed Time:
                     </span>
                     <p className="leading-relaxed">
@@ -247,7 +247,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
             {/* Waiting Room Seating Status */}
             <div className="mt-3.5 p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
               <span className="text-slate-400">Waiting Room Density:</span>
-              <span className={`font-bold ${isTransformed ? "text-emerald-400" : "text-red-400"}`}>
+              <span className={`font-bold ${isTransformed ? "text-success" : "text-danger"}`}>
                 {isTransformed ? "2 People (75% Less Crowding)" : "16 People (Packed & Tense)"}
               </span>
             </div>
@@ -258,10 +258,10 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-5 rounded-2xl bg-emerald-500/10 border-2 border-emerald-500/40 space-y-3"
+              className="p-5 rounded-2xl bg-success-soft border-2 border-success/40 space-y-3"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                <div className="flex items-center gap-2 text-xs font-bold text-success">
                   <Smartphone className="w-4 h-4" />
                   <span>Anya's Pocket Ticket: #A-{queueState.protagonistToken}</span>
                 </div>
@@ -278,7 +278,7 @@ export const ClinicIllustration: React.FC<ClinicIllustrationProps> = ({
                   className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all ${
                     queueState.isCalled
                       ? "bg-slate-800 text-slate-500 cursor-not-allowed"
-                      : "bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-emerald-500/20"
+                      : "bg-success text-success-foreground hover:bg-success/90"
                   }`}
                 >
                   <Sparkles className="w-4 h-4" />

@@ -144,7 +144,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
                   isActive
                     ? "bg-primary text-primary-foreground font-extrabold shadow-sm ring-2 ring-primary/40"
                     : isCompleted
-                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                    ? "bg-success-soft text-success border border-success/30"
                     : "bg-muted/40 text-muted-foreground hover:bg-muted"
                 }`}
               >
@@ -175,7 +175,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
               onClick={onToggleTour}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                 state.isPlayingTour
-                  ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 animate-pulse"
+                  ? "bg-warning-soft text-warning border border-warning/30"
                   : "bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20"
               }`}
             >
@@ -196,8 +196,8 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
           </div>
 
           {/* The Qblink Solution */}
-          <div className="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-foreground space-y-1">
-            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
+          <div className="p-3.5 rounded-xl bg-success-soft border border-success/20 text-foreground space-y-1">
+            <span className="text-[10px] font-bold text-success uppercase tracking-wider block">
               With Qblink (The Transformation)
             </span>
             <p className="text-muted-foreground">{currentStep.afterDescription}</p>
@@ -206,7 +206,7 @@ export const StoryProgressionPanel: React.FC<StoryProgressionPanelProps> = ({
 
         {/* Human Context Footnote */}
         <div className="p-3 rounded-xl bg-card border border-border text-[11px] text-muted-foreground flex items-start gap-2">
-          <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <Sparkles className="w-4 h-4 text-warning shrink-0 mt-0.5" />
           <p>
             <strong>Human Context:</strong> {currentStep.humanContext}
           </p>

@@ -28,7 +28,7 @@ export const MORPH_INDUSTRIES: Record<MorphIndustryKey, IndustryMorphConfig> = {
     locationName: "Metro Care Health & OPD",
     tagline: "Patients wait comfortably nearby instead of crowding in sick rooms",
     description: "Doctor consultations, diagnostic blood draws, and specialist appointments with live estimated turn arrivals.",
-    themeColor: "from-blue-600 to-cyan-500",
+    themeColor: "bg-primary text-primary-foreground",
     customer: {
       roleTitle: "Patient",
       name: "Anya Rao",
@@ -69,7 +69,7 @@ export const MORPH_INDUSTRIES: Record<MorphIndustryKey, IndustryMorphConfig> = {
     locationName: "Artisan Grill & Rooftop Dining",
     tagline: "Hungry guests explore nearby streets instead of blocking the front door",
     description: "Table seating queues, party size management, and kitchen pickup buzzers on any mobile browser.",
-    themeColor: "from-amber-600 to-orange-500",
+    themeColor: "bg-warning text-warning-foreground",
     customer: {
       roleTitle: "Dining Guest",
       name: "Rahul Verma (Party of 4)",
@@ -110,7 +110,7 @@ export const MORPH_INDUSTRIES: Record<MorphIndustryKey, IndustryMorphConfig> = {
     locationName: "Luxe Studio & Styling Lounge",
     tagline: "Clients run errands while waiting for their preferred master stylist",
     description: "Stylist chair allocation, multi-treatment tracking, and walk-in smoothing with rolling service velocity.",
-    themeColor: "from-purple-600 to-pink-500",
+    themeColor: "bg-foreground text-background",
     customer: {
       roleTitle: "Salon Client",
       name: "Priya Sundaram",
@@ -151,7 +151,7 @@ export const MORPH_INDUSTRIES: Record<MorphIndustryKey, IndustryMorphConfig> = {
     locationName: "Citizen Civic & Permit Center",
     tagline: "Citizens track multi-counter document permits with dignity and clarity",
     description: "Token document verification, multi-counter civic desks, and municipal public service routing.",
-    themeColor: "from-emerald-600 to-teal-500",
+    themeColor: "bg-info text-info-foreground",
     customer: {
       roleTitle: "Citizen Applicant",
       name: "Deepak Kumar",

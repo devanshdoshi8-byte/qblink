@@ -48,7 +48,7 @@ export const JoinQrKioskCard: React.FC<JoinQrKioskCardProps> = ({ queueId, queue
           <span>Live wait countdown on phone</span>
         </div>
         <div className="flex items-center gap-2 font-medium text-foreground">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          <ShieldCheck className="w-4 h-4 text-success" />
           <span>Turn alert before your number</span>
         </div>
       </div>
