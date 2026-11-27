@@ -19,6 +19,8 @@ export default {
       fontFamily: {
         sans: ["DM Sans", "system-ui", "sans-serif"],
         display: ["Space Grotesk", "system-ui", "sans-serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
+        signature: ["Great Vibes", "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",

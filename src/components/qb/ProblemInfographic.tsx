@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle } from "lucide-react";
+import BorderGlow from "@/components/reactbits/BorderGlow";
 
 const spots = [
   { x: 15, y: 40, label: "Walk-outs", detail: "22% leave when the line is unclear", stat: "22% lost" },
@@ -20,10 +21,6 @@ export const ProblemInfographic = () => {
       aria-label="The problem"
     >
       <div className="relative max-w-7xl mx-auto px-6 lg:px-24">
-        <div className="font-mono-caps text-glow/80 mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-glow" />
-          Ch. 02 · The Shape of Uncertainty
-        </div>
         <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
           Uncertainty has a shape.
           <br />
@@ -35,7 +32,15 @@ export const ProblemInfographic = () => {
         </p>
 
         {/* Interactive Silhouette Room Stage */}
-        <div className="mt-16 relative aspect-[16/7] rounded-2xl bg-deep/25 border border-glow/20 overflow-hidden shadow-xl">
+        <BorderGlow
+          backgroundColor="#0d1b2e"
+          borderRadius={16}
+          glowColor="180 54 54"
+          colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+          surfaceTheme="dark"
+          className="mt-16"
+        >
+          <div className="relative aspect-[16/7] overflow-hidden rounded-[14px]">
           {/* Animated Sonar Radar Sweep */}
           <div className="absolute inset-0 pointer-events-none opacity-30">
 
@@ -133,18 +138,18 @@ export const ProblemInfographic = () => {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+          </div>
+        </BorderGlow>
 
         {/* Interactive Legend Grid */}
         <div className="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3.5">
           {spots.map((s, i) => (
-            <motion.button
+            <button
               key={i}
-              whileHover={{ scale: 1.03, y: -2 }}
-              whileTap={{ scale: 0.97 }}
+              type="button"
               onMouseEnter={() => setActive(i)}
               onMouseLeave={() => setActive(null)}
-              className={`p-3.5 rounded-xl border text-left transition-all ${
+              className={`p-3.5 rounded-xl border text-left transition-colors ${
                 active === i
                   ? "bg-glow/20 border-glow text-cream shadow-lg shadow-glow/10"
                   : "bg-deep/20 border-glow/15 hover:border-glow/40 text-cream/70"
@@ -156,7 +161,7 @@ export const ProblemInfographic = () => {
               </div>
               <div className="text-cream font-semibold mt-1 text-sm">{s.label}</div>
               <div className="text-[11px] text-cream/50 mt-0.5">{s.stat}</div>
-            </motion.button>
+            </button>
           ))}
         </div>
       </div>

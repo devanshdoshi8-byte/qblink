@@ -1,21 +1,39 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, RotateCcw, FastForward, CheckCircle2, Bell, Activity } from "lucide-react";
+import BellToggle from "@/components/reactbits/BellToggle";
+import Counter from "@/components/reactbits/Counter";
+import TearTicket from "@/components/reactbits/TearTicket";
+import SlideCommit from "@/components/reactbits/SlideCommit";
+import BorderGlow from "@/components/reactbits/BorderGlow";
+import { useOptionalTheme } from "@/hooks/useTheme";
 
 const TOTAL_AHEAD = 6;
 const TICK_MS = 2800;
 
 export const LiveQueueDemo = () => {
+  const themeCtx = useOptionalTheme();
+  const isDark = themeCtx?.theme === "dark";
   const [position, setPosition] = useState(TOTAL_AHEAD);
   const [phase, setPhase] = useState<"waiting" | "almost" | "called" | "done">("waiting");
   const [paused, setPaused] = useState(false);
+  const [notifyEnabled, setNotifyEnabled] = useState(false);
+  const [ticketKey, setTicketKey] = useState(0);
+  const [ticketTorn, setTicketTorn] = useState(false);
   const [tokenNum] = useState("A-42");
+  const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const estWait = Math.max(1, position * 3);
 
   const reset = useCallback(() => {
+    if (confirmTimerRef.current) {
+      clearTimeout(confirmTimerRef.current);
+      confirmTimerRef.current = null;
+    }
     setPosition(TOTAL_AHEAD);
     setPhase("waiting");
+    setTicketTorn(false);
+    setTicketKey((k) => k + 1);
   }, []);
 
   const advanceOne = useCallback(() => {
@@ -23,7 +41,6 @@ export const LiveQueueDemo = () => {
       const next = p - 1;
       if (next <= 0) {
         setPhase("called");
-        setTimeout(() => setPhase("done"), 3200);
         return 0;
       }
       if (next <= 2) setPhase("almost");
@@ -33,11 +50,17 @@ export const LiveQueueDemo = () => {
 
   useEffect(() => {
     if (paused) return;
-    if (phase === "done") return;
+    if (phase === "called" || phase === "done") return;
 
     const t = setInterval(advanceOne, TICK_MS);
     return () => clearInterval(t);
   }, [paused, phase, advanceOne]);
+
+  useEffect(() => {
+    return () => {
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+    };
+  }, []);
 
   // Radius for circular progress ring
   const radius = 54;
@@ -57,17 +80,11 @@ export const LiveQueueDemo = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 font-mono-caps text-primary mb-4 text-xs tracking-[0.2em] uppercase font-semibold">
-                <span className="w-2 h-2 rounded-full bg-primary" />
-                Ch. 04 · Interactive Simulation
-              </div>
-
               <h2 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground leading-[1.02]">
                 Watch the wait
                 <br />
-                <span className="text-primary relative inline-block">
-                  dissolve in real time.
-                  <span className="absolute left-0 bottom-0 w-full h-1 bg-primary opacity-60 rounded-full" />
+                <span className={isDark ? "text-[hsl(var(--brand-cream))] italic font-normal" : "text-foreground italic font-normal"}>
+                  dissolve in real time
                 </span>
               </h2>
 
@@ -77,7 +94,15 @@ export const LiveQueueDemo = () => {
               </p>
 
               {/* Interactive Director Controls */}
-              <div className="mt-8 p-4 rounded-2xl bg-card border border-border/80 shadow-sm max-w-md">
+              <BorderGlow
+                backgroundColor={isDark ? "#0e1e34" : "#ffffff"}
+                surfaceTheme={isDark ? "dark" : "light"}
+                borderRadius={16}
+                glowColor={isDark ? "180 54 54" : "195 78 28"}
+                colors={isDark ? ["#51c2c2", "#10637f", "#f4f2eb"] : ["#10637f", "#51c2c2", "#0e1e34"]}
+                className="mt-8 max-w-md"
+              >
+                <div className="p-4">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center justify-between">
                   <span>Simulator Controls</span>
                   <span className="flex items-center gap-1 text-[11px] text-primary">
@@ -114,6 +139,78 @@ export const LiveQueueDemo = () => {
                     Reset
                   </button>
                 </div>
+                <div className="mt-4 pt-3 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-[11px] font-medium text-muted-foreground">
+                    Customer turn alert
+                  </span>
+                  <BellToggle
+                    offLabel="Notify me"
+                    onLabel="You'll be notified"
+                    color={isDark ? "#f4f2eb" : "#f4f2eb"}
+                    background="#0e1e34"
+                    onColor="#0e1e34"
+                    onBackground="#51c2c2"
+                    size="sm"
+                    radius={22}
+                    ringAmplitude={17}
+                    ringPasses={5}
+                    ringDecay={1}
+                    ringDuration={820}
+                    ringPivot={16}
+                    crossfadeMs={200}
+                    revealBounce={0}
+                    count={phase === "almost" || phase === "called" ? 1 : 0}
+                    badge
+                    badgeColor="#c93a3a"
+                    waves
+                    clapper={false}
+                    pressed={notifyEnabled}
+                    onChange={setNotifyEnabled}
+                  />
+                </div>
+                </div>
+              </BorderGlow>
+
+              {/* Tactile Perforated TearTicket */}
+              <div className="mt-6 max-w-md">
+                <div className="text-[11px] font-mono-caps text-muted-foreground mb-2">
+                  {ticketTorn ? "Stub torn · Ticket #A-42 active on phone" : "Pull perforated stub to draw ticket"}
+                </div>
+                <TearTicket
+                  key={ticketKey}
+                  width={340}
+                  height={118}
+                  stubSize={92}
+                  radius={14}
+                  background={isDark ? "#1a3552" : "#f4f2eb"}
+                  stubBackground={isDark ? "#13273d" : "#eae5d9"}
+                  color={isDark ? "#f4f2eb" : "#0e1e34"}
+                  border
+                  borderColor={isDark ? "rgba(81,194,194,0.28)" : "rgba(14,30,52,0.16)"}
+                  onTear={() => {
+                    setTicketTorn(true);
+                    setNotifyEnabled(true);
+                  }}
+                  ariaLabel="Tear queue ticket A-42"
+                  stub={
+                    <div className="flex flex-col items-center justify-center h-full text-center px-1">
+                      <span className="text-[9px] font-mono uppercase tracking-widest opacity-60">Pull</span>
+                      <span className="font-display text-lg font-extrabold tracking-tight">#{tokenNum}</span>
+                    </div>
+                  }
+                >
+                  <div className="flex items-center justify-between h-full px-5 py-3">
+                    <div>
+                      <div className="text-[10px] font-mono uppercase tracking-widest opacity-60">Qblink Paper Pass</div>
+                      <div className="font-display text-2xl font-black tracking-tight mt-0.5">#{tokenNum}</div>
+                      <div className="text-[11px] opacity-75">City Life Health · Counter 2</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[10px] font-mono uppercase opacity-60">Ahead</div>
+                      <div className="font-display text-xl font-bold tabular-nums">{position}</div>
+                    </div>
+                  </div>
+                </TearTicket>
               </div>
 
               <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
@@ -197,13 +294,33 @@ export const LiveQueueDemo = () => {
                             </p>
                           </div>
 
-                          <motion.div
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.97 }}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-success text-white text-xs font-bold shadow-md shadow-success/30"
-                          >
-                            <Bell className="w-3.5 h-3.5" /> Check-in Confirmed
-                          </motion.div>
+                          {phase === "done" ? (
+                            <div
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-success text-white text-xs font-bold shadow-md shadow-success/30"
+                            >
+                              <Bell className="w-3.5 h-3.5" /> Check-in Confirmed
+                            </div>
+                          ) : (
+                            <div className="flex justify-center pt-1">
+                              <SlideCommit
+                                label="Slide to confirm arrival"
+                                doneLabel="Checked in"
+                                errorLabel="Try again"
+                                width={236}
+                                height={44}
+                                radius={22}
+                                trackColor="#0e1e34"
+                                handleColor="#51c2c2"
+                                successColor="#1a7a53"
+                                holdMs={0}
+                                onConfirm={() => new Promise((resolve) => setTimeout(resolve, 350))}
+                                onDone={() => {
+                                  if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+                                  confirmTimerRef.current = setTimeout(() => setPhase("done"), 700);
+                                }}
+                              />
+                            </div>
+                          )}
                         </motion.div>
                       ) : (
                         <motion.div
@@ -244,14 +361,16 @@ export const LiveQueueDemo = () => {
                               <span className="text-[10px] font-mono-caps text-muted-foreground uppercase tracking-widest font-semibold">
                                 Position
                               </span>
-                              <motion.span
-                                key={position}
-                                initial={{ scale: 0.7, opacity: 0, y: -10 }}
-                                animate={{ scale: 1, opacity: 1, y: 0 }}
-                                className="font-display text-5xl sm:text-6xl font-extrabold text-foreground tabular-nums tracking-tighter"
-                              >
-                                {position}
-                              </motion.span>
+                              <div className="font-display font-extrabold tracking-tighter my-0.5">
+                                <Counter
+                                  value={position}
+                                  fontSize="3.25rem"
+                                  fontWeight={800}
+                                  textColor="hsl(var(--foreground))"
+                                  duration={480}
+                                  bounce={0.22}
+                                />
+                              </div>
                               <span className="text-[11px] text-muted-foreground font-medium">
                                 {position === 1 ? "1 person ahead" : `${position} people ahead`}
                               </span>

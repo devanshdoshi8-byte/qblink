@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import { supabase } from "@/integrations/supabase/client";
 import { SkeletonPageHeader, SkeletonStatGrid, SkeletonChartCard } from "@/components/skeletons/DashboardSkeletons";
@@ -172,10 +173,17 @@ const AdminAnalytics = () => {
           <p className="text-sm text-muted-foreground mt-1">Deep insights across every business and customer</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <select value={category} onChange={e => setCategory(e.target.value)} className="px-3 py-1.5 rounded-xl bg-card border border-border text-sm">
-            <option>All</option>
-            {allCategories.map(c => <option key={c}>{c}</option>)}
-          </select>
+          <GlideSelect
+            size="sm"
+            value={category}
+            onChange={setCategory}
+            ariaLabel="Filter by category"
+            menuWidth={180}
+            options={[
+              { value: "All", label: "All" },
+              ...allCategories.map((c) => ({ value: c, label: c })),
+            ]}
+          />
           <div className="flex gap-1 bg-card rounded-xl p-1 card-shadow">
             {(["7d", "30d", "90d"] as const).map(r => (
               <button key={r} onClick={() => setRange(r)} className={`px-4 py-1.5 rounded-lg text-xs font-semibold ${

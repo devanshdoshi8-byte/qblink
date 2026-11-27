@@ -6,6 +6,7 @@ import SectionHeading from "./SectionHeading";
 import { toast } from "sonner";
 import PrefillNotice from "@/components/PrefillNotice";
 import { hapticSuccess } from "@/lib/haptics";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 
 const ContactSection = () => {
   const [form, setForm] = useState({ name: "", business: "", email: "", phone: "", industry: "", message: "" });
@@ -166,16 +167,24 @@ const ContactSection = () => {
               <input type="email" placeholder="Email Address *" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} className={inputClass} />
               <input type="tel" required placeholder="Phone Number *" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className={inputClass} />
             </div>
-            <select value={form.industry} onChange={e => setForm({...form, industry: e.target.value})} className={inputClass}>
-              <option value="">Select Industry</option>
-              <option value="restaurant">Restaurant</option>
-              <option value="clinic">Clinic / Healthcare</option>
-              <option value="bank">Bank / Finance</option>
-              <option value="salon">Salon / Beauty</option>
-              <option value="government">Government Services</option>
-              <option value="service">Service Center</option>
-              <option value="other">Other</option>
-            </select>
+            <GlideSelect
+              value={form.industry}
+              onChange={(val) => setForm({ ...form, industry: val })}
+              ariaLabel="Select Industry"
+              placeholder="Select Industry"
+              menuWidth="100%"
+              className="w-full"
+              options={[
+                { value: "", label: "Select Industry" },
+                { value: "restaurant", label: "Restaurant" },
+                { value: "clinic", label: "Clinic / Healthcare" },
+                { value: "bank", label: "Bank / Finance" },
+                { value: "salon", label: "Salon / Beauty" },
+                { value: "government", label: "Government Services" },
+                { value: "service", label: "Service Center" },
+                { value: "other", label: "Other" },
+              ]}
+            />
             <textarea placeholder="Tell us about your needs..." rows={4} value={form.message} onChange={e => setForm({...form, message: e.target.value})} className={inputClass + " resize-none"} />
             <div className="flex flex-wrap gap-4">
               <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-7 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity elevated-shadow flex items-center gap-2 disabled:opacity-50">

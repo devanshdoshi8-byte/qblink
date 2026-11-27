@@ -26,6 +26,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Counter from "@/components/reactbits/Counter";
 
 interface ExecutiveTelemetryBarProps {
   queue?: {
@@ -269,8 +270,15 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
           </div>
 
           <div className="mt-2">
-            <span className="font-mono text-sm sm:text-base font-black text-foreground">
-              {dailyOutput.servedCount} {nouns.plural}
+            <span className="font-mono text-sm sm:text-base font-black text-foreground inline-flex items-baseline gap-1.5">
+              <Counter
+                value={dailyOutput.servedCount}
+                fontSize="1rem"
+                fontWeight={900}
+                textColor="hsl(var(--foreground))"
+                intro={false}
+              />
+              <span>{nouns.plural}</span>
             </span>
             <span className="block text-[11px] text-muted-foreground mt-1">
               Completed since midnight

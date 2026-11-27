@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import WakeSlider from "@/components/reactbits/WakeSlider";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import {
   Calculator,
   TrendingDown,
@@ -195,15 +197,17 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                   <span className="text-muted-foreground text-xs">/ day</span>
                 </div>
               </div>
-              <input
-                type="range"
-                min="10"
-                max="500"
-                step="5"
-                aria-label={preset.visitorTerm}
+              <WakeSlider
+                min={10}
+                max={500}
+                step={5}
+                bars={28}
+                height={36}
+                restHeight={8}
+                gap={3}
+                ariaLabel={preset.visitorTerm}
                 value={dailyVisitors}
-                onChange={(e) => setDailyVisitors(parseInt(e.target.value))}
-                className="w-full accent-primary cursor-pointer"
+                onChange={setDailyVisitors}
               />
               <div className="flex justify-between text-[10px] text-muted-foreground">
                 <span>10</span>
@@ -229,15 +233,17 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                   />
                 </div>
               </div>
-              <input
-                type="range"
-                min="50"
-                max="3000"
-                step="50"
-                aria-label={preset.valueTerm}
+              <WakeSlider
+                min={50}
+                max={3000}
+                step={50}
+                bars={28}
+                height={36}
+                restHeight={8}
+                gap={3}
+                ariaLabel={preset.valueTerm}
                 value={avgCustomerValue}
-                onChange={(e) => setAvgCustomerValue(parseInt(e.target.value))}
-                className="w-full accent-primary cursor-pointer"
+                onChange={setAvgCustomerValue}
               />
               <div className="flex justify-between text-[10px] text-muted-foreground">
                 <span>{outputs.currencySymbol}50</span>
@@ -254,16 +260,18 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                   {currentWalkawayRate}%
                 </span>
               </div>
-              <input
-                id="walkaway-slider"
-                type="range"
-                min="1"
-                max="35"
-                step="1"
-                aria-label="Estimated Queue Walkaway Rate"
+              <WakeSlider
+                min={1}
+                max={35}
+                step={1}
+                bars={28}
+                height={36}
+                restHeight={8}
+                gap={3}
+                fillColor="hsl(var(--warning))"
+                ariaLabel="Estimated Queue Walkaway Rate"
                 value={currentWalkawayRate}
-                onChange={(e) => setCurrentWalkawayRate(parseInt(e.target.value))}
-                className="w-full accent-warning cursor-pointer"
+                onChange={setCurrentWalkawayRate}
               />
               <p className="text-[11px] text-muted-foreground leading-tight">
                 Estimated % of customers who walk away or abandon when seeing a congested physical queue.
@@ -278,16 +286,18 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                   {targetWalkawayRate}%
                 </span>
               </div>
-              <input
-                id="target-slider"
-                type="range"
-                min="0"
+              <WakeSlider
+                min={0}
                 max={Math.max(1, currentWalkawayRate)}
-                step="1"
-                aria-label="Scenario Target Walkaway Rate"
+                step={1}
+                bars={28}
+                height={36}
+                restHeight={8}
+                gap={3}
+                fillColor="hsl(var(--success))"
+                ariaLabel="Scenario Target Walkaway Rate"
                 value={targetWalkawayRate}
-                onChange={(e) => setTargetWalkawayRate(parseInt(e.target.value))}
-                className="w-full accent-success cursor-pointer"
+                onChange={setTargetWalkawayRate}
               />
               <p className="text-[11px] text-muted-foreground leading-tight">
                 Target walkaway rate under an improved digital flow scenario (Reduction: -{outputs.rateReductionPercent}%).
@@ -295,20 +305,22 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
             </div>
 
             {/* Input 5: Operating Days */}
-            <div className="flex items-center justify-between text-xs font-semibold px-1">
-              <label htmlFor="operating-days-select" className="text-muted-foreground">Operating Days per Month</label>
-              <select
-                id="operating-days-select"
-                aria-label="Operating Days per Month"
-                value={operatingDays}
-                onChange={(e) => setOperatingDays(parseInt(e.target.value))}
-                className="px-3 py-1 rounded-lg bg-muted/60 border border-border text-foreground font-mono font-bold text-xs"
-              >
-                <option value={22}>22 days (Mon–Fri)</option>
-                <option value={26}>26 days (6 days/wk)</option>
-                <option value={28}>28 days</option>
-                <option value={30}>30 days (Full month)</option>
-              </select>
+            <div className="flex items-center justify-between gap-3 text-xs font-semibold px-1">
+              <span className="text-muted-foreground">Operating Days per Month</span>
+              <GlideSelect
+                size="sm"
+                menuWidth={190}
+                align="right"
+                ariaLabel="Operating Days per Month"
+                value={String(operatingDays)}
+                onChange={(val) => setOperatingDays(parseInt(val, 10))}
+                options={[
+                  { value: "22", label: "22 days (Mon–Fri)" },
+                  { value: "26", label: "26 days (6 days/wk)" },
+                  { value: "28", label: "28 days" },
+                  { value: "30", label: "30 days (Full month)" },
+                ]}
+              />
             </div>
           </div>
 

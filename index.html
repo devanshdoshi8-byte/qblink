@@ -13,6 +13,7 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet" />
     <meta name="theme-color" content="#10637f" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -29,13 +30,11 @@
       (function () {
         try {
           var stored = localStorage.getItem("qblink-theme");
-          if (stored === "dark") {
-            document.documentElement.classList.add("dark");
-          } else if (stored === "light") {
+          if (stored === "light") {
             document.documentElement.classList.remove("dark");
+          } else {
+            document.documentElement.classList.add("dark");
           }
-          // No stored preference => leave neutral so the app can show the
-          // first-time appearance picker before committing to a theme.
         } catch (e) {}
       })();
     </script>

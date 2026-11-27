@@ -38,7 +38,7 @@ const applyThemeClass = (t: Theme) => {
 };
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(() => readStored() ?? "light");
+  const [theme, setThemeState] = useState<Theme>(() => readStored() ?? "dark");
   const [needsChoice, setNeedsChoice] = useState<boolean>(false);
 
   useEffect(() => {
@@ -72,3 +72,5 @@ export const useTheme = (): Ctx => {
   if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
   return ctx;
 };
+
+export const useOptionalTheme = (): Ctx | null => useContext(ThemeContext);

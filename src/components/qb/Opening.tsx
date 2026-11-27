@@ -84,7 +84,6 @@ export const Opening = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-24 py-4 flex justify-between font-mono-caps text-cream/40">
           <span>Est. 2025 · India</span>
           <span className="hidden sm:inline">Hardware-free · Browser-native</span>
-          <span>Ch. 01 / 10</span>
         </div>
       </div>
     </section>

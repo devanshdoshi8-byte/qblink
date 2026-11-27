@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tag, Plus, Trash2 } from "lucide-react";
@@ -85,7 +86,15 @@ const Input = ({ label, value, onChange, type = "text" }: any) => (
 );
 const Select = ({ label, value, options, onChange }: any) => (
   <div><label className="text-xs uppercase font-bold text-muted-foreground mb-1.5 block">{label}</label>
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="input">{options.map((o: string) => <option key={o} value={o}>{o}</option>)}</select></div>
+    <GlideSelect
+      value={value}
+      onChange={onChange}
+      ariaLabel={label}
+      menuWidth="100%"
+      className="w-full"
+      options={options.map((o: string) => ({ value: o, label: o }))}
+    />
+  </div>
 );
 
 export default AdminMarketing;

@@ -310,7 +310,6 @@ export const Environments = () => (
     <div className="max-w-7xl mx-auto px-6 lg:px-16">
       <div className="grid lg:grid-cols-12 gap-6 mb-16 items-end">
         <div className="lg:col-span-7">
-          <div className="font-mono-caps text-ink/50 mb-4">Ch. 07 · Where the wait lives</div>
           <h2 className="font-display text-4xl sm:text-6xl text-ink leading-[0.95]">
             Every walk-in business has a version of the same line.
           </h2>

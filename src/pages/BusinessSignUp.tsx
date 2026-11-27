@@ -8,6 +8,8 @@ import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
 import { GoogleButton, AuthDivider } from "@/components/auth/GooglePickerModal";
 import { signInWithGoogle, ensureRoleAndProfile } from "@/lib/auth/authService";
+import GlideSelect from "@/components/reactbits/GlideSelect";
+import WakeSlider from "@/components/reactbits/WakeSlider";
 import { INDUSTRIES, getIndustryDefaults, type IndustryDefaults } from "@/lib/industryDefaults";
 
 const ALERT_LABELS: Record<string, string> = {
@@ -163,10 +165,14 @@ const BusinessSignUp = () => {
               className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
           </Field>
           <Field icon={<Tag className="w-4 h-4" />} label="Industry">
-            <select value={category} onChange={e => setCategory(e.target.value)}
-              className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors appearance-none">
-              {INDUSTRIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <GlideSelect
+              options={INDUSTRIES.map((c) => ({ value: c, label: c }))}
+              value={category}
+              onChange={(val) => setCategory(val)}
+              ariaLabel="Industry"
+              menuWidth="100%"
+              className="w-full pl-7"
+            />
           </Field>
 
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-3">
@@ -210,14 +216,17 @@ const BusinessSignUp = () => {
               <p className="text-xs font-medium text-foreground mb-1.5">
                 Estimated service time · <span className="text-primary">{overrides.estimated_service_time} min</span>
               </p>
-              <input
-                type="range"
+              <WakeSlider
                 min={2}
                 max={60}
                 step={1}
+                bars={28}
+                height={36}
+                restHeight={8}
+                gap={3}
                 value={overrides.estimated_service_time}
-                onChange={e => setOverrides({ ...overrides, estimated_service_time: Number(e.target.value) })}
-                className="w-full accent-primary"
+                ariaLabel="Estimated service time"
+                onChange={v => setOverrides({ ...overrides, estimated_service_time: v })}
               />
             </div>
 

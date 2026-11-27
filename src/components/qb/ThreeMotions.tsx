@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, UserCheck, Clock, ShieldCheck } from "lucide-react";
+import BorderGlow from "@/components/reactbits/BorderGlow";
 
 export const ThreeMotions = () => (
   <section
@@ -10,10 +11,6 @@ export const ThreeMotions = () => (
     <div className="max-w-7xl mx-auto px-6 lg:px-24 relative z-10">
       <div className="flex items-end justify-between flex-wrap gap-6 mb-8">
         <div>
-          <div className="font-mono-caps text-glow/80 mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-glow" />
-            Ch. 03 · Unified Kinetic Flow
-          </div>
           <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.95] max-w-3xl">
             One thread.
             <br />
@@ -27,7 +24,19 @@ export const ThreeMotions = () => (
       </div>
 
       {/* Interactive Timeline Pipeline (Desktop) */}
-      <div className="mt-16 relative hidden md:block rounded-3xl bg-deep/35 border border-glow/20 p-8 shadow-xl">
+      <BorderGlow
+        backgroundColor="#0d1b2e"
+        borderRadius={24}
+        glowColor="180 54 54"
+        glowRadius={48}
+        glowIntensity={1}
+        coneSpread={35}
+        animated
+        colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+        surfaceTheme="dark"
+        className="mt-16 hidden md:block"
+      >
+        <div className="relative p-8">
         <svg viewBox="0 0 1200 240" className="w-full">
           <defs>
             <linearGradient id="threadGlow" x1="0" x2="1">
@@ -113,7 +122,8 @@ export const ThreeMotions = () => (
             </circle>
           </g>
         </svg>
-      </div>
+        </div>
+      </BorderGlow>
 
       {/* Mobile Vertical Timeline */}
       <div className="md:hidden mt-12 space-y-6">
@@ -128,18 +138,29 @@ export const ThreeMotions = () => (
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.15 }}
-            className="flex items-start gap-4 p-4 rounded-2xl bg-deep/30 border border-glow/20"
           >
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-xl bg-glow/15 border border-glow flex items-center justify-center text-glow font-bold text-sm">
-                {s.n}
+            <BorderGlow
+              backgroundColor="#0d1b2e"
+              borderRadius={16}
+              glowColor="180 54 54"
+              glowRadius={40}
+              glowIntensity={1}
+              colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+              surfaceTheme="dark"
+            >
+              <div className="flex items-start gap-4 p-4">
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 rounded-xl bg-glow/15 border border-glow flex items-center justify-center text-glow font-bold text-sm">
+                    {s.n}
+                  </div>
+                  {i < 2 && <div className="w-0.5 h-10 bg-gradient-to-b from-glow to-transparent mt-2" />}
+                </div>
+                <div>
+                  <div className="font-display text-xl text-cream font-bold">{s.label}</div>
+                  <div className="text-cream/70 text-xs mt-1 leading-relaxed">{s.sub}</div>
+                </div>
               </div>
-              {i < 2 && <div className="w-0.5 h-10 bg-gradient-to-b from-glow to-transparent mt-2" />}
-            </div>
-            <div>
-              <div className="font-display text-xl text-cream font-bold">{s.label}</div>
-              <div className="text-cream/70 text-xs mt-1 leading-relaxed">{s.sub}</div>
-            </div>
+            </BorderGlow>
           </motion.div>
         ))}
       </div>
@@ -172,24 +193,33 @@ export const ThreeMotions = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: i * 0.15 }}
-            whileHover={{ y: -6, scale: 1.02 }}
-            className="relative rounded-2xl bg-gradient-to-b from-deep/40 to-deep/15 border border-glow/20 p-7 shadow-lg hover:border-glow/50 transition-all group"
           >
-            <div className="w-12 h-12 rounded-xl bg-glow/10 border border-glow/30 flex items-center justify-center mb-5 group-hover:bg-glow/20 transition-colors">
-              <c.icon className="w-6 h-6 text-glow" />
-            </div>
+            <BorderGlow
+              backgroundColor="#0d1b2e"
+              borderRadius={16}
+              glowColor="180 54 54"
+              colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+              surfaceTheme="dark"
+              className="h-full"
+            >
+              <div className="relative p-7 group h-full flex flex-col">
+                <div className="w-12 h-12 rounded-xl bg-glow/10 border border-glow/30 flex items-center justify-center mb-5 group-hover:bg-glow/20 transition-colors">
+                  <c.icon className="w-6 h-6 text-glow" />
+                </div>
 
-            <div className="font-mono-caps text-glow text-xs font-bold tracking-wider mb-2">
-              PERSPECTIVE 0{i + 1}
-            </div>
+                <div className="font-mono-caps text-glow text-xs font-bold tracking-wider mb-2">
+                  PERSPECTIVE 0{i + 1}
+                </div>
 
-            <h3 className="font-display text-2xl text-cream font-bold leading-snug">{c.h}</h3>
-            <p className="text-cream/70 mt-3 text-sm leading-relaxed">{c.b}</p>
+                <h3 className="font-display text-2xl text-cream font-bold leading-snug">{c.h}</h3>
+                <p className="text-cream/70 mt-3 text-sm leading-relaxed flex-1">{c.b}</p>
 
-            <div className="mt-6 pt-4 border-t border-glow/15 flex items-center justify-between text-xs text-glow/80 font-mono-caps">
-              <span>{c.tag}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </div>
+                <div className="mt-6 pt-4 border-t border-glow/15 flex items-center justify-between text-xs text-glow/80 font-mono-caps">
+                  <span>{c.tag}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </BorderGlow>
           </motion.div>
         ))}
       </div>

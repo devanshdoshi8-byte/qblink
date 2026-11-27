@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import MagicBento from "@/components/reactbits/MagicBento";
+import BorderGlow from "@/components/reactbits/BorderGlow";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import AdminOnboardingChecklist from "@/components/admin/AdminOnboardingChecklist";
 import {
@@ -199,16 +201,76 @@ const AdminOverview = () => {
 
       <AdminOnboardingChecklist />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Kpi icon={<Building2 className="w-4 h-4 text-primary" />} label="Total Businesses" value={totals.businesses} />
-        <Kpi icon={<Users className="w-4 h-4 text-primary" />} label="Total Customers" value={totals.customers.toLocaleString()} />
-        <Kpi icon={<Activity className="w-4 h-4 text-success" />} label="Active Queues" value={totals.activeQueues} sub="Live now" />
-        <Kpi icon={<UserCheck className="w-4 h-4 text-primary" />} label="Visitors Today" value={totals.visitorsToday} />
-        <Kpi icon={<Ticket className="w-4 h-4 text-primary" />} label="Tokens Generated" value={totals.tokensToday} />
-        <Kpi icon={<Clock className="w-4 h-4 text-warning" />} label="Avg Wait Time" value={`${totals.avgWait}m`} />
-        <Kpi icon={<CheckCircle className="w-4 h-4 text-success" />} label="Served Today" value={totals.servedToday} />
-        <Kpi icon={<TrendingDown className="w-4 h-4 text-danger" />} label="Drop-off Rate" value={`${totals.dropOffRate}%`} />
-      </div>
+      <MagicBento
+        columns={4}
+        rowHeight={148}
+        gap={12}
+        radius={20}
+        enableBorderGlow={true}
+        enableSpotlight={true}
+        spotlightRadius={300}
+        clickEffect={true}
+        className="mb-6"
+        cards={[
+          {
+            id: "total-businesses",
+            label: "Total Businesses",
+            title: "Active accounts",
+            value: totals.businesses,
+            icon: <Building2 className="w-4 h-4 text-primary" />,
+          },
+          {
+            id: "total-customers",
+            label: "Total Customers",
+            title: "Registered profiles",
+            value: totals.customers.toLocaleString(),
+            icon: <Users className="w-4 h-4 text-primary" />,
+          },
+          {
+            id: "active-queues",
+            label: "Active Queues",
+            title: "Live now",
+            value: totals.activeQueues,
+            accent: true,
+            icon: <Activity className="w-4 h-4 text-success" />,
+          },
+          {
+            id: "visitors-today",
+            label: "Visitors Today",
+            title: "Walk-ins joined",
+            value: totals.visitorsToday,
+            icon: <UserCheck className="w-4 h-4 text-primary" />,
+          },
+          {
+            id: "tokens-today",
+            label: "Tokens Generated",
+            title: "Issued today",
+            value: totals.tokensToday,
+            icon: <Ticket className="w-4 h-4 text-primary" />,
+          },
+          {
+            id: "avg-wait",
+            label: "Avg Wait Time",
+            title: "Across served tokens",
+            value: `${totals.avgWait}m`,
+            icon: <Clock className="w-4 h-4 text-warning" />,
+          },
+          {
+            id: "served-today",
+            label: "Served Today",
+            title: "Completed visits",
+            value: totals.servedToday,
+            icon: <CheckCircle className="w-4 h-4 text-success" />,
+          },
+          {
+            id: "drop-off-rate",
+            label: "Drop-off Rate",
+            title: "Skipped or removed",
+            value: `${totals.dropOffRate}%`,
+            icon: <TrendingDown className="w-4 h-4 text-danger" />,
+          },
+        ]}
+      />
 
       <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
         <Insight icon={<Flame className="w-4 h-4 text-warning" />} title="Most active business" value={insights.mostActive?.name} sub={insights.mostActive ? `${insights.mostActive.count} tokens today` : "No tokens yet"} />
@@ -309,19 +371,35 @@ const Kpi = ({ icon, label, value, sub }: { icon: React.ReactNode; label: string
 );
 
 const Insight = ({ icon, title, value, sub }: { icon: React.ReactNode; title: string; value?: string; sub: string }) => (
-  <div className="bg-card rounded-2xl p-4 card-shadow">
-    <div className="flex items-center gap-2 mb-2">{icon}<span className="text-xs text-muted-foreground">{title}</span></div>
-    <p className="text-sm font-bold text-foreground truncate">{value || "—"}</p>
-    <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
-  </div>
+  <BorderGlow
+    backgroundColor="hsl(var(--card))"
+    borderRadius={16}
+    glowColor="180 54 54"
+    colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+    className="h-full"
+  >
+    <div className="p-4 h-full">
+      <div className="flex items-center gap-2 mb-2">{icon}<span className="text-xs text-muted-foreground">{title}</span></div>
+      <p className="text-sm font-bold text-foreground truncate">{value || "—"}</p>
+      <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
+    </div>
+  </BorderGlow>
 );
 
 const ChartCard = ({ title, subtitle, children, className = "" }: { title: string; subtitle: string; children: React.ReactNode; className?: string }) => (
-  <div className={`bg-card rounded-2xl p-5 card-shadow ${className}`}>
-    <h3 className="font-semibold text-foreground">{title}</h3>
-    <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
-    {children}
-  </div>
+  <BorderGlow
+    backgroundColor="hsl(var(--card))"
+    borderRadius={16}
+    glowColor="180 54 54"
+    colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+    className={className}
+  >
+    <div className="p-5 h-full">
+      <h3 className="font-semibold text-foreground">{title}</h3>
+      <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
+      {children}
+    </div>
+  </BorderGlow>
 );
 
 const Empty = () => (

@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { User, Lock, Phone, Mail, ArrowLeft, AlertCircle, Loader2 } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { COUNTRY_CODES, normalizePhone, phoneToEmail, isValidPhone } from "@/lib/phoneAuth";
 import { GoogleButton, AuthDivider } from "@/components/auth/GooglePickerModal";
 import { signInWithGoogle } from "@/lib/auth/authService";
@@ -148,12 +149,17 @@ const CustomerSignUp = () => {
             <div>
               <label className="text-sm font-medium text-foreground mb-1.5 block">WhatsApp number</label>
               <div className="flex gap-2">
-                <select value={countryCode} onChange={e => setCountryCode(e.target.value)}
-                  className="px-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors">
-                  {COUNTRY_CODES.map(c => (
-                    <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
-                  ))}
-                </select>
+                <GlideSelect
+                  value={countryCode}
+                  onChange={setCountryCode}
+                  ariaLabel="Country code"
+                  menuWidth={128}
+                  options={COUNTRY_CODES.map((c) => ({
+                    value: c.code,
+                    label: `${c.flag} ${c.code}`,
+                  }))}
+                  className="w-28 shrink-0"
+                />
                 <div className="relative flex-1">
                   <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input type="tel" inputMode="numeric" value={phone}

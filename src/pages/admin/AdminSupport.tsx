@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageSquare, Mail, Bug, Lightbulb, Briefcase, Star, Calendar, HelpCircle } from "lucide-react";
 
@@ -62,9 +63,18 @@ const AdminSupport = () => {
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">{r.message}</p>
                 <p className="text-[10px] text-muted-foreground mt-2">{new Date(r.created_at).toLocaleString()}{r.source ? ` · via ${r.source}` : ""}</p>
               </div>
-              <select value={r.category} onChange={(e) => setCategory(r.id, e.target.value)} className="text-xs px-2 py-1.5 rounded-lg bg-background border border-border">
-                {TABS.filter((t) => t.key !== "all").map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
-              </select>
+              <GlideSelect
+                size="sm"
+                align="right"
+                value={r.category}
+                onChange={(val) => setCategory(r.id, val)}
+                ariaLabel="Ticket category"
+                menuWidth={160}
+                options={TABS.filter((t) => t.key !== "all").map((t) => ({
+                  value: t.key,
+                  label: t.label,
+                }))}
+              />
             </div>
           ))}
       </div>

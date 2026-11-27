@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import WakeSlider from "@/components/reactbits/WakeSlider";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Billboard, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -604,10 +605,6 @@ export const ChaoticRoom360: React.FC = () => {
         {/* Editorial Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
           <div className="max-w-3xl">
-            <div className="font-mono-caps text-glow/90 mb-4 flex items-center gap-2 text-xs tracking-[0.25em]">
-              <span className="w-2 h-2 rounded-full bg-glow" />
-              Ch. 04 · 360° Spatial Reality Simulator
-            </div>
             <h2 className="font-display text-4xl sm:text-6xl text-cream leading-[0.94] tracking-tight">
               Step inside the room.
               <br />
@@ -761,15 +758,20 @@ export const ChaoticRoom360: React.FC = () => {
               </div>
 
               {/* Range Slider */}
-              <div className="relative flex items-center">
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
+              <div className="relative">
+                <WakeSlider
                   value={transition}
-                  onChange={(e) => setTransition(parseFloat(e.target.value))}
-                  className="w-full h-2.5 bg-[hsl(var(--brand-cream)/0.18)] rounded-lg appearance-none cursor-pointer accent-glow shadow-inner"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  bars={32}
+                  height={36}
+                  restHeight={10}
+                  gap={4}
+                  fillColor="hsl(var(--brand-glow))"
+                  trackColor="hsl(var(--brand-cream) / 0.18)"
+                  ariaLabel="360 room metamorphosis"
+                  onChange={setTransition}
                 />
               </div>
 

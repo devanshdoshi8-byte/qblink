@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCustomerAppointments } from "@/hooks/useCustomerRealtime";
 import { Skeleton } from "@/components/ui/skeleton";
 import { hapticSuccess } from "@/lib/haptics";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 
 interface BookableBusiness { id: string; name: string }
 
@@ -97,15 +98,18 @@ const UpcomingAppointments = ({ businesses = [], customerName = "" }: { business
               <button onClick={() => setOpen(false)} aria-label="Close"><X className="w-4 h-4 text-muted-foreground" /></button>
             </div>
             <div className="space-y-3">
-              <select
+              <GlideSelect
                 value={form.business_id}
-                onChange={(e) => setForm({ ...form, business_id: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl bg-background border border-border text-sm"
-                aria-label="Business"
-              >
-                <option value="">Select a business…</option>
-                {businesses.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
-              </select>
+                onChange={(val) => setForm({ ...form, business_id: val })}
+                ariaLabel="Business"
+                placeholder="Select a business…"
+                menuWidth="100%"
+                className="w-full"
+                options={[
+                  { value: "", label: "Select a business…" },
+                  ...businesses.map((b) => ({ value: b.id, label: b.name })),
+                ]}
+              />
               <input
                 type="datetime-local"
                 value={form.scheduled_at}

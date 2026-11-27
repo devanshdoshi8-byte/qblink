@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Bell, Plus, Trash2 } from "lucide-react";
@@ -25,9 +26,17 @@ const AdminNotifications = () => {
       <div className="grid lg:grid-cols-[400px,1fr] gap-6">
         <div className="bg-card rounded-2xl p-6 card-shadow self-start flex flex-col gap-3">
           <h2 className="font-bold text-foreground">New template</h2>
-          <select value={form.channel} onChange={(e) => setForm({ ...form, channel: e.target.value })} className="input">
-            {["email","push","sms","whatsapp","in_app"].map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <GlideSelect
+            value={form.channel}
+            onChange={(val) => setForm({ ...form, channel: val })}
+            ariaLabel="Channel"
+            menuWidth="100%"
+            className="w-full"
+            options={["email", "push", "sms", "whatsapp", "in_app"].map((c) => ({
+              value: c,
+              label: c,
+            }))}
+          />
           <input placeholder="Key (e.g. queue.joined)" value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} className="input" />
           <input placeholder="Subject (email only)" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="input" />
           <textarea placeholder="Body — use {{variables}}" rows={5} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="input" />

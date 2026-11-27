@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, TrendingUp, Activity, CheckCircle, Clock, Users, ShieldAlert } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import SplitFlapText from "@/components/reactbits/SplitFlapText";
+import Counter from "@/components/reactbits/Counter";
+import SpotlightCard from "@/components/reactbits/SpotlightCard";
 
 const tabs = ["Live queue", "Insights", "Queue health", "Tokens"];
 
@@ -30,10 +33,6 @@ export const DashboardPreview = () => {
     <section className="relative hero-stage py-24 sm:py-32 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-5 sm:px-8 z-10">
         <div className="max-w-2xl">
-          <div className="font-mono-caps stage-accent mb-4 flex items-center gap-2 text-xs tracking-[0.2em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--brand-glow))]" />
-            Ch. 06 · The Operator Surface
-          </div>
           <h2 className="font-display text-4xl sm:text-5xl md:text-6xl stage-text leading-[1.02]">
             Everything at the counter,
             <br />
@@ -51,9 +50,9 @@ export const DashboardPreview = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-14 rounded-3xl bg-[hsl(var(--brand-deep)/0.4)] p-2.5 sm:p-4 overflow-hidden shadow-xl border border-[hsl(var(--brand-glow)/0.2)]"
+          className="mt-14"
         >
-          <div className="rounded-2xl bg-[hsl(var(--brand-navy))] border border-[hsl(var(--brand-cream)/0.08)] overflow-hidden">
+          <div className="rounded-2xl bg-[hsl(var(--brand-navy))] border border-[hsl(var(--brand-cream)/0.08)] overflow-hidden shadow-xl">
             {/* Console Bar */}
             <div className="flex items-center justify-between px-5 h-12 border-b border-[hsl(var(--brand-cream)/0.08)] bg-[hsl(var(--brand-navy))]">
               <span className="text-[11px] font-mono-caps text-cream/60 hidden sm:inline">Counter Desk</span>
@@ -86,25 +85,31 @@ export const DashboardPreview = () => {
               <div className="bg-[hsl(var(--brand-navy))] p-6 sm:p-8">
                 <div className="flex items-center justify-between mb-8 p-4 rounded-2xl bg-[hsl(var(--brand-cream)/0.04)] border border-[hsl(var(--brand-cream)/0.08)]">
                   <div>
-                    <div className="text-xs tracking-[0.2em] uppercase stage-muted font-mono-caps font-bold">Now serving</div>
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={servingNum}
-                        initial={{ y: 15, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -15, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="font-display text-5xl sm:text-6xl stage-accent font-extrabold tabular-nums tracking-tight"
-                      >
-                        A-{servingNum}
-                      </motion.div>
-                    </AnimatePresence>
+                    <div className="text-xs tracking-[0.2em] uppercase stage-muted font-mono-caps font-bold mb-2">Now serving</div>
+                    <SplitFlapText
+                      text={`A-${servingNum}`}
+                      charset="alphanumeric"
+                      tileColor="#152b47"
+                      textColor="#51c2c2"
+                      fontSize="2.25rem"
+                      tileRadius={8}
+                      gap={5}
+                      flipsPerChar={4}
+                      flipDuration={0.08}
+                      intro={false}
+                      loop={false}
+                    />
                   </div>
 
                   <div className="text-right">
                     <div className="text-xs tracking-[0.2em] uppercase stage-muted font-mono-caps font-bold">In queue</div>
-                    <div className="font-display text-5xl sm:text-6xl stage-text font-bold tabular-nums">
-                      12
+                    <div className="font-display stage-text font-bold mt-1">
+                      <Counter
+                        value={12}
+                        fontSize="3rem"
+                        fontWeight={700}
+                        textColor="#f4f2eb"
+                      />
                     </div>
                   </div>
                 </div>
@@ -116,7 +121,6 @@ export const DashboardPreview = () => {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.08 }}
-                      whileHover={{ x: 3 }}
                       className="flex items-center gap-4 rounded-xl px-4 py-3 border border-[hsl(var(--brand-cream)/0.08)] transition-colors"
                       style={{ background: `hsl(var(--brand-cream) / ${i === 0 ? 0.08 : 0.03})` }}
                     >
@@ -132,16 +136,14 @@ export const DashboardPreview = () => {
                 </div>
 
                 <div className="mt-8 flex flex-wrap items-center gap-2.5">
-                  <motion.button
+                  <button
                     type="button"
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
                     onClick={() => setServingNum((n) => n + 1)}
-                    className="text-xs rounded-xl px-4 py-3 bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-bold hover:opacity-95 transition-all flex items-center gap-1.5"
+                    className="text-xs rounded-xl px-4 py-3 bg-[hsl(var(--brand-glow))] text-[hsl(var(--brand-navy))] font-bold hover:opacity-95 transition-opacity flex items-center gap-1.5"
                   >
                     <CheckCircle className="w-3.5 h-3.5" />
                     Serve Next Token
-                  </motion.button>
+                  </button>
 
                   {["Skip", "Recall", "Pause Queue"].map((b) => (
                     <button
@@ -173,8 +175,7 @@ export const DashboardPreview = () => {
                         whileInView={{ height: `${h}%` }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: i * 0.04 }}
-                        whileHover={{ scaleY: 1.1 }}
-                        className="flex-1 rounded-t cursor-pointer transition-all"
+                        className="flex-1 rounded-t transition-colors"
                         style={{
                           background:
                             h > 80
@@ -200,17 +201,19 @@ export const DashboardPreview = () => {
                     { l: "No-shows", v: "4", icon: ShieldAlert },
                     { l: "Flow Health", v: "94 / 100", icon: TrendingUp },
                   ].map((m) => (
-                    <motion.div
+                    <SpotlightCard
                       key={m.l}
-                      whileHover={{ scale: 1.02 }}
-                      className="rounded-xl bg-[hsl(var(--brand-deep)/0.45)] p-3.5 border border-[hsl(var(--brand-cream)/0.08)]"
+                      theme="dark"
+                      spotlightColor="#51c2c2"
+                      intensity={0.14}
+                      className="!rounded-xl !p-3.5 border border-[hsl(var(--brand-cream)/0.08)] [--spotlight-card-surface:hsl(var(--brand-deep)/0.45)]"
                     >
                       <div className="flex items-center justify-between text-xs tracking-wider uppercase stage-muted font-mono-caps">
                         <span>{m.l}</span>
                         <m.icon className="w-3.5 h-3.5 text-[hsl(var(--brand-glow))]" />
                       </div>
                       <div className="font-display text-2xl stage-text font-bold mt-1">{m.v}</div>
-                    </motion.div>
+                    </SpotlightCard>
                   ))}
                 </div>
 
@@ -230,15 +233,13 @@ export const DashboardPreview = () => {
         </motion.div>
 
         <div className="mt-10">
-          <motion.div whileHover={{ x: 3 }}>
-            <Link
-              to="/auth"
-              className="group inline-flex items-center gap-2 text-sm stage-accent hover:brightness-125 transition font-semibold"
-            >
-              Launch your own live operator counter
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </motion.div>
+          <Link
+            to="/auth"
+            className="group inline-flex items-center gap-2 text-sm stage-accent hover:brightness-125 transition font-semibold"
+          >
+            Launch your own live operator counter
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>

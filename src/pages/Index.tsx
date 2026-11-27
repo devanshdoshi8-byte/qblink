@@ -1,22 +1,19 @@
-import { Suspense, lazy } from "react";
+import { useEffect, useState } from "react";
 import SEO from "@/components/SEO";
 import { TopNav } from "@/components/qb/TopNav";
 import { Hero } from "@/components/qb/Hero";
 import { ProblemInfographic } from "@/components/qb/ProblemInfographic";
 import { StaffNotes } from "@/components/qb/StaffNotes";
 import { ThreeMotions } from "@/components/qb/ThreeMotions";
-import { Environments } from "@/components/qb/Environments";
 import { ReliefBento } from "@/components/qb/ReliefBento";
 import { DashboardPreview } from "@/components/qb/DashboardPreview";
-import { BusinessRoiCalculator } from "@/components/business/BusinessRoiCalculator";
 import { Pricing } from "@/components/qb/Pricing";
+import { FoundersBento } from "@/components/qb/FoundersBento";
 import { LiveQueueDemo } from "@/components/qb/LiveQueueDemo";
 import { InterviewFAQ } from "@/components/qb/InterviewFAQ";
 import { Signature } from "@/components/qb/Signature";
 import DemoVideosSection from "@/components/DemoVideosSection";
-
-const ChaosToClarityExperience = lazy(() => import("@/features/chaosToClarity/ChaosToClarityExperience"));
-const IndustryMorphingExperience = lazy(() => import("@/features/industryMorphing/IndustryMorphingExperience"));
+import GradientASCII from "@/components/reactbits/GradientASCII";
 
 const faqs = [
   { q: "Do customers need to download an app?", a: "No. Customers simply scan a QR code or open a link in their browser. No app download, no sign-up required." },
@@ -76,44 +73,76 @@ const jsonLd = [
   },
 ];
 
-const Index = () => (
-  <div className="min-h-screen bg-background">
-    <SEO
-      title="Qblink — Turn Walk-In Chaos Into Controlled Flow"
-      description="Qblink is a hardware-free digital queue system. Customers join via QR code, track wait times live, and businesses manage walk-in flow from a simple dashboard."
-      path="/"
-    />
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-    <TopNav />
-    <main>
-      <Hero />
-      <ProblemInfographic />
-      <div id="simulation" className="py-12 sm:py-16 px-4 sm:px-6 max-w-7xl mx-auto">
-        <Suspense fallback={<div className="h-96 flex items-center justify-center text-cream/40 font-mono-caps text-xs">Loading Customer Flow Simulation...</div>}>
-          <ChaosToClarityExperience />
-        </Suspense>
+const useIsLightTheme = () => {
+  const [isLight, setIsLight] = useState(
+    () => typeof document !== "undefined" && !document.documentElement.classList.contains("dark"),
+  );
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => setIsLight(!root.classList.contains("dark"));
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  return isLight;
+};
+
+const Index = () => {
+  const isLight = useIsLightTheme();
+
+  return (
+    <div className="relative min-h-screen bg-background">
+      <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+        <GradientASCII
+          colors={
+            isLight
+              ? ["#10637f", "#51c2c2", "#0e1e34", "#f3f1ec"]
+              : ["#0e1e34", "#10637f", "#51c2c2", "#f4f2eb"]
+          }
+          shape="rise"
+          characters=" =+xX0S8#@"
+          cellSize={20}
+          density={0.65}
+          glow={isLight ? 0.08 : 0.22}
+          flicker={0}
+          grain={0}
+          gradientOpacity={isLight ? 0.08 : 0.24}
+          glyphOpacity={isLight ? 0.2 : 0.32}
+          speed={0.45}
+          lightMode={isLight}
+          intro={false}
+          mouseInteraction={false}
+          clickEffect="none"
+        />
       </div>
-      <StaffNotes />
-      <ThreeMotions />
-      <LiveQueueDemo />
-      <ReliefBento />
-      <DashboardPreview />
-      <div id="industries" className="py-12 sm:py-16">
-        <Suspense fallback={<div className="h-96 flex items-center justify-center text-muted-foreground text-xs font-mono">Loading Industry Experience...</div>}>
-          <IndustryMorphingExperience />
-        </Suspense>
-      </div>
-      <div id="roi" className="py-12 sm:py-16 px-4 sm:px-6 max-w-7xl mx-auto">
-        <BusinessRoiCalculator />
-      </div>
-      <DemoVideosSection />
-      <Pricing />
-      <div id="faq">
-        <InterviewFAQ />
-      </div>
-      <Signature />
-    </main>
-  </div>
-);
+      <SEO
+        title="Qblink — Turn Walk-In Chaos Into Controlled Flow"
+        description="Qblink is a hardware-free digital queue system. Customers join via QR code, track wait times live, and businesses manage walk-in flow from a simple dashboard."
+        path="/"
+      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <TopNav />
+      <main className="relative z-10">
+        <Hero />
+        <ProblemInfographic />
+        <StaffNotes />
+        <ThreeMotions />
+        <LiveQueueDemo />
+        <ReliefBento />
+        <DashboardPreview />
+        <DemoVideosSection />
+        <Pricing />
+        <FoundersBento />
+        <div id="faq">
+          <InterviewFAQ />
+        </div>
+        <Signature />
+      </main>
+    </div>
+  );
+};
 
 export default Index;

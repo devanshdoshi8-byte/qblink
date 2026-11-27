@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Building2, Bell, Lock, Trash2, Save, BellRing, Send, Eye, Globe, LogIn, Clock, Users as UsersIcon } from "lucide-react";
 import InfoHint from "@/components/InfoHint";
 import OperatingHoursCard from "@/components/business/OperatingHoursCard";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 
 const CATEGORIES = ["Restaurant", "Clinic", "Hospital", "Salon", "Bank", "Government Service", "Hotel", "Service Center", "Other"];
 
@@ -131,9 +132,14 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Category</label>
-            <select value={biz.category} onChange={e => setBiz({ ...biz, category: e.target.value })} className="input">
-              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-            </select>
+            <GlideSelect
+              value={biz.category}
+              onChange={(val) => setBiz({ ...biz, category: val })}
+              ariaLabel="Category"
+              menuWidth="100%"
+              options={CATEGORIES.map((c) => ({ value: c, label: c }))}
+              className="w-full"
+            />
           </div>
           <Input label="Address" value={biz.address} onChange={v => setBiz({ ...biz, address: v })} />
           <div>

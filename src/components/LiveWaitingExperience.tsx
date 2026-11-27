@@ -23,6 +23,7 @@ import { WebPushProvider, NotificationPermissionState } from "@/lib/notification
 import { formatGraceCountdown, getRemainingGraceSeconds, GraceStatus } from "@/lib/arrivalGraceEngine";
 import { toast } from "sonner";
 import { hapticSuccess } from "@/lib/haptics";
+import BellToggle from "@/components/reactbits/BellToggle";
 
 interface Props {
   ahead: number;
@@ -476,27 +477,50 @@ const LiveWaitingExperience = ({
         </dl>
 
         {/* Push Notification Banner */}
-        {pushState !== "granted" && (
-          <motion.div
-            layout
-            className="mt-3.5 rounded-2xl border border-border bg-muted/40 p-3.5 flex items-center justify-between gap-3"
-          >
-            <div className="flex items-center gap-2.5">
-              <BellRing className="w-4 h-4 text-primary shrink-0" />
-              <div>
-                <p className="text-xs font-semibold text-foreground">Enable Turn Alerts</p>
-                <p className="text-[10px] text-muted-foreground">Receive sound alerts when you're 2nd and Next.</p>
-              </div>
+        <motion.div
+          layout
+          className="mt-3.5 rounded-2xl border border-border bg-muted/40 p-3.5 flex items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <BellRing className="w-4 h-4 text-primary shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-foreground">Turn Alerts</p>
+              <p className="text-[10px] text-muted-foreground">
+                {pushState === "granted"
+                  ? "Sound & turn notifications active for your pass."
+                  : "Receive alerts when you're 2nd and Next."}
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={handleEnableNotifications}
-              className="px-3 py-1.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold transition-colors shrink-0"
-            >
-              Enable
-            </button>
-          </motion.div>
-        )}
+          </div>
+          <BellToggle
+            offLabel="Notify me"
+            onLabel="You'll be notified"
+            color="#f4f2eb"
+            background="#0e1e34"
+            onColor="#0e1e34"
+            onBackground="#51c2c2"
+            size="sm"
+            radius={22}
+            ringAmplitude={17}
+            ringPasses={5}
+            ringDecay={1}
+            ringDuration={820}
+            ringPivot={16}
+            crossfadeMs={200}
+            revealBounce={0}
+            count={ahead <= 2 ? 1 : 0}
+            badge
+            badgeColor="#c93a3a"
+            waves
+            clapper={false}
+            pressed={pushState === "granted"}
+            onChange={(next) => {
+              if (next && pushState !== "granted") {
+                void handleEnableNotifications();
+              }
+            }}
+          />
+        </motion.div>
 
         {/* Saved-Time Counter */}
         {joinedAt && (

@@ -77,7 +77,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen soft-bg flex w-full">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-64 flex-col bg-card border-r border-border p-4 sticky top-0 h-screen">
+      <aside className="hidden md:flex w-64 shrink-0 flex-col bg-card border-r border-border p-4 sticky top-0 h-screen">
         <Link to="/" className="flex items-center gap-2 mb-6 px-2">
           <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain" />
           <span className="font-bold text-foreground">Qblink</span>
@@ -124,7 +124,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         )}
       </div>
 
-      <main className="flex-1 pt-16 md:pt-0 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 overflow-x-hidden">
+      <main className="flex-1 min-w-0 pt-16 md:pt-0 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 overflow-x-hidden">
         <OfflineBanner />
         {children}
       </main>

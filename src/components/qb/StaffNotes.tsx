@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import BorderGlow from "@/components/reactbits/BorderGlow";
 
 const notes = [
   {
@@ -32,7 +33,6 @@ export const StaffNotes = () => (
     <div className="max-w-7xl mx-auto px-6 lg:px-24">
       <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
         <div>
-          <div className="font-mono-caps text-glow/80 mb-4">Ch. 05 · From the counter</div>
           <h2 className="font-display text-4xl sm:text-5xl text-cream max-w-2xl leading-tight">
             The notes we heard, pinned to the back of the counter.
           </h2>
@@ -50,17 +50,28 @@ export const StaffNotes = () => (
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             key={i}
-            className={`cream-surface p-8 ticket-shadow ${n.offset} transition-transform hover:rotate-0 hover:scale-[1.02] duration-500`}
+            className={`${n.offset}`}
             style={{ transform: `rotate(${n.rot})` }}
           >
-            <div className="font-mono-caps text-ink/50 mb-4">Note 0{i + 1}</div>
-            <div className="font-display text-2xl text-ink leading-snug italic">
-              {n.title}
-            </div>
-            <p className="text-ink/70 mt-4 leading-relaxed">{n.body}</p>
-            <div className="mt-8 pt-4 border-t border-dashed border-ink/25 font-mono-caps text-ink/50">
-              — {n.tag}
-            </div>
+            <BorderGlow
+              backgroundColor="#f3f1ec"
+              surfaceTheme="light"
+              borderRadius={16}
+              glowColor="195 78 28"
+              colors={["#10637f", "#51c2c2", "#0e1e34"]}
+              className="h-full"
+            >
+              <div className="p-8 h-full flex flex-col">
+                <div className="font-mono-caps text-ink/50 mb-4">Note 0{i + 1}</div>
+                <div className="font-display text-2xl text-ink leading-snug italic">
+                  {n.title}
+                </div>
+                <p className="text-ink/70 mt-4 leading-relaxed flex-1">{n.body}</p>
+                <div className="mt-8 pt-4 border-t border-dashed border-ink/25 font-mono-caps text-ink/50">
+                  — {n.tag}
+                </div>
+              </div>
+            </BorderGlow>
           </motion.article>
         ))}
       </div>

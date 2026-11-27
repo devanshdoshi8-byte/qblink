@@ -1,7 +1,8 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Clock, AlertTriangle, PauseCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { CheckCircle2, Clock, PauseCircle } from "lucide-react";
 import { PublicDisplayState } from "../types";
+import SplitFlapText from "@/components/reactbits/SplitFlapText";
 
 interface NowServingHeroProps {
   displayData: PublicDisplayState;
@@ -94,20 +95,27 @@ export const NowServingHero: React.FC<NowServingHeroProps> = ({ displayData }) =
             </span>
           </div>
 
-          {/* Giant Number Transition with Smooth Spring Animation */}
-          <div className="py-2">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentToken || "empty"}
-                initial={{ opacity: 0, y: -25, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 25, scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className="font-mono font-black text-7xl sm:text-9xl md:text-[10rem] lg:text-[11.5rem] tracking-tighter text-foreground leading-none drop-shadow-sm select-none"
-              >
-                {currentToken ? `#${currentToken}` : "—"}
-              </motion.div>
-            </AnimatePresence>
+          {/* Giant Split-Flap Departure Board Token Display */}
+          <div className="py-2 flex justify-center">
+            {currentToken ? (
+              <SplitFlapText
+                text={`#${currentToken}`}
+                charset="alphanumeric"
+                tileColor="#0e1e34"
+                textColor="#f4f2eb"
+                fontSize="clamp(3.5rem, 11vw, 8.5rem)"
+                tileRadius={14}
+                gap={8}
+                flipsPerChar={5}
+                flipDuration={0.075}
+                intro={false}
+                loop={false}
+              />
+            ) : (
+              <span className="font-mono font-black text-7xl sm:text-9xl tracking-tighter text-foreground leading-none select-none">
+                —
+              </span>
+            )}
           </div>
 
           {/* Counter Label */}

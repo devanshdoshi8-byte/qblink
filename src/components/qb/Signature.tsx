@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Monogram } from "./Monogram";
+import GradientASCII from "@/components/reactbits/GradientASCII";
+import SpecularButton from "@/components/reactbits/SpecularButton";
 
 const marqueeItems = [
   "No app",
@@ -12,8 +14,10 @@ const marqueeItems = [
   "Free during pilot",
 ];
 
-export const Signature = () => (
-  <footer className="relative ink-surface overflow-hidden">
+export const Signature = () => {
+  const navigate = useNavigate();
+  return (
+  <footer id="contact" className="relative ink-surface overflow-hidden">
     {/* marquee */}
     <div className="border-y border-glow/20 overflow-hidden">
       <div className="flex gap-16 animate-marquee font-display text-4xl sm:text-6xl text-cream/20 py-6 whitespace-nowrap" style={{ animationDuration: '55s' }}>
@@ -27,31 +31,64 @@ export const Signature = () => (
     </div>
 
     {/* CTA + signature */}
-    <div className="max-w-5xl mx-auto px-6 lg:px-24 py-24 text-center relative">
-      <div className="absolute inset-0 relief-glow" />
-      <div className="relative">
-        <div className="font-mono-caps text-glow/80 mb-6">Ch. 10 · The invitation</div>
+    <div className="relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none opacity-80" aria-hidden="true">
+        <GradientASCII
+          colors={["#0e1e34", "#10637f", "#51c2c2", "#f4f2eb"]}
+          shape="horizon"
+          characters=" =+xX0S8#@"
+          cellSize={18}
+          density={0.8}
+          flicker={0}
+          grain={0}
+          gradientOpacity={0.38}
+          glyphOpacity={0.42}
+          intro={false}
+          mouseInteraction={false}
+          clickEffect="none"
+        />
+      </div>
+      <div
+        className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[hsl(var(--brand-navy)/0.72)] via-[hsl(var(--brand-navy)/0.55)] to-[hsl(var(--brand-navy)/0.88)]"
+        aria-hidden="true"
+      />
+      <div className="max-w-5xl mx-auto px-6 lg:px-24 py-24 text-center relative z-10">
         <h2 className="font-display text-5xl sm:text-7xl text-cream leading-[0.95]">
           Give an hour
           <br />
           <span className="text-glow italic font-normal">back.</span>
         </h2>
-        <p className="mt-8 text-cream/60 max-w-lg mx-auto">
+        <p className="mt-8 text-cream/75 max-w-lg mx-auto">
           The pilot is free. Setup is two minutes. If it doesn't earn its place at your counter, take it off.
         </p>
-        <div className="mt-10 flex flex-wrap gap-4 justify-center">
+        <div className="mt-10 flex flex-wrap gap-4 justify-center items-center">
           <Link
             to="/auth"
-            className="bg-glow text-ink font-mono-caps px-6 py-4 hover:bg-cream transition-colors"
+            className="bg-glow text-ink font-mono-caps px-6 py-4 rounded-xl hover:bg-cream transition-colors"
           >
             Start the pilot →
           </Link>
-          <Link
-            to="/onboarding"
-            className="border border-glow/40 text-cream font-mono-caps px-6 py-4 hover:border-glow hover:text-glow transition-colors"
+          <SpecularButton
+            size="md"
+            radius={14}
+            tint="#51c2c2"
+            tintOpacity={0.1}
+            textColor="#f4f2eb"
+            lineColor="#51c2c2"
+            baseColor="#10637f"
+            intensity={1}
+            idleIntensity={0.35}
+            shineSize={10}
+            shineFade={34}
+            thickness={1.2}
+            glow={1}
+            followMouse
+            proximity={250}
+            onClick={() => navigate("/onboarding")}
+            className="font-mono-caps !px-6 !py-4"
           >
             Walk through it first
-          </Link>
+          </SpecularButton>
         </div>
       </div>
     </div>
@@ -69,9 +106,9 @@ export const Signature = () => (
         <div>
           <div className="font-mono-caps text-cream/30 mb-3 text-xs">Industries</div>
           <div className="space-y-2">
-            <a href="#industries" className="block text-cream/60 hover:text-glow transition-colors">Clinics</a>
-            <a href="#industries" className="block text-cream/60 hover:text-glow transition-colors">Salons</a>
-            <a href="#industries" className="block text-cream/60 hover:text-glow transition-colors">Restaurants</a>
+            <Link to="/industries" className="block text-cream/60 hover:text-glow transition-colors">Clinics</Link>
+            <Link to="/industries" className="block text-cream/60 hover:text-glow transition-colors">Salons</Link>
+            <Link to="/industries" className="block text-cream/60 hover:text-glow transition-colors">Restaurants</Link>
           </div>
         </div>
         <div>
@@ -79,7 +116,9 @@ export const Signature = () => (
           <div className="space-y-2">
             <a href="#faq" className="block text-cream/60 hover:text-glow transition-colors">FAQ</a>
             <Link to="/affiliate" className="block text-cream/60 hover:text-glow transition-colors">Affiliate</Link>
-            <a href="mailto:teamqblink@gmail.com" className="block text-cream/60 hover:text-glow transition-colors">Contact</a>
+            <a href="mailto:qblinkteam@gmail.com" className="block text-cream/60 hover:text-glow transition-colors">
+              Founders · qblinkteam@gmail.com
+            </a>
           </div>
         </div>
         <div>
@@ -102,11 +141,12 @@ export const Signature = () => (
         </div>
         <div className="flex gap-6">
           <Link to="/affiliate" className="hover:text-glow">Affiliate</Link>
-          <a href="mailto:teamqblink@gmail.com" className="hover:text-glow">Contact</a>
+          <a href="mailto:qblinkteam@gmail.com" className="hover:text-glow">qblinkteam@gmail.com</a>
           <Link to="/auth" className="hover:text-glow">Sign in</Link>
         </div>
         <span className="text-cream/30">Hardware-free by conviction.</span>
       </div>
     </div>
   </footer>
-);
+  );
+};

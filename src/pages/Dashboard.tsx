@@ -33,6 +33,7 @@ import {
 import { publicUrl } from "@/lib/publicUrl";
 import { QRCodeSVG } from "qrcode.react";
 import BusinessLayout from "@/components/business/BusinessLayout";
+import MagicBento from "@/components/reactbits/MagicBento";
 import AIInsights from "@/components/AIInsights";
 import BusinessBenchmark from "@/components/business/BusinessBenchmark";
 import QueueForecast from "@/components/QueueForecast";
@@ -644,45 +645,52 @@ const QueueManager = ({
 
       {selectedQueue ? (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <Stat
-              icon={<Users className="w-4 h-4" />}
-              label="Waiting"
-              value={syncedStats.waiting}
-              accent
-              tip={{
-                title: "Waiting Visitors",
+          <MagicBento
+            columns={4}
+            rowHeight={156}
+            gap={12}
+            radius={20}
+            enableBorderGlow={true}
+            enableSpotlight={true}
+            spotlightRadius={300}
+            clickEffect={true}
+            className="mb-6"
+            cards={[
+              {
+                id: "waiting",
+                label: "Waiting",
+                title: "In queue right now",
+                value: syncedStats.waiting,
                 description: "Customers who have joined the queue and are waiting to be called.",
-              }}
-            />
-            <Stat
-              icon={<CheckCircle className="w-4 h-4 text-success" />}
-              label="Served Today"
-              value={syncedStats.servedToday}
-              tip={{
-                title: "Served Today",
+                accent: true,
+                icon: <Users className="w-4 h-4" />,
+              },
+              {
+                id: "served-today",
+                label: "Served Today",
+                title: "Completed visits",
+                value: syncedStats.servedToday,
                 description: "Total customers who completed service today.",
-              }}
-            />
-            <Stat
-              icon={<Clock className="w-4 h-4 text-warning" />}
-              label="Avg Service (min)"
-              value={syncedStats.avgService || "—"}
-              tip={{
-                title: "Average Service Time",
+                icon: <CheckCircle className="w-4 h-4 text-success" />,
+              },
+              {
+                id: "avg-service",
+                label: "Avg Service (min)",
+                title: "Counter pace",
+                value: syncedStats.avgService || "—",
                 description: "Average minutes spent serving each customer today.",
-              }}
-            />
-            <Stat
-              icon={<Clock className="w-4 h-4 text-warning" />}
-              label="Avg Wait (min)"
-              value={syncedStats.avgWait || "—"}
-              tip={{
-                title: "Average Wait",
+                icon: <Clock className="w-4 h-4 text-warning" />,
+              },
+              {
+                id: "avg-wait",
+                label: "Avg Wait (min)",
+                title: "Customer wait",
+                value: syncedStats.avgWait || "—",
                 description: "Average minutes between joining the queue and being served today.",
-              }}
-            />
-          </div>
+                icon: <Clock className="w-4 h-4 text-warning" />,
+              },
+            ]}
+          />
 
           <div className="mb-6">
             <HealthScoreCard businessId={businessId} />

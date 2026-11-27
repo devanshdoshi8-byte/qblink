@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, Play, Activity, Tv, Layers, DollarSign, X, ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useOptionalTheme } from "@/hooks/useTheme";
+import PillNav from "@/components/reactbits/PillNav";
+import GlassSurface from "@/components/reactbits/GlassSurface";
 import logo from "@/assets/qblink-logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -60,10 +63,15 @@ const links = [
  * Transparent over the hero stage, glass once scrolled.
  */
 export const TopNav = () => {
+  const themeCtx = useOptionalTheme();
+  const isDarkTheme = themeCtx ? themeCtx.theme === "dark" : true;
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [demosOpen, setDemosOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState("#product");
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const pillTheme: "dark" | "light" = scrolled && !isDarkTheme ? "light" : "dark";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -86,18 +94,18 @@ export const TopNav = () => {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-          scrolled ? "bg-background/85 backdrop-blur-xl border-b border-border shadow-sm" : "bg-transparent"
+          scrolled ? "bg-background/95 border-b border-border shadow-sm" : "bg-transparent"
         }`}
       >
-        <nav className="max-w-7xl mx-auto px-5 sm:px-8 h-[4.5rem] flex items-center gap-8" aria-label="Primary">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 h-[4.5rem] flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="Qblink home">
             <img src={logo} alt="" className="w-8 h-8 object-contain" draggable={false} />
-            <span className={`font-display text-lg tracking-tight ${scrolled ? "text-foreground" : "stage-text"}`}>
+            <span className={`font-serif font-semibold text-xl tracking-tight ${scrolled ? "text-foreground" : "stage-text"}`}>
               Qblink
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6 text-sm">
+          <div className="hidden md:flex items-center gap-4 text-sm">
             {/* Interactive Demos Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
@@ -170,17 +178,37 @@ export const TopNav = () => {
               </AnimatePresence>
             </div>
 
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className={`transition-colors ${
-                  scrolled ? "text-muted-foreground hover:text-foreground" : "stage-muted hover:text-[hsl(var(--brand-cream))]"
-                }`}
-              >
-                {l.label}
-              </a>
-            ))}
+            <GlassSurface
+              width="auto"
+              height="auto"
+              borderRadius={999}
+              backgroundOpacity={0}
+              opacity={1}
+              blur={14}
+              displace={0.3}
+              distortionScale={-120}
+              className="p-0.5 !border-white/20 !shadow-none"
+            >
+              <PillNav
+                items={links}
+                activeHref={activeHref}
+                onItemClick={(item) => {
+                  if (item.href) setActiveHref(item.href);
+                }}
+                theme={pillTheme}
+                size="sm"
+                surface="glass"
+                itemStyle="bare"
+                hoverEffect="fill"
+                indicator="dot"
+                collapse="never"
+                highlightColor={pillTheme === "light" ? "#10637f" : "#51c2c2"}
+                highlightTextColor={pillTheme === "light" ? "#ffffff" : "#0e1e34"}
+                barColor="transparent"
+                textColor={pillTheme === "light" ? "#0e1e34" : "#f4f2eb"}
+                ariaLabel="Primary"
+              />
+            </GlassSurface>
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
@@ -222,7 +250,7 @@ export const TopNav = () => {
               {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
-        </nav>
+        </div>
 
         {/* Mobile Navigation Drawer */}
         <div

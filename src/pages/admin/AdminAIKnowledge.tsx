@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkles, Plus, Trash2 } from "lucide-react";
@@ -25,9 +26,17 @@ const AdminAIKnowledge = () => {
       <div className="grid lg:grid-cols-[400px,1fr] gap-6">
         <div className="bg-card rounded-2xl p-6 card-shadow self-start flex flex-col gap-3">
           <h2 className="font-bold text-foreground">New entry</h2>
-          <select value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value })} className="input">
-            {["all","customer","business","founder","admin"].map(a => <option key={a} value={a}>{a}</option>)}
-          </select>
+          <GlideSelect
+            value={form.audience}
+            onChange={(val) => setForm({ ...form, audience: val })}
+            ariaLabel="Audience"
+            menuWidth="100%"
+            className="w-full"
+            options={["all", "customer", "business", "founder", "admin"].map((a) => ({
+              value: a,
+              label: a,
+            }))}
+          />
           <input placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input" />
           <input placeholder="Question / trigger" value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} className="input" />
           <textarea placeholder="Answer / response" rows={4} value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} className="input" />

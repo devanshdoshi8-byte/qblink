@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
+import { useOptionalTheme } from "@/hooks/useTheme";
+import BorderGlow from "@/components/reactbits/BorderGlow";
 
 export interface PlanDef {
   id: "free" | "starter" | "growth" | "enterprise";
@@ -57,8 +59,49 @@ export const PLANS: PlanDef[] = [
   },
 ];
 
-export const Pricing = () => (
-  <section id="pricing" className="relative py-24 sm:py-32 bg-background">
+export const Pricing = () => {
+  const themeCtx = useOptionalTheme();
+  const isDark = themeCtx?.theme === "dark";
+
+  const renderCardBody = (p: PlanDef) => (
+    <>
+      {p.featured && (
+        <span className="absolute -top-3 left-6 z-10 rounded-full bg-primary text-primary-foreground text-xs font-medium tracking-[0.16em] uppercase px-3 py-1">
+          Most chosen
+        </span>
+      )}
+      <h3 className="font-display text-xl text-foreground">{p.name}</h3>
+      <div className="mt-3 flex items-baseline gap-1.5">
+        <span className="font-display text-4xl text-foreground">{p.price}</span>
+        <span className="text-xs text-muted-foreground">{p.cadence}</span>
+      </div>
+      <p className="mt-3 text-sm text-muted-foreground leading-relaxed min-h-[2.5rem]">{p.line}</p>
+
+      <ul className="mt-6 space-y-3 flex-1">
+        {p.features.map((f) => (
+          <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/90">
+            <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden />
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="border-t border-border mt-6" />
+      <Link
+        to={p.to}
+        className={`mt-7 inline-flex justify-center rounded-xl px-4 py-3 text-sm font-medium transition-opacity ${
+          p.featured
+            ? "bg-primary text-primary-foreground hover:opacity-90"
+            : "border border-border text-foreground hover:bg-muted"
+        }`}
+      >
+        {p.cta}
+      </Link>
+    </>
+  );
+
+  return (
+  <section id="pricing" className="relative py-24 sm:py-32 bg-background/85">
     <div className="max-w-7xl mx-auto px-5 sm:px-8">
       <div className="max-w-2xl">
         <div className="font-mono-caps text-primary mb-4">Pricing</div>
@@ -71,48 +114,27 @@ export const Pricing = () => (
         </p>
       </div>
 
-      <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4 items-start">
+      <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4 items-stretch">
         {PLANS.map((p) => (
-          <div
-            key={p.id}
-            className={`relative rounded-2xl p-6 flex flex-col h-full border transition-shadow ${
-              p.featured
-                ? "border-primary/50 bg-primary/[0.03] shadow-[0_20px_60px_-24px_hsl(var(--primary)/0.45)]"
-                : "border-border bg-card hover:shadow-lg"
-            }`}
-          >
-            {p.featured && (
-              <span className="absolute -top-3 left-6 rounded-full bg-primary text-primary-foreground text-xs font-medium tracking-[0.16em] uppercase px-3 py-1">
-                Most chosen
-              </span>
-            )}
-            <h3 className="font-display text-xl text-foreground">{p.name}</h3>
-            <div className="mt-3 flex items-baseline gap-1.5">
-              <span className="font-display text-4xl text-foreground">{p.price}</span>
-              <span className="text-xs text-muted-foreground">{p.cadence}</span>
-            </div>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed min-h-[2.5rem]">{p.line}</p>
-
-            <ul className="mt-6 space-y-3 flex-1">
-              {p.features.map((f) => (
-                <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/90">
-                  <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="border-t border-border mt-6" />
-            <Link
-              to={p.to}
-              className={`mt-7 inline-flex justify-center rounded-xl px-4 py-3 text-sm font-medium transition-opacity ${
-                p.featured
-                  ? "bg-primary text-primary-foreground hover:opacity-90"
-                  : "border border-border text-foreground hover:bg-muted"
-              }`}
+          <div key={p.id} className="relative h-full">
+            <BorderGlow
+              edgeSensitivity={30}
+              glowColor={isDark ? "180 48 54" : "195 78 28"}
+              backgroundColor={isDark ? "#122136" : "#ffffff"}
+              surfaceTheme={isDark ? "dark" : "light"}
+              borderRadius={16}
+              glowRadius={36}
+              glowIntensity={p.featured ? 0.95 : 0.75}
+              coneSpread={25}
+              animated={false}
+              colors={isDark ? ["#51c2c2", "#10637f", "#f4f2eb"] : ["#10637f", "#51c2c2", "#0e1e34"]}
+              fillOpacity={0.28}
+              className="h-full"
             >
-              {p.cta}
-            </Link>
+              <div className="relative p-6 flex flex-col h-full">
+                {renderCardBody(p)}
+              </div>
+            </BorderGlow>
           </div>
         ))}
       </div>
@@ -122,4 +144,5 @@ export const Pricing = () => (
       </p>
     </div>
   </section>
-);
+  );
+};

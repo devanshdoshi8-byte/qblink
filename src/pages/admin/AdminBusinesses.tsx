@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import GlideSelect from "@/components/reactbits/GlideSelect";
 import { toast } from "sonner";
 import { Search, Download, Eye, Pause, Play, Trash2, RotateCcw, X } from "lucide-react";
 import BusinessHealthBarChart from "@/components/health/BusinessHealthBarChart";
@@ -147,11 +148,24 @@ const AdminBusinesses = () => {
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by business or category…"
             className="w-full pl-10 pr-4 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
         </div>
-        <select value={filter} onChange={e => setFilter(e.target.value)} className="px-3 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
-          <option>All</option>
-          <option>active</option><option>inactive</option><option>no-queue</option>
-          <option>Restaurant</option><option>Clinic</option><option>Salon</option><option>Hospital</option><option>Hotel</option>
-        </select>
+        <GlideSelect
+          size="sm"
+          value={filter}
+          onChange={setFilter}
+          ariaLabel="Filter businesses"
+          menuWidth={170}
+          options={[
+            { value: "All", label: "All" },
+            { value: "active", label: "active" },
+            { value: "inactive", label: "inactive" },
+            { value: "no-queue", label: "no-queue" },
+            { value: "Restaurant", label: "Restaurant" },
+            { value: "Clinic", label: "Clinic" },
+            { value: "Salon", label: "Salon" },
+            { value: "Hospital", label: "Hospital" },
+            { value: "Hotel", label: "Hotel" },
+          ]}
+        />
       </div>
 
       <div className="bg-card rounded-2xl p-5 card-shadow mb-4">

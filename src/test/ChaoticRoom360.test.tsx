@@ -24,8 +24,7 @@ describe("ChaoticRoom360 component", () => {
   it("renders 360 spatial reality simulator with interactive controls", () => {
     render(<ChaoticRoom360 />);
 
-    // Chapter heading & titles
-    expect(screen.getByText(/360° Spatial Reality Simulator/i)).toBeInTheDocument();
+    // Section heading & titles
     expect(screen.getByText(/Step inside the room/i)).toBeInTheDocument();
     expect(screen.getByText(/Drag 360° — Feel the Metamorphosis/i)).toBeInTheDocument();
 

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import WakeSlider from "@/components/reactbits/WakeSlider";
 
 export const TimeThread = () => {
   const [daily, setDaily] = useState(80); // customers/day
@@ -19,7 +20,6 @@ export const TimeThread = () => {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-24 grid lg:grid-cols-12 gap-12">
         <div className="lg:col-span-4">
-          <div className="font-mono-caps text-glow/80 mb-4">Ch. 02 · The math</div>
           <h2 className="font-display text-4xl sm:text-5xl text-cream leading-tight">
             How much of your customers' lives are you holding?
           </h2>
@@ -31,14 +31,20 @@ export const TimeThread = () => {
               <span>Customers per day</span>
               <span className="text-glow tabular-nums">{daily}</span>
             </label>
-            <input
-              type="range"
+            <WakeSlider
+              value={daily}
               min={10}
               max={400}
-              value={daily}
-              onChange={(e) => setDaily(Number(e.target.value))}
-              className="w-full mt-3 accent-glow"
-              aria-label="Customers per day"
+              step={1}
+              bars={32}
+              height={40}
+              restHeight={10}
+              gap={4}
+              fillColor="hsl(var(--brand-glow))"
+              trackColor="hsl(var(--brand-cream) / 0.18)"
+              ariaLabel="Customers per day"
+              onChange={setDaily}
+              className="mt-3"
             />
           </div>
           <div>
@@ -46,14 +52,20 @@ export const TimeThread = () => {
               <span>Average wait (minutes)</span>
               <span className="text-glow tabular-nums">{avgWait}</span>
             </label>
-            <input
-              type="range"
+            <WakeSlider
+              value={avgWait}
               min={2}
               max={45}
-              value={avgWait}
-              onChange={(e) => setAvgWait(Number(e.target.value))}
-              className="w-full mt-3 accent-glow"
-              aria-label="Average wait minutes"
+              step={1}
+              bars={32}
+              height={40}
+              restHeight={10}
+              gap={4}
+              fillColor="hsl(var(--brand-glow))"
+              trackColor="hsl(var(--brand-cream) / 0.18)"
+              ariaLabel="Average wait minutes"
+              onChange={setAvgWait}
+              className="mt-3"
             />
           </div>
 

@@ -6,8 +6,6 @@ export const WhatSpread = () => (
     <div className="max-w-7xl mx-auto px-6 lg:px-24 grid lg:grid-cols-12 gap-16 items-start">
       {/* Left illustration column */}
       <div className="lg:col-span-5 relative">
-        <div className="font-mono-caps text-ink/50 mb-6">Ch. 03 · The object</div>
-
         {/* Isometric phone — hand drawn feel */}
         <svg viewBox="0 0 320 480" className="w-full max-w-xs">
           <defs>

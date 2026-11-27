@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import BorderGlow from "@/components/reactbits/BorderGlow";
+import GlassSurface from "@/components/reactbits/GlassSurface";
 
 const qa = [
   { q: "Do customers need to download an app?", a: "No. They scan a QR code or open a link. Whatever browser is already on their phone is enough." },
@@ -17,14 +19,32 @@ export const InterviewFAQ = () => {
   return (
     <section className="relative deep-surface py-24 sm:py-32" aria-label="Interview">
       <div className="max-w-5xl mx-auto px-6 lg:px-24">
-        <div className="font-mono-caps text-glow/80 mb-4">Ch. 09 · Transcript</div>
         <h2 className="font-display text-4xl sm:text-5xl text-cream leading-tight max-w-2xl">
           Interview with the product, edited for length.
         </h2>
 
-        <div className="mt-16 space-y-8">
+        <BorderGlow
+          backgroundColor="#0d1b2e"
+          borderRadius={24}
+          glowColor="180 54 54"
+          colors={["#51c2c2", "#10637f", "#f4f2eb"]}
+          surfaceTheme="dark"
+          className="mt-16"
+        >
+          <GlassSurface
+            width="100%"
+            height="auto"
+            borderRadius={22}
+            backgroundOpacity={0.04}
+            opacity={1}
+            blur={12}
+            displace={0.25}
+            distortionScale={-100}
+            className="!border-0 p-6 sm:p-10"
+          >
+            <div className="w-full space-y-8">
           {qa.map((row, i) => (
-            <div key={i} className="border-b border-glow/15 pb-8">
+            <div key={i} className="border-b border-glow/15 pb-8 last:border-b-0 last:pb-0">
               <button
                 onClick={() => setOpen(open === i ? -1 : i)}
                 className="w-full text-left grid grid-cols-[auto_1fr_auto] gap-6 items-baseline"
@@ -58,7 +78,9 @@ export const InterviewFAQ = () => {
               </AnimatePresence>
             </div>
           ))}
-        </div>
+            </div>
+          </GlassSurface>
+        </BorderGlow>
       </div>
     </section>
   );
