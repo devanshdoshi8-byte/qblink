@@ -1,4 +1,41 @@
 export const INACTIVITY_PAUSE_MS = 60 * 60 * 1000;
+export const DEFAULT_INACTIVITY_MINUTES = 60;
+export const MIN_INACTIVITY_MINUTES = 15;
+export const MAX_INACTIVITY_MINUTES = 240;
+
+export function clampInactivityMinutes(minutes?: number | null): number {
+  if (typeof minutes !== "number" || !Number.isFinite(minutes)) {
+    return DEFAULT_INACTIVITY_MINUTES;
+  }
+  return Math.min(MAX_INACTIVITY_MINUTES, Math.max(MIN_INACTIVITY_MINUTES, Math.round(minutes)));
+}
+
+export function getInactivityThresholdMs(minutes?: number | null): number {
+  return clampInactivityMinutes(minutes) * 60 * 1000;
+}
+
+export function readStoredInactivityMinutes(businessId?: string | null): number {
+  if (!businessId || typeof window === "undefined") return DEFAULT_INACTIVITY_MINUTES;
+  try {
+    const raw = localStorage.getItem(`qblink:inactivity-minutes:${businessId}`);
+    if (!raw) return DEFAULT_INACTIVITY_MINUTES;
+    return clampInactivityMinutes(Number(raw));
+  } catch {
+    return DEFAULT_INACTIVITY_MINUTES;
+  }
+}
+
+export function writeStoredInactivityMinutes(businessId: string, minutes: number): void {
+  if (!businessId || typeof window === "undefined") return;
+  try {
+    localStorage.setItem(
+      `qblink:inactivity-minutes:${businessId}`,
+      String(clampInactivityMinutes(minutes))
+    );
+  } catch {
+    // ignore storage errors
+  }
+}
 
 export interface ActivityQueueLike {
   status?: string | null;

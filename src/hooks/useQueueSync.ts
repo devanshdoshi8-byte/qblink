@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   filterRowsAfterInactivityGap,
+  getInactivityThresholdMs,
+  readStoredInactivityMinutes,
   shouldCancelAvgWait,
 } from "@/lib/queueInactivity";
 
@@ -68,8 +70,12 @@ interface UseQueueSyncOptions {
 
 const emptyStats: QueueStats = { waiting: 0, called: 0, served: 0, skipped: 0, removed: 0, avgWait: 0 };
 
-const avgWaitFromDetails = (rows: DetailQueueVisitor[], queue?: SyncedQueue) => {
-  const activeRows = filterRowsAfterInactivityGap(rows, queue);
+const avgWaitFromDetails = (
+  rows: DetailQueueVisitor[],
+  queue?: SyncedQueue,
+  thresholdMs?: number
+) => {
+  const activeRows = filterRowsAfterInactivityGap(rows, queue, Date.now(), thresholdMs);
   const waits = activeRows
     .filter((v) => v.status === "served" && v.served_at)
     .map((v) => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000)
@@ -80,17 +86,20 @@ const avgWaitFromDetails = (rows: DetailQueueVisitor[], queue?: SyncedQueue) => 
 const buildStats = (
   publicRows: PublicQueueVisitor[],
   detailRows: DetailQueueVisitor[],
-  queue?: SyncedQueue
+  queue?: SyncedQueue,
+  thresholdMs?: number
 ): QueueStats => {
   const rows = detailRows.length ? detailRows : publicRows;
-  const cancelAvgWait = shouldCancelAvgWait(queue, detailRows);
+  const cancelAvgWait = shouldCancelAvgWait(queue, detailRows, Date.now(), thresholdMs);
   return {
     waiting: publicRows.filter((v) => v.status === "waiting").length,
     called: rows.filter((v) => v.status === "called").length,
     served: rows.filter((v) => v.status === "served").length,
     skipped: rows.filter((v) => v.status === "skipped").length,
     removed: rows.filter((v) => v.status === "removed").length,
-    avgWait: !cancelAvgWait && detailRows.length ? avgWaitFromDetails(detailRows, queue) : 0,
+    avgWait: !cancelAvgWait && detailRows.length
+      ? avgWaitFromDetails(detailRows, queue, thresholdMs)
+      : 0,
   };
 };
 
@@ -243,10 +252,13 @@ export const useQueueSync = ({
     queues.forEach((queue) => {
       const pub = publicVisitors.filter((v) => v.queue_id === queue.id);
       const det = detailVisitors.filter((v) => v.queue_id === queue.id);
-      map[queue.id] = buildStats(pub, det, queue);
+      const thresholdMs = getInactivityThresholdMs(
+        readStoredInactivityMinutes(queue.business_id || businessId)
+      );
+      map[queue.id] = buildStats(pub, det, queue, thresholdMs);
     });
     return map;
-  }, [detailVisitors, publicVisitors, queues]);
+  }, [businessId, detailVisitors, publicVisitors, queues]);
 
   const getQueueStats = useCallback((id?: string | null) => (id ? statsByQueue[id] || emptyStats : emptyStats), [statsByQueue]);
   const getPublicVisitors = useCallback((id?: string | null) => (id ? publicVisitors.filter((v) => v.queue_id === id) : []), [publicVisitors]);

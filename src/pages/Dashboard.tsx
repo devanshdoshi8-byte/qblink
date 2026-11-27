@@ -42,7 +42,11 @@ import QueueHealthAlerts from "@/components/QueueHealthAlerts";
 import QueueIntegrityPanel from "@/components/business/QueueIntegrityPanel";
 import { useQueueSync } from "@/hooks/useQueueSync";
 import { useAutoDaySync } from "@/hooks/useAutoDaySync";
-import { isQueueInactiveForPause } from "@/lib/queueInactivity";
+import {
+  getInactivityThresholdMs,
+  isQueueInactiveForPause,
+  readStoredInactivityMinutes,
+} from "@/lib/queueInactivity";
 import RestaurantTableConfig, { TableSize, COMMON_PARTY_SIZES, PartySizeMode } from "@/components/business/RestaurantTableConfig";
 import EmptyState from "@/components/EmptyState";
 import InfoHint from "@/components/InfoHint";
@@ -167,14 +171,18 @@ const QueueManager = ({
     onDayReset: refresh,
   });
 
-  // Auto-pause any active queue inactive for more than 60 minutes
+  // Auto-pause any active queue inactive for longer than the business threshold
   useEffect(() => {
     if (!queues.length) return;
     let cancelled = false;
+    const configuredMinutes =
+      (business as any)?.default_settings?.inactivity_pause_minutes ??
+      readStoredInactivityMinutes(businessId);
+    const thresholdMs = getInactivityThresholdMs(configuredMinutes);
     const checkInactivity = async () => {
       const nowMs = Date.now();
       const stale = queues.filter((q) =>
-        isQueueInactiveForPause(q, getDetailVisitors(q.id), nowMs)
+        isQueueInactiveForPause(q, getDetailVisitors(q.id), nowMs, thresholdMs)
       );
       if (!stale.length || cancelled) return;
       await Promise.all(
@@ -185,8 +193,8 @@ const QueueManager = ({
       if (!cancelled) {
         toast.info(
           stale.length === 1
-            ? `"${stale[0].name}" paused after 60 min of inactivity`
-            : `${stale.length} queues paused after 60 min of inactivity`
+            ? `"${stale[0].name}" paused after ${configuredMinutes} min of inactivity`
+            : `${stale.length} queues paused after ${configuredMinutes} min of inactivity`
         );
         refresh();
       }
@@ -197,7 +205,7 @@ const QueueManager = ({
       cancelled = true;
       clearInterval(timer);
     };
-  }, [queues, getDetailVisitors, refresh]);
+  }, [business, businessId, queues, getDetailVisitors, refresh]);
 
   const waiting = visitors.filter((v) => v.status === "waiting");
   const called = visitors.filter((v) => v.status === "called");

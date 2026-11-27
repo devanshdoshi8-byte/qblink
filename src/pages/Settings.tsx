@@ -7,6 +7,15 @@ import { Building2, Bell, Lock, Trash2, Save, BellRing, Send, Eye, Globe, LogIn,
 import InfoHint from "@/components/InfoHint";
 import OperatingHoursCard from "@/components/business/OperatingHoursCard";
 import GlideSelect from "@/components/reactbits/GlideSelect";
+import WakeSlider from "@/components/reactbits/WakeSlider";
+import {
+  DEFAULT_INACTIVITY_MINUTES,
+  MAX_INACTIVITY_MINUTES,
+  MIN_INACTIVITY_MINUTES,
+  clampInactivityMinutes,
+  readStoredInactivityMinutes,
+  writeStoredInactivityMinutes,
+} from "@/lib/queueInactivity";
 
 const CATEGORIES = ["Restaurant", "Clinic", "Hospital", "Salon", "Bank", "Government Service", "Hotel", "Service Center", "Other"];
 
@@ -42,6 +51,11 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
     show_live_queue_info: true,
   });
   const [savingVisibility, setSavingVisibility] = useState(false);
+  const [defaultSettings, setDefaultSettings] = useState<Record<string, any>>({});
+  const [inactivityMinutes, setInactivityMinutes] = useState<number>(() =>
+    readStoredInactivityMinutes(businessId)
+  );
+  const [savingInactivity, setSavingInactivity] = useState(false);
 
   useEffect(() => { fetchBiz(); }, [businessId]);
 
@@ -56,6 +70,14 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
         address: data.address || "",
       });
       const ds: any = (data as any).default_settings ?? {};
+      setDefaultSettings(ds);
+      const loadedMinutes = clampInactivityMinutes(
+        typeof ds.inactivity_pause_minutes === "number"
+          ? ds.inactivity_pause_minutes
+          : readStoredInactivityMinutes(businessId)
+      );
+      setInactivityMinutes(loadedMinutes);
+      writeStoredInactivityMinutes(businessId, loadedMinutes);
       setAlerts(Array.isArray(ds.alerts) ? ds.alerts : []);
       setIndustry(data.category || "");
       const d: any = data;
@@ -95,6 +117,25 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
     } finally {
       setTimeout(() => setTesting(null), 600);
     }
+  };
+
+  const saveInactivityMinutes = async () => {
+    const clamped = clampInactivityMinutes(inactivityMinutes);
+    setInactivityMinutes(clamped);
+    writeStoredInactivityMinutes(businessId, clamped);
+    setSavingInactivity(true);
+    const nextSettings = {
+      ...defaultSettings,
+      inactivity_pause_minutes: clamped,
+    };
+    setDefaultSettings(nextSettings);
+    const { error } = await supabase
+      .from("businesses")
+      .update({ default_settings: nextSettings } as any)
+      .eq("id", businessId);
+    setSavingInactivity(false);
+    if (error) toast.error("Failed to save inactivity timeout");
+    else toast.success(`Auto-pause set to ${clamped} min`);
   };
 
   const saveProfile = async () => {
@@ -153,6 +194,50 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
 
         {/* Opening Hours */}
         <OperatingHoursCard businessId={businessId} />
+
+        {/* Queue Auto-Pause Inactivity */}
+        <Card icon={<Clock className="w-5 h-5 text-primary" />} title="Queue Auto-Pause Timeout">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm font-medium text-foreground">
+              Inactivity threshold
+            </span>
+            <span className="rounded-lg bg-primary/10 px-2.5 py-1 font-mono text-xs font-bold text-primary">
+              {inactivityMinutes} min
+            </span>
+          </div>
+          <WakeSlider
+            value={inactivityMinutes}
+            min={MIN_INACTIVITY_MINUTES}
+            max={MAX_INACTIVITY_MINUTES}
+            step={5}
+            bars={32}
+            height={42}
+            restHeight={10}
+            gap={4}
+            ariaLabel="Queue inactivity auto-pause minutes"
+            onChange={(val) => {
+              setInactivityMinutes(val);
+              writeStoredInactivityMinutes(businessId, val);
+            }}
+          />
+          <div className="flex justify-between text-[11px] text-muted-foreground font-mono">
+            <span>{MIN_INACTIVITY_MINUTES}m</span>
+            <span>{DEFAULT_INACTIVITY_MINUTES}m (default)</span>
+            <span>{MAX_INACTIVITY_MINUTES}m</span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Automatically pause active queues after {inactivityMinutes} minutes without any joins,
+            calls, or serves, and void stale wait-time data from that idle period.
+          </p>
+          <button
+            type="button"
+            onClick={saveInactivityMinutes}
+            disabled={savingInactivity}
+            className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            <Save className="w-4 h-4" /> {savingInactivity ? "Saving…" : "Save Inactivity Limit"}
+          </button>
+        </Card>
 
         {/* Notifications */}
         <Card icon={<Bell className="w-5 h-5 text-primary" />} title="Notifications">

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import GlideSelect from "@/components/reactbits/GlideSelect";
+import { filterRowsAfterInactivityGap } from "@/lib/queueInactivity";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import { supabase } from "@/integrations/supabase/client";
 import { SkeletonPageHeader, SkeletonStatGrid, SkeletonChartCard } from "@/components/skeletons/DashboardSkeletons";
@@ -27,7 +28,7 @@ const AdminAnalytics = () => {
     const [v, b, q, c] = await Promise.all([
       supabase.from("queue_visitors").select("queue_id, status, joined_at, served_at, visitor_name, phone").gte("joined_at", since),
       supabase.from("businesses").select("id, name, category, created_at"),
-      supabase.from("queues").select("id, business_id, status"),
+      supabase.from("queues").select("id, business_id, status, updated_at"),
       supabase.from("customer_profiles").select("user_id, created_at"),
     ]);
     setVisitors(v.data || []);
@@ -52,15 +53,22 @@ const AdminAnalytics = () => {
   const bizCat = useMemo(() => new Map(businesses.map(b => [b.id, b.category || "Other"])), [businesses]);
 
   const scoped = useMemo(() => {
-    if (category === "All") return visitors;
-    return visitors.filter(v => bizCat.get(queueBiz.get(v.queue_id) as string) === category);
-  }, [visitors, category, queueBiz, bizCat]);
+    const activeScoped = queues.flatMap((q) => {
+      if (category !== "All" && bizCat.get(q.business_id) !== category) return [];
+      const qRows = visitors.filter((v) => v.queue_id === q.id);
+      return filterRowsAfterInactivityGap(qRows, q);
+    });
+    return activeScoped;
+  }, [visitors, queues, category, bizCat]);
 
   const today0 = startOfDay(new Date()).getTime();
   const vToday = scoped.filter(v => new Date(v.joined_at).getTime() >= today0);
   const served = scoped.filter(v => v.status === "served");
   const dropped = scoped.filter(v => v.status === "skipped" || v.status === "removed" || v.status === "no_show");
-  const waitTimes = served.filter(v => v.served_at).map(v => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000);
+  const waitTimes = served
+    .filter(v => v.served_at)
+    .map(v => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000)
+    .filter(mins => Number.isFinite(mins) && mins >= 0 && mins <= 120);
   const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
   const completion = scoped.length ? Math.round((served.length / scoped.length) * 100) : 0;
   const dropOff = scoped.length ? +((dropped.length / scoped.length) * 100).toFixed(1) : 0;

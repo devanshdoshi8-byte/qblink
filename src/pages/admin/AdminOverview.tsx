@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import MagicBento from "@/components/reactbits/MagicBento";
 import BorderGlow from "@/components/reactbits/BorderGlow";
+import { filterRowsAfterInactivityGap } from "@/lib/queueInactivity";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import AdminOnboardingChecklist from "@/components/admin/AdminOnboardingChecklist";
 import {
@@ -57,7 +58,7 @@ const AdminOverview = () => {
     ] = await Promise.all([
       supabase.from("businesses").select("*", { count: "exact", head: true }),
       supabase.from("customer_profiles").select("*", { count: "exact", head: true }),
-      supabase.from("queues").select("id, name, status, business_id"),
+      supabase.from("queues").select("id, name, status, business_id, updated_at"),
       supabase.from("queue_visitors").select("queue_id, status, joined_at, served_at").gte("joined_at", today0),
       supabase.from("queue_visitors").select("queue_id, status, joined_at, served_at").gte("joined_at", last90),
       supabase.from("businesses").select("id, name, category, created_at"),
@@ -72,11 +73,17 @@ const AdminOverview = () => {
     const queueName = new Map(qs.map(q => [q.id, q.name]));
 
     const active = qs.filter(q => q.status === "active").length;
-    const served = vToday.filter(v => v.status === "served").length;
-    const total = vToday.length;
-    const dropped = vToday.filter(v => v.status === "skipped" || v.status === "removed").length;
-    const waitTimes = vToday.filter(v => v.status === "served" && v.served_at)
-      .map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000);
+    const activeVisitorsToday = qs.flatMap((q) => {
+      const qRows = vToday.filter((v) => v.queue_id === q.id);
+      return filterRowsAfterInactivityGap(qRows, q);
+    });
+    const served = activeVisitorsToday.filter(v => v.status === "served").length;
+    const total = activeVisitorsToday.length;
+    const dropped = activeVisitorsToday.filter(v => v.status === "skipped" || v.status === "removed" || v.status === "no_show").length;
+    const waitTimes = activeVisitorsToday
+      .filter(v => v.status === "served" && v.served_at)
+      .map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000)
+      .filter(mins => Number.isFinite(mins) && mins >= 0 && mins <= 120);
     const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
 
     setTotals({
@@ -92,16 +99,18 @@ const AdminOverview = () => {
 
     // Insights
     const tokensByBiz: Record<string, number> = {};
-    vToday.forEach(v => {
+    activeVisitorsToday.forEach(v => {
       const bId = queueBiz.get(v.queue_id);
       if (bId) tokensByBiz[bId] = (tokensByBiz[bId] || 0) + 1;
     });
     const mostActiveEntry = Object.entries(tokensByBiz).sort((a, b) => b[1] - a[1])[0];
 
     const waitByQueue: Record<string, number[]> = {};
-    vToday.filter(v => v.status === "served" && v.served_at).forEach(v => {
+    activeVisitorsToday.filter(v => v.status === "served" && v.served_at).forEach(v => {
       const mins = (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000;
-      (waitByQueue[v.queue_id] = waitByQueue[v.queue_id] || []).push(mins);
+      if (Number.isFinite(mins) && mins >= 0 && mins <= 120) {
+        (waitByQueue[v.queue_id] = waitByQueue[v.queue_id] || []).push(mins);
+      }
     });
     const queueAvgs = Object.entries(waitByQueue).map(([qid, arr]) => ({
       qid, avg: arr.reduce((a, b) => a + b, 0) / arr.length,
@@ -118,7 +127,7 @@ const AdminOverview = () => {
     const topCat = Object.entries(catCount).sort((a, b) => b[1] - a[1])[0];
 
     const dropByBiz: Record<string, { total: number; dropped: number }> = {};
-    vToday.forEach(v => {
+    activeVisitorsToday.forEach(v => {
       const bId = queueBiz.get(v.queue_id);
       if (!bId) return;
       const e = dropByBiz[bId] = dropByBiz[bId] || { total: 0, dropped: 0 };

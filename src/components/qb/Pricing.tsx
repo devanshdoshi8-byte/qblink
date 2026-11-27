@@ -63,42 +63,65 @@ export const Pricing = () => {
   const themeCtx = useOptionalTheme();
   const isDark = themeCtx?.theme === "dark";
 
-  const renderCardBody = (p: PlanDef) => (
-    <>
-      {p.featured && (
-        <span className="absolute -top-3 left-6 z-10 rounded-full bg-primary text-primary-foreground text-xs font-medium tracking-[0.16em] uppercase px-3 py-1">
-          Most chosen
-        </span>
-      )}
-      <h3 className="font-display text-xl text-foreground">{p.name}</h3>
-      <div className="mt-3 flex items-baseline gap-1.5">
-        <span className="font-display text-4xl text-foreground">{p.price}</span>
-        <span className="text-xs text-muted-foreground">{p.cadence}</span>
-      </div>
-      <p className="mt-3 text-sm text-muted-foreground leading-relaxed min-h-[2.5rem]">{p.line}</p>
+  const renderCardBody = (p: PlanDef) => {
+    const featuredDark = p.featured && isDark;
+    const featuredLight = p.featured && !isDark;
+    const headingClass = featuredLight
+      ? "text-[#0e1e34]"
+      : featuredDark
+      ? "text-[#f4f2eb]"
+      : "text-foreground";
+    const mutedClass = featuredLight
+      ? "text-[#2c4459]"
+      : featuredDark
+      ? "text-[#c8d8e6]"
+      : "text-muted-foreground";
+    const featureClass = featuredLight
+      ? "text-[#0e1e34]"
+      : featuredDark
+      ? "text-[#f4f2eb]"
+      : "text-foreground/90";
 
-      <ul className="mt-6 space-y-3 flex-1">
-        {p.features.map((f) => (
-          <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/90">
-            <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden />
-            <span>{f}</span>
-          </li>
-        ))}
-      </ul>
+    return (
+      <>
+        {p.featured && (
+          <span className="absolute -top-3 left-6 z-10 rounded-full bg-[#10637f] text-[#f4f2eb] text-xs font-medium tracking-[0.16em] uppercase px-3 py-1">
+            Most chosen
+          </span>
+        )}
+        <h3 className={`font-display text-xl ${headingClass}`}>{p.name}</h3>
+        <div className="mt-3 flex items-baseline gap-1.5">
+          <span className={`font-display text-4xl ${headingClass}`}>{p.price}</span>
+          <span className={`text-xs ${mutedClass}`}>{p.cadence}</span>
+        </div>
+        <p className={`mt-3 text-sm leading-relaxed min-h-[2.5rem] ${mutedClass}`}>{p.line}</p>
 
-      <div className="border-t border-border mt-6" />
-      <Link
-        to={p.to}
-        className={`mt-7 inline-flex justify-center rounded-xl px-4 py-3 text-sm font-medium transition-opacity ${
-          p.featured
-            ? "bg-primary text-primary-foreground hover:opacity-90"
-            : "border border-border text-foreground hover:bg-muted"
-        }`}
-      >
-        {p.cta}
-      </Link>
-    </>
-  );
+        <ul className="mt-6 space-y-3 flex-1">
+          {p.features.map((f) => (
+            <li key={f} className={`flex items-start gap-2.5 text-sm ${featureClass}`}>
+              <Check
+                className={`w-4 h-4 shrink-0 mt-0.5 ${featuredDark ? "text-[#51c2c2]" : "text-primary"}`}
+                aria-hidden
+              />
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="border-t border-border mt-6" />
+        <Link
+          to={p.to}
+          className={`mt-7 inline-flex justify-center rounded-xl px-4 py-3 text-sm font-medium transition-opacity ${
+            p.featured
+              ? "bg-primary text-primary-foreground hover:opacity-90"
+              : "border border-border text-foreground hover:bg-muted"
+          }`}
+        >
+          {p.cta}
+        </Link>
+      </>
+    );
+  };
 
   return (
   <section id="pricing" className="relative py-24 sm:py-32 bg-background/85">
@@ -120,7 +143,15 @@ export const Pricing = () => {
             <BorderGlow
               edgeSensitivity={30}
               glowColor={isDark ? "180 48 54" : "195 78 28"}
-              backgroundColor={isDark ? "#122136" : "#ffffff"}
+              backgroundColor={
+                p.featured
+                  ? isDark
+                    ? "#0b192c"
+                    : "#eef7f8"
+                  : isDark
+                  ? "#122136"
+                  : "#ffffff"
+              }
               surfaceTheme={isDark ? "dark" : "light"}
               borderRadius={16}
               glowRadius={36}
