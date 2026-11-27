@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import BusinessLayout from "@/components/business/BusinessLayout";
+import { CHART_COLORS } from "@/lib/chartPalette";
 import {
   Users, Clock, Timer, Hourglass, CheckCircle2, UserX, SkipForward,
   Flame, HeartPulse, Wrench, Repeat, RefreshCw,
@@ -320,8 +321,8 @@ const InsightsContent = ({
                   <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={11} />
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} allowDecimals={false} />
                   <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-                  <Line type="monotone" dataKey="joined" stroke="hsl(205 100% 50%)" strokeWidth={2.5} dot={false} />
-                  <Line type="monotone" dataKey="served" stroke="hsl(160 70% 45%)" strokeWidth={2.5} dot={false} />
+                  <Line type="monotone" dataKey="joined" stroke={CHART_COLORS.primary} strokeWidth={2.5} dot={false} />
+                  <Line type="monotone" dataKey="served" stroke={CHART_COLORS.positive} strokeWidth={2.5} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -335,7 +336,7 @@ const InsightsContent = ({
                   <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={11} />
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} allowDecimals={false} />
                   <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-                  <Bar dataKey="visitors" fill="hsl(205 100% 50%)" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="visitors" fill={CHART_COLORS.primary} radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

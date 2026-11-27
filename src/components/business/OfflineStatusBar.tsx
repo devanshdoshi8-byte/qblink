@@ -51,13 +51,13 @@ export const OfflineStatusBar = ({ onSyncPending }: Props) => {
   return (
     <div className={`px-4 py-2.5 rounded-2xl flex items-center justify-between gap-3 text-xs transition-all ${
       !isOnline
-        ? "bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400"
+        ? "bg-warning-soft border border-warning/20 text-warning"
         : "bg-primary/10 border border-primary/20 text-primary"
     }`}>
       <div className="flex items-center gap-2">
         {!isOnline ? (
           <>
-            <WifiOff className="w-4 h-4 text-amber-500 shrink-0" />
+            <WifiOff className="w-4 h-4 text-warning shrink-0" />
             <span className="font-semibold">Connection interrupted</span>
             <span className="opacity-80 hidden sm:inline">• Showing cached queue state</span>
           </>

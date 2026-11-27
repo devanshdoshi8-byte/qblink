@@ -87,12 +87,12 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
           <span className="flex h-2 w-2 relative">
             <span
               className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                isQueueActive ? "bg-emerald-400" : "bg-amber-400"
+                isQueueActive ? "bg-success" : "bg-warning"
               }`}
             />
             <span
               className={`relative inline-flex rounded-full h-2 w-2 ${
-                isQueueActive ? "bg-emerald-500" : "bg-amber-500"
+                isQueueActive ? "bg-success" : "bg-warning"
               }`}
             />
           </span>
@@ -109,9 +109,9 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
           <span
             className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
               isQueueActive
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                ? "bg-success-soft text-success border-success/20"
                 : isQueuePaused
-                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                ? "bg-warning-soft text-warning border-warning/20"
                 : "bg-muted text-muted-foreground border-border"
             }`}
           >
@@ -195,10 +195,10 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
             </span>
             <div className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1">
               {velocity.trend === "faster" && (
-                <TrendingUp className="w-3 h-3 text-emerald-500 shrink-0" />
+                <TrendingUp className="w-3 h-3 text-success shrink-0" />
               )}
               {velocity.trend === "slower" && (
-                <TrendingDown className="w-3 h-3 text-amber-500 shrink-0" />
+                <TrendingDown className="w-3 h-3 text-warning shrink-0" />
               )}
               <span className="truncate">{velocity.trendLabel}</span>
             </div>
@@ -233,7 +233,7 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
           <div className="mt-2">
             <span
               className={`font-mono text-sm sm:text-base font-black ${
-                reliability.hasData ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground italic text-xs"
+                reliability.hasData ? "text-success" : "text-muted-foreground italic text-xs"
               }`}
             >
               {reliability.displayValue}
@@ -250,7 +250,7 @@ export const ExecutiveTelemetryBar: React.FC<ExecutiveTelemetryBarProps> = ({
         <div className="p-3 rounded-xl bg-muted/30 border border-border/50 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-success" />
               <span>Served Today</span>
             </span>
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { CHART_COLORS } from "@/lib/chartPalette";
 import { supabase } from "@/integrations/supabase/client";
 import { SkeletonPageHeader, SkeletonStatGrid, SkeletonChartCard } from "@/components/skeletons/DashboardSkeletons";
 import { DollarSign, TrendingUp, Crown, Users, Info } from "lucide-react";
@@ -9,7 +10,7 @@ import {
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area,
 } from "recharts";
 
-const COLORS = ["hsl(220 10% 65%)", "hsl(205 100% 50%)", "hsl(185 100% 45%)", "hsl(280 70% 60%)"];
+const COLORS = [CHART_COLORS.slate, CHART_COLORS.primary, CHART_COLORS.secondary, CHART_COLORS.rose];
 const fmt = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
 const AdminRevenue = () => {
@@ -96,15 +97,15 @@ const AdminRevenue = () => {
             <AreaChart data={monthly}>
               <defs>
                 <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(160 70% 50%)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(160 70% 50%)" stopOpacity={0} />
+                  <stop offset="0%" stopColor={CHART_COLORS.positive} stopOpacity={0.4} />
+                  <stop offset="100%" stopColor={CHART_COLORS.positive} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="m" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Area type="monotone" dataKey="businesses" stroke="hsl(160 70% 50%)" fill="url(#rev)" strokeWidth={2.5} />
+              <Area type="monotone" dataKey="businesses" stroke={CHART_COLORS.positive} fill="url(#rev)" strokeWidth={2.5} />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
@@ -116,8 +117,8 @@ const AdminRevenue = () => {
                 data={[{ name: "Free", value: free }, { name: "Paid", value: paid || 0.0001 }]}
                 dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={4}
               >
-                <Cell fill="hsl(220 10% 65%)" />
-                <Cell fill="hsl(205 100% 50%)" />
+                <Cell fill={CHART_COLORS.slate} />
+                <Cell fill={CHART_COLORS.primary} />
               </Pie>
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
             </PieChart>

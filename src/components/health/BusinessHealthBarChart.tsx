@@ -3,11 +3,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 interface Row { name: string; score: number | null; band: string | null; id: string; }
 
 const COLOR: Record<string, string> = {
-  excellent: "hsl(142 76% 36%)",
-  good: "hsl(142 71% 45%)",
-  attention: "hsl(48 96% 53%)",
-  poor: "hsl(25 95% 53%)",
-  critical: "hsl(0 84% 60%)",
+  excellent: "hsl(var(--success))",
+  good: "hsl(var(--chart-1))",
+  attention: "hsl(var(--warning))",
+  poor: "hsl(var(--chart-6))",
+  critical: "hsl(var(--danger))",
 };
 
 export default function BusinessHealthBarChart({ rows, onSelect }: { rows: Row[]; onSelect?: (id: string) => void }) {

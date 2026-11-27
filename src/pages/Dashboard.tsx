@@ -516,7 +516,7 @@ const QueueManager = ({
                       onClick={() => setShowQuickHub(false)}
                       className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-muted transition-colors"
                     >
-                      <Monitor className="w-4 h-4 text-teal-500" />
+                      <Monitor className="w-4 h-4 text-primary" />
                       <span>Open TV Kiosk Display</span>
                     </a>
                     <button
@@ -538,7 +538,7 @@ const QueueManager = ({
                       }}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-muted transition-colors text-left"
                     >
-                      <BarChart3 className="w-4 h-4 text-emerald-500" />
+                      <BarChart3 className="w-4 h-4 text-success" />
                       <span>Daily Performance Summary</span>
                     </button>
                     <button
@@ -549,7 +549,7 @@ const QueueManager = ({
                       }}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-muted transition-colors text-left"
                     >
-                      <Keyboard className="w-4 h-4 text-amber-500" />
+                      <Keyboard className="w-4 h-4 text-warning" />
                       <span>Hotkeys Cheat Sheet [?]</span>
                     </button>
                   </motion.div>
@@ -787,14 +787,14 @@ const QueueManager = ({
               onClick={() => setShowDailySummary(true)}
               className="bg-card border border-border text-foreground px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-muted transition-colors flex items-center gap-2"
             >
-              <BarChart3 className="w-4 h-4 text-emerald-500" /> Daily Summary
+              <BarChart3 className="w-4 h-4 text-success" /> Daily Summary
             </button>
 
             <button
               onClick={() => setShowServiceConfig(true)}
               className="bg-card border border-border text-foreground px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-muted transition-colors flex items-center gap-2"
             >
-              <Layers className="w-4 h-4 text-amber-500" /> Services
+              <Layers className="w-4 h-4 text-warning" /> Services
             </button>
 
             <div
@@ -978,13 +978,13 @@ const QueueManager = ({
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/50 border border-border">
                 <span className="font-medium text-foreground">Mark Called Token Served</span>
-                <kbd className="px-2 py-1 rounded bg-background border border-border font-mono font-bold text-emerald-600 dark:text-emerald-400 shadow-sm">
+                <kbd className="px-2 py-1 rounded bg-background border border-border font-mono font-bold text-success shadow-sm">
                   Enter or S
                 </kbd>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/50 border border-border">
                 <span className="font-medium text-foreground">Skip Called Token</span>
-                <kbd className="px-2 py-1 rounded bg-background border border-border font-mono font-bold text-amber-600 dark:text-amber-400 shadow-sm">
+                <kbd className="px-2 py-1 rounded bg-background border border-border font-mono font-bold text-warning shadow-sm">
                   K
                 </kbd>
               </div>

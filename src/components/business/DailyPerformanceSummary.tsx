@@ -118,7 +118,7 @@ export const DailyPerformanceSummary = ({
             <div className="p-4 rounded-2xl bg-muted/40 border border-border flex flex-col justify-between">
               <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase">
                 <span>Service Velocity</span>
-                <Zap className="w-4 h-4 text-amber-500" />
+                <Zap className="w-4 h-4 text-warning" />
               </div>
               <div className="mt-3">
                 <span className="text-3xl font-black text-foreground">
@@ -132,10 +132,10 @@ export const DailyPerformanceSummary = ({
             <div className="p-4 rounded-2xl bg-muted/40 border border-border flex flex-col justify-between">
               <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase">
                 <span>Flow Score</span>
-                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                <TrendingUp className="w-4 h-4 text-success" />
               </div>
               <div className="mt-3">
-                <span className="text-3xl font-black text-emerald-500">{summary.flowEfficiencyScore.value}</span>
+                <span className="text-3xl font-black text-success">{summary.flowEfficiencyScore.value}</span>
                 <span className="text-xs text-muted-foreground ml-1.5">/ 100</span>
               </div>
             </div>

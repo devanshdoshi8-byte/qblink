@@ -8,13 +8,14 @@ import TrendBadge from "@/components/TrendBadge";
 import InfoHint from "@/components/InfoHint";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
+import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import {
   SkeletonStatGrid,
   SkeletonChartCard,
   SkeletonPageHeader,
 } from "@/components/skeletons/DashboardSkeletons";
 
-const COLORS = ["hsl(205 100% 50%)", "hsl(185 100% 45%)", "hsl(160 70% 50%)", "hsl(280 70% 60%)"];
+const COLORS = CHART_SERIES;
 
 const Analytics = () => (
   <BusinessLayout>{(business) => <AnalyticsContent businessId={business.id} />}</BusinessLayout>
@@ -211,8 +212,8 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
               <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Line type="monotone" dataKey="served" stroke="hsl(205 100% 50%)" strokeWidth={2.5} dot={false} />
-              <Line type="monotone" dataKey="skipped" stroke="hsl(185 100% 45%)" strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="served" stroke={CHART_COLORS.primary} strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="skipped" stroke={CHART_COLORS.secondary} strokeWidth={2.5} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -263,7 +264,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
             <XAxis dataKey="hour" stroke="hsl(var(--muted-foreground))" fontSize={12} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
             <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-            <Bar dataKey="visitors" fill="hsl(205 100% 50%)" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="visitors" fill={CHART_COLORS.primary} radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

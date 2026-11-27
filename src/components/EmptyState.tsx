@@ -55,8 +55,7 @@ const EmptyState = ({
   return (
     <div className={`flex flex-col items-center text-center ${compact ? "py-6" : "py-10"} ${className}`}>
       <div className="relative mb-4">
-        <div className="absolute inset-0 rounded-2xl bg-primary/15 blur-2xl" aria-hidden />
-        <div className="relative w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+        <div className="relative w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-sm">
           <Icon className="w-7 h-7 text-primary-foreground" strokeWidth={2} />
         </div>
       </div>

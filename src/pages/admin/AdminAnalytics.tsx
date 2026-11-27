@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import { supabase } from "@/integrations/supabase/client";
 import { SkeletonPageHeader, SkeletonStatGrid, SkeletonChartCard } from "@/components/skeletons/DashboardSkeletons";
 import { format, startOfDay, subDays } from "date-fns";
@@ -8,7 +9,7 @@ import {
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area,
 } from "recharts";
 
-const COLORS = ["hsl(205 100% 50%)", "hsl(185 100% 45%)", "hsl(160 70% 50%)", "hsl(280 70% 60%)", "hsl(35 90% 55%)", "hsl(340 75% 55%)"];
+const COLORS = CHART_SERIES;
 
 const AdminAnalytics = () => {
   const [range, setRange] = useState<"7d" | "30d" | "90d">("30d");
@@ -203,13 +204,13 @@ const AdminAnalytics = () => {
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={growth}>
               <defs>
-                <linearGradient id="ag1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="hsl(205 100% 50%)" stopOpacity={0.4} /><stop offset="100%" stopColor="hsl(205 100% 50%)" stopOpacity={0} /></linearGradient>
+                <linearGradient id="ag1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={CHART_COLORS.primary} stopOpacity={0.4} /><stop offset="100%" stopColor={CHART_COLORS.primary} stopOpacity={0} /></linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Area type="monotone" dataKey="customers" stroke="hsl(205 100% 50%)" fill="url(#ag1)" strokeWidth={2} />
+              <Area type="monotone" dataKey="customers" stroke={CHART_COLORS.primary} fill="url(#ag1)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
@@ -242,7 +243,7 @@ const AdminAnalytics = () => {
               <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Bar dataKey="queues" fill="hsl(185 100% 45%)" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="queues" fill={CHART_COLORS.secondary} radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
@@ -254,7 +255,7 @@ const AdminAnalytics = () => {
               <XAxis dataKey="hour" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Bar dataKey="visitors" fill="hsl(205 100% 50%)" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="visitors" fill={CHART_COLORS.primary} radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
@@ -279,7 +280,7 @@ const AdminAnalytics = () => {
               <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Line type="monotone" dataKey="rate" stroke="hsl(160 70% 50%)" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="rate" stroke={CHART_COLORS.positive} strokeWidth={2.5} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </Card>

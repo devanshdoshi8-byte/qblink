@@ -169,13 +169,6 @@ const StepContextBridge = ({ data, onNext }: Props) => {
 
       {/* Living infographic */}
       <div className="relative mx-auto h-72 w-72 sm:h-80 sm:w-80 mb-6 overflow-hidden">
-        {/* Soft glow */}
-        <motion.div
-          aria-hidden
-          className="absolute inset-6 rounded-full bg-primary/10 blur-2xl"
-          animate={{ scale: [1, 1.08, 1], opacity: [0.6, 0.9, 0.6] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
         {/* Orbit rings */}
         {[0, 1].map((i) => (
           <motion.div

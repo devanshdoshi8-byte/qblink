@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import AdminOnboardingChecklist from "@/components/admin/AdminOnboardingChecklist";
 import {
   Building2, Users, Activity, UserCheck, Ticket, Clock, CheckCircle,
@@ -12,7 +13,7 @@ import {
 } from "recharts";
 import { format, startOfDay, subDays } from "date-fns";
 
-const COLORS = ["hsl(205 100% 50%)", "hsl(185 100% 45%)", "hsl(160 70% 50%)", "hsl(280 70% 60%)", "hsl(35 90% 55%)", "hsl(340 75% 55%)"];
+const COLORS = CHART_SERIES;
 
 interface Totals {
   businesses: number; customers: number; activeQueues: number;
@@ -223,20 +224,20 @@ const AdminOverview = () => {
             <AreaChart data={growth}>
               <defs>
                 <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(205 100% 50%)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(205 100% 50%)" stopOpacity={0} />
+                  <stop offset="0%" stopColor={CHART_COLORS.primary} stopOpacity={0.4} />
+                  <stop offset="100%" stopColor={CHART_COLORS.primary} stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(185 100% 45%)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(185 100% 45%)" stopOpacity={0} />
+                  <stop offset="0%" stopColor={CHART_COLORS.secondary} stopOpacity={0.4} />
+                  <stop offset="100%" stopColor={CHART_COLORS.secondary} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Area type="monotone" dataKey="customers" stroke="hsl(205 100% 50%)" fill="url(#g1)" strokeWidth={2} />
-              <Area type="monotone" dataKey="businesses" stroke="hsl(185 100% 45%)" fill="url(#g2)" strokeWidth={2} />
+              <Area type="monotone" dataKey="customers" stroke={CHART_COLORS.primary} fill="url(#g1)" strokeWidth={2} />
+              <Area type="monotone" dataKey="businesses" stroke={CHART_COLORS.secondary} fill="url(#g2)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -275,7 +276,7 @@ const AdminOverview = () => {
               <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Bar dataKey="served" fill="hsl(205 100% 50%)" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="served" fill={CHART_COLORS.primary} radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -287,7 +288,7 @@ const AdminOverview = () => {
               <XAxis dataKey="hour" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Line type="monotone" dataKey="visitors" stroke="hsl(185 100% 45%)" strokeWidth={2.5} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="visitors" stroke={CHART_COLORS.secondary} strokeWidth={2.5} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>

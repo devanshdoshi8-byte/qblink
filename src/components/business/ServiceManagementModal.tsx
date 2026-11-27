@@ -139,7 +139,7 @@ export const ServiceManagementModal = ({
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                             srv.priority === "express"
-                              ? "bg-amber-500/10 text-amber-500"
+                              ? "bg-warning-soft text-warning"
                               : srv.priority === "urgent"
                               ? "bg-rose-500/10 text-rose-500"
                               : "bg-primary/10 text-primary"

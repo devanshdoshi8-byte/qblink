@@ -251,7 +251,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
             <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-2.5">
               <div className="flex items-center justify-between text-xs font-semibold">
                 <label htmlFor="walkaway-slider" className="text-foreground">Estimated Queue Walkaway Rate</label>
-                <span className="font-mono font-bold text-sm text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">
+                <span className="font-mono font-bold text-sm text-warning bg-warning-soft px-2 py-0.5 rounded-md">
                   {currentWalkawayRate}%
                 </span>
               </div>
@@ -264,7 +264,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                 aria-label="Estimated Queue Walkaway Rate"
                 value={currentWalkawayRate}
                 onChange={(e) => setCurrentWalkawayRate(parseInt(e.target.value))}
-                className="w-full accent-amber-500 cursor-pointer"
+                className="w-full accent-warning cursor-pointer"
               />
               <p className="text-[11px] text-muted-foreground leading-tight">
                 Estimated % of customers who walk away or abandon when seeing a congested physical queue.
@@ -275,7 +275,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
             <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-2.5">
               <div className="flex items-center justify-between text-xs font-semibold">
                 <label htmlFor="target-slider" className="text-foreground">Scenario Target Walkaway Rate</label>
-                <span className="font-mono font-bold text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
+                <span className="font-mono font-bold text-sm text-success bg-success-soft px-2 py-0.5 rounded-md">
                   {targetWalkawayRate}%
                 </span>
               </div>
@@ -288,7 +288,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                 aria-label="Scenario Target Walkaway Rate"
                 value={targetWalkawayRate}
                 onChange={(e) => setTargetWalkawayRate(parseInt(e.target.value))}
-                className="w-full accent-emerald-500 cursor-pointer"
+                className="w-full accent-success cursor-pointer"
               />
               <p className="text-[11px] text-muted-foreground leading-tight">
                 Target walkaway rate under an improved digital flow scenario (Reduction: -{outputs.rateReductionPercent}%).
@@ -320,17 +320,17 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
             </h3>
 
             {/* Hero Output Card: Assumed Revenue Exposure */}
-            <div className="p-6 sm:p-7 rounded-3xl bg-slate-900 border-2 border-primary/30 text-white shadow-xl flex flex-col justify-between">
+            <div className="p-6 sm:p-7 rounded-3xl bg-[hsl(var(--brand-navy))] border-2 border-[hsl(var(--brand-glow)/0.3)] text-[hsl(var(--brand-cream))] shadow-xl flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--brand-glow))]">
                     Illustrative Annual Revenue Exposure
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px]">
+                  <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning font-bold text-[10px]">
                     Assumed Cost
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mb-4">
+                <p className="text-xs text-[hsl(var(--brand-cream)/0.72)] mb-4">
                   Estimated revenue tied to the assumed {currentWalkawayRate}% walkaway rate
                 </p>
 
@@ -364,12 +364,12 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
             </div>
 
             {/* Target Scenario Opportunity Box */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-foreground space-y-3">
+            <div className="p-5 sm:p-6 rounded-3xl bg-success-soft border border-success/30 text-foreground space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" /> Scenario Improvement ({currentWalkawayRate}% → {targetWalkawayRate}%)
                 </span>
-                <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                <span className="font-mono text-xs font-bold text-success bg-success/15 px-2 py-0.5 rounded-full">
                   -{outputs.rateReductionPercent}% Walkaway
                 </span>
               </div>
@@ -377,13 +377,13 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
                   <span className="text-[11px] text-muted-foreground block">Potential Annual Opportunity</span>
-                  <span className="font-mono font-extrabold text-xl text-emerald-600 dark:text-emerald-400">
+                  <span className="font-mono font-extrabold text-xl text-success">
                     {formatCurrencyOutput(outputs.annualOpportunityAddressed, currency)}
                   </span>
                 </div>
                 <div>
                   <span className="text-[11px] text-muted-foreground block">Potential Retained Guests</span>
-                  <span className="font-mono font-extrabold text-xl text-emerald-600 dark:text-emerald-400">
+                  <span className="font-mono font-extrabold text-xl text-success">
                     +{outputs.monthlyCustomersRetained} / mo
                   </span>
                 </div>
@@ -407,7 +407,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                 onClick={handleCopySummary}
                 className="flex-1 py-3 px-4 rounded-xl border border-border bg-card hover:bg-muted font-bold text-xs text-foreground flex items-center justify-center gap-2 transition-colors"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? "Copied Scenario Summary" : "Copy Scenario Digest"}</span>
               </button>
 
@@ -459,7 +459,7 @@ Potential Monthly Retained ${preset.visitorTerm}: ${outputs.monthlyCustomersReta
                   </p>
 
                   <p className="text-foreground font-bold pt-1">3. Scenario Opportunity Addressed ({currentWalkawayRate}% → {targetWalkawayRate}%):</p>
-                  <p className="pl-4 text-emerald-600 dark:text-emerald-400">
+                  <p className="pl-4 text-success">
                     = Daily {preset.visitorTerm} ({dailyVisitors}) × Avg. Ticket ({outputs.currencySymbol}{avgCustomerValue}) × Rate Reduction ({outputs.rateReductionPercent}%) × Operating Days ({operatingDays}) × 12 months
                     <br />
                     = {outputs.currencySymbol}{outputs.annualOpportunityAddressed.toLocaleString()} / year
