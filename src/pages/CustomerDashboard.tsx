@@ -231,7 +231,7 @@ const CustomerDashboard = () => {
     setQueuesByBiz(byBiz);
 
     if (user?.id) {
-      const { data: myActive } = await supabase
+      const { data: myActive } = await (supabase as any)
         .from("queue_visitors")
         .select("id, queue_id, token_number, status")
         .eq("customer_user_id", user.id)

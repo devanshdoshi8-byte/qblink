@@ -1,6 +1,6 @@
 import {
   ArrowRight, Check, Eye, Info, Plus, Trash2,
-  Users, Utensils, X, Zap,
+  Users, Utensils, Wand2, X, Zap,
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";

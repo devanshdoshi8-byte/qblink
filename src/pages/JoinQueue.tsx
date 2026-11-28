@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Clock, Users, CheckCircle, Loader2, Activity, RefreshCw, UserCircle2, AlertCircle, ArrowLeft, BellRing, Lightbulb } from "lucide-react";
+import { Clock, Users, CheckCircle, Loader2, Activity, RefreshCw, UserCircle2, AlertCircle, ArrowLeft, BellRing, Lightbulb, Zap } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import AIAssistant from "@/components/AIAssistant";
 import TrustPrivacyCard from "@/components/TrustPrivacyCard";
@@ -329,7 +329,7 @@ const JoinQueue = () => {
     if (!user?.id || !queueId || isDemo || joined) return;
     let cancelled = false;
     (async () => {
-      const { data: activeRows } = await supabase
+      const { data: activeRows } = await (supabase as any)
         .from("queue_visitors")
         .select("id, queue_id, token_number, status, joined_at")
         .eq("customer_user_id", user.id)

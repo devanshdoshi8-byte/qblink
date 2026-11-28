@@ -46,7 +46,7 @@ const CustomerAnalyticsBento = ({ userId }: CustomerAnalyticsBentoProps) => {
     const days = range === "week" ? 7 : range === "month" ? 30 : 90;
     const since = startOfDay(subDays(new Date(), days)).toISOString();
 
-    const { data: visitors } = await supabase
+    const { data: visitors } = await (supabase as any)
       .from("queue_visitors")
       .select("queue_id, status, joined_at, served_at")
       .eq("customer_user_id", userId)
