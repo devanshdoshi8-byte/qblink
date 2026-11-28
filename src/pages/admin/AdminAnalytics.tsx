@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import GlideSelect from "@/components/reactbits/GlideSelect";
-import { filterRowsAfterInactivityGap } from "@/lib/queueInactivity";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import { supabase } from "@/integrations/supabase/client";
 import { SkeletonPageHeader, SkeletonStatGrid, SkeletonChartCard } from "@/components/skeletons/DashboardSkeletons";
@@ -53,13 +52,12 @@ const AdminAnalytics = () => {
   const bizCat = useMemo(() => new Map(businesses.map(b => [b.id, b.category || "Other"])), [businesses]);
 
   const scoped = useMemo(() => {
-    const activeScoped = queues.flatMap((q) => {
-      if (category !== "All" && bizCat.get(q.business_id) !== category) return [];
-      const qRows = visitors.filter((v) => v.queue_id === q.id);
-      return filterRowsAfterInactivityGap(qRows, q);
+    if (category === "All") return visitors;
+    return visitors.filter((v) => {
+      const bizId = queueBiz.get(v.queue_id);
+      return bizId ? bizCat.get(bizId) === category : false;
     });
-    return activeScoped;
-  }, [visitors, queues, category, bizCat]);
+  }, [visitors, category, queueBiz, bizCat]);
 
   const today0 = startOfDay(new Date()).getTime();
   const vToday = scoped.filter(v => new Date(v.joined_at).getTime() >= today0);
@@ -68,7 +66,7 @@ const AdminAnalytics = () => {
   const waitTimes = served
     .filter(v => v.served_at)
     .map(v => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000)
-    .filter(mins => Number.isFinite(mins) && mins >= 0 && mins <= 120);
+    .filter(mins => Number.isFinite(mins) && mins >= 0);
   const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
   const completion = scoped.length ? Math.round((served.length / scoped.length) * 100) : 0;
   const dropOff = scoped.length ? +((dropped.length / scoped.length) * 100).toFixed(1) : 0;
@@ -102,13 +100,14 @@ const AdminAnalytics = () => {
     };
   });
 
-  // Daily queue count
+  // Daily queue count (last 7 days)
   const dailyMap: Record<string, { queues: Set<string>; served: number }> = {};
   for (let i = 6; i >= 0; i--) {
     const k = format(subDays(new Date(), i), "EEE");
     dailyMap[k] = { queues: new Set(), served: 0 };
   }
-  scoped.forEach(v => {
+  const cutoff7 = startOfDay(subDays(new Date(), 6)).getTime();
+  scoped.filter(v => new Date(v.joined_at).getTime() >= cutoff7).forEach(v => {
     const k = format(new Date(v.joined_at), "EEE");
     if (!dailyMap[k]) return;
     dailyMap[k].queues.add(v.queue_id);
@@ -148,10 +147,11 @@ const AdminAnalytics = () => {
     return { week: `W${i + 1}`, rate: u ? Math.round((r / u) * 100) : 0 };
   });
 
-  const waiting = scoped.filter(v => v.status === "waiting" || v.status === "called").length;
+  const servedToday = vToday.filter(v => v.status === "served").length;
+  const waitingToday = vToday.filter(v => v.status === "waiting" || v.status === "called").length;
   const servedVsWaiting = [
-    { name: "Served", value: served.length },
-    { name: "Waiting", value: waiting },
+    { name: "Served", value: servedToday },
+    { name: "Waiting", value: waitingToday },
   ];
 
   const allCategories = Array.from(new Set(businesses.map(b => b.category || "Other")));
