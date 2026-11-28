@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import BusinessLayout from "@/components/business/BusinessLayout";
+import { getActiveWaitMinutes } from "@/lib/queueInactivity";
 import { CHART_COLORS } from "@/lib/chartPalette";
 import {
   Users, Clock, Timer, Hourglass, CheckCircle2, UserX, SkipForward,
@@ -115,12 +116,9 @@ const InsightsContent = ({
     const noShowToday = today.filter(v => v.status === "no_show").length;
     const skippedToday = today.filter(v => v.status === "skipped").length;
 
-    const waits = servedToday
-      .filter(v => v.served_at)
-      .map(v => differenceInMinutes(new Date(v.served_at!), new Date(v.joined_at)))
-      .filter(n => Number.isFinite(n) && n >= 0 && n < 600);
+    const waits = getActiveWaitMinutes(servedToday);
     const avgWait = waits.length ? Math.round(waits.reduce((a, b) => a + b, 0) / waits.length) : 0;
-    const longestWait = waits.length ? Math.max(...waits) : 0;
+    const longestWait = waits.length ? Math.round(Math.max(...waits)) : 0;
 
     const services = servedToday
       .filter(v => v.called_at && v.served_at)

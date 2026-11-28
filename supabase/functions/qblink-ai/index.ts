@@ -415,7 +415,10 @@ async function runInsight(args: {
     const total = (visitors ?? []).length;
     const served = (visitors ?? []).filter((v: any) => v.status === "served");
     const skipped = (visitors ?? []).filter((v: any) => v.status === "skipped").length;
-    const waits = served.filter((v: any) => v.served_at).map((v: any) => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000);
+    const waits = served
+      .filter((v: any) => v.served_at)
+      .map((v: any) => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000)
+      .filter((m: number) => Number.isFinite(m) && m >= 0 && m <= 60);
     const avgWait = waits.length ? Math.round(waits.reduce((a, b) => a + b, 0) / waits.length) : 0;
     const hourCounts: Record<number, number> = {};
     (visitors ?? []).forEach((v: any) => { const h = new Date(v.joined_at).getHours(); hourCounts[h] = (hourCounts[h] ?? 0) + 1; });

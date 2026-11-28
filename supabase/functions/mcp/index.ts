@@ -88,12 +88,8 @@ var queue_status_default = defineTool3({
     const rows = visitors ?? [];
     const waiting = rows.filter((v) => v.status === "waiting" || v.status === "checked_in").length;
     const served = rows.filter((v) => v.status === "served" && v.served_at);
-    const avgServiceMinutes = served.length ? Math.round(
-      served.reduce(
-        (sum, v) => sum + (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 6e4,
-        0
-      ) / served.length
-    ) : queue.estimated_service_time ?? 5;
+    const activeWaits = served.map((v) => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 6e4).filter((m) => Number.isFinite(m) && m >= 0 && m <= 60);
+    const avgServiceMinutes = activeWaits.length ? Math.round(activeWaits.reduce((sum, m) => sum + m, 0) / activeWaits.length) : queue.estimated_service_time ?? 5;
     const snapshot = {
       queue_id: queue.id,
       queue_name: queue.name,

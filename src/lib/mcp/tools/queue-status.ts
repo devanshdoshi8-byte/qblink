@@ -28,13 +28,11 @@ export default defineTool({
     const rows = visitors ?? [];
     const waiting = rows.filter((v) => v.status === "waiting" || v.status === "checked_in").length;
     const served = rows.filter((v) => v.status === "served" && v.served_at);
-    const avgServiceMinutes = served.length
-      ? Math.round(
-          served.reduce(
-            (sum, v) => sum + (new Date(v.served_at as string).getTime() - new Date(v.joined_at as string).getTime()) / 60000,
-            0,
-          ) / served.length,
-        )
+    const activeWaits = served
+      .map((v) => (new Date(v.served_at as string).getTime() - new Date(v.joined_at as string).getTime()) / 60000)
+      .filter((m) => Number.isFinite(m) && m >= 0 && m <= 60);
+    const avgServiceMinutes = activeWaits.length
+      ? Math.round(activeWaits.reduce((sum, m) => sum + m, 0) / activeWaits.length)
       : (queue.estimated_service_time ?? 5);
 
     const snapshot = {

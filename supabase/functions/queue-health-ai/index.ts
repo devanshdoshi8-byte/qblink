@@ -32,7 +32,10 @@ async function buildContext(businessId: string) {
   const total = visitors?.length || 0;
   const served = (visitors || []).filter(v => v.status === "served");
   const abandoned = (visitors || []).filter(v => ["skipped","removed","no_show"].includes(v.status));
-  const waits = served.filter(v => v.served_at).map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime())/60000);
+  const waits = served
+    .filter(v => v.served_at)
+    .map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime())/60000)
+    .filter(m => Number.isFinite(m) && m >= 0 && m <= 60);
   const avgWait = waits.length ? waits.reduce((a,b)=>a+b,0)/waits.length : 0;
   const serviceTimes = served.filter(v => v.called_at && v.served_at).map(v => (new Date(v.served_at!).getTime() - new Date(v.called_at!).getTime())/60000);
   const avgService = serviceTimes.length ? serviceTimes.reduce((a,b)=>a+b,0)/serviceTimes.length : 0;

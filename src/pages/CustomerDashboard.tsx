@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import FavoriteBusinesses from "@/components/FavoriteBusinesses";
 import NotificationBell from "@/components/customer/NotificationBell";
 import UpcomingAppointments from "@/components/customer/UpcomingAppointments";
+import CustomerAnalyticsBento from "@/components/customer/CustomerAnalyticsBento";
 import { AnimatedNumber } from "@/components/AnimatedNumber";
 
 interface Business {
@@ -311,6 +312,8 @@ const CustomerDashboard = () => {
                 What kind of service do you need today?
               </p>
             </div>
+
+            {user && <CustomerAnalyticsBento userId={user.id} />}
 
             <FavoriteBusinesses />
 

@@ -56,7 +56,6 @@ import { PrintReadyQRKit } from "@/components/business/PrintReadyQRKit";
 import { DailyPerformanceSummary } from "@/components/business/DailyPerformanceSummary";
 import { ServiceManagementModal } from "@/components/business/ServiceManagementModal";
 import { OfflineStatusBar } from "@/components/business/OfflineStatusBar";
-import { ExecutiveTelemetryBar } from "@/components/business/ExecutiveTelemetryBar";
 import { isStaffAudioEnabled, setStaffAudioEnabled, playArrivalChime, playCallNextChime } from "@/lib/audioChime";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -613,8 +612,6 @@ const QueueManager = ({
           </div>
         )}
       </div>
-
-      <ExecutiveTelemetryBar queue={selectedQueue} visitors={visitors} businessName={businessName} />
 
       {showDebug && selectedQueue && (
         <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-xs text-muted-foreground">
