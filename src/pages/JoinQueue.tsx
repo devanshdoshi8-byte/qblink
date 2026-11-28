@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Clock, Users, CheckCircle, Loader2, Activity, RefreshCw, UserCircle2, AlertCircle, ArrowLeft, BellRing, Lightbulb, Zap } from "lucide-react";
+import { Clock, Users, CheckCircle, Loader2, Activity, RefreshCw, UserCircle2, AlertCircle, ArrowLeft, MapPin, LayoutDashboard } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import AIAssistant from "@/components/AIAssistant";
 import TrustPrivacyCard from "@/components/TrustPrivacyCard";
@@ -17,28 +17,26 @@ import BusinessHighlightsCard from "@/components/queue/BusinessHighlightsCard";
 import LiveActivityFeed from "@/components/queue/LiveActivityFeed";
 import QueueTimeline from "@/components/queue/QueueTimeline";
 import ContextualTips from "@/components/queue/ContextualTips";
+import CustomerTicketShareCard from "@/components/queue/CustomerTicketShareCard";
+import { publicUrl } from "@/lib/publicUrl";
 import { useCustomerQueueIntel } from "@/hooks/useCustomerQueueIntel";
-import { useRollingWaitEstimate } from "@/hooks/useRollingWaitEstimate";
-import { notificationService } from "@/lib/notifications/notificationService";
-import { GraceStatus, calculateGraceExpiry, canRequestGrace } from "@/lib/arrivalGraceEngine";
-import { getServicesForQueue, ServiceDefinition } from "@/lib/serviceDefinitions";
-import { WaitAndExplore } from "@/components/customer/WaitAndExplore";
 import QueueForecast from "@/components/QueueForecast";
 import SaveBusinessButton from "@/components/SaveBusinessButton";
 import SuccessCelebration from "@/components/SuccessCelebration";
-import { hapticJoin, hapticRefresh, hapticSuccess } from "@/lib/haptics";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { sendQueueSmsNonBlocking } from "@/lib/sms";
+import { hapticJoin, hapticRefresh } from "@/lib/haptics";
 import { useAuth } from "@/hooks/useAuth";
 import { logEngagement } from "@/lib/receptionImpact";
+import { Button } from "@/components/ui/button";
+import BackButton from "@/components/BackButton";
+import { TicketLanguagePicker, TurnAlertControls } from "@/components/queue/TicketPreferences";
+import { useTurnAlerts } from "@/hooks/useTurnAlerts";
+import { OnPremiseConfig } from "@/lib/onPremiseVerification";
+import OnPremiseVerificationModal from "@/components/queue/OnPremiseVerificationModal";
+import { ticketCopy, type TicketLanguage } from "@/lib/waitingExperience";
+import { getSavedCustomerDetails, saveCustomerDetails } from "@/lib/storage/cookieStorage";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { setPending } from "@/lib/auth/pendingAuth";
 
 interface QueueInfo {
   id: string;
@@ -68,21 +66,7 @@ const JoinQueue = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const goBack = () => {
-    if (window.history.length > 1) navigate(-1);
-    else navigate("/customer-dashboard");
-  };
-
-  const requiredFieldsIncomplete = () => {
-    if (joined || !queue) return false;
-    const isRestaurant = (queue as any).queue_type === "restaurant";
-    if (isRestaurant) {
-      const sizes = deriveJoinPartySizes(queue);
-      if (!sizes.length || !sizes.includes(partySize)) return true;
-    }
-    if (!hasCustomerProfile) {
-      return !visitorName.trim() || !phone.trim();
-    }
-    return false;
+    navigate(user ? "/customer-dashboard" : "/");
   };
 
   useEffect(() => {
@@ -106,6 +90,15 @@ const JoinQueue = () => {
   const [myToken, setMyToken] = useState<number | null>(null);
   const [myVisitorId, setMyVisitorId] = useState<string | null>(null);
   const [myStatus, setMyStatus] = useState<string>("waiting");
+  const [language, setLanguage] = useState<TicketLanguage>(() => {
+    try { const saved = localStorage.getItem("qb_ticket_language"); return saved === "hi" || saved === "mr" ? saved : "en"; } catch { return "en"; }
+  });
+  const t = ticketCopy[language];
+  const alerts = useTurnAlerts(myStatus, joined);
+  const changeLanguage = (value: TicketLanguage) => {
+    setLanguage(value);
+    try { localStorage.setItem("qb_ticket_language", value); } catch {}
+  };
   const [visitorName, setVisitorName] = useState("");
   const [phone, setPhone] = useState("");
   const [waitingCount, setWaitingCount] = useState(0);
@@ -119,8 +112,8 @@ const JoinQueue = () => {
   const [showJoinSuccess, setShowJoinSuccess] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
-  const [showBackConfirm, setShowBackConfirm] = useState(false);
   const prevStatusRef = useRef<string>("waiting");
+  const autoJoinTriggeredRef = useRef(false);
   const [partySize, setPartySize] = useState<number>(2);
   // The queue we actively track live state against. For restaurants this
   // swaps to the child (table-size) queue after joining, so "Now Serving",
@@ -134,6 +127,11 @@ const JoinQueue = () => {
   });
   const [bizAddress, setBizAddress] = useState<string | null>(null);
   const [bizHours, setBizHours] = useState<unknown>(null);
+  const [bizName, setBizName] = useState<string>("the business");
+  const [bizCategory, setBizCategory] = useState<string | null>(null);
+  const [onPremiseConfig, setOnPremiseConfig] = useState<OnPremiseConfig | null>(null);
+  const [onPremiseVerified, setOnPremiseVerified] = useState(false);
+  const [showOnPremiseModal, setShowOnPremiseModal] = useState(false);
   const openState = getOpenState(bizHours);
 
   // Parse QR/link query params for frictionless prefill
@@ -145,7 +143,24 @@ const JoinQueue = () => {
     const n = raw ? parseInt(raw, 10) : NaN;
     return Number.isFinite(n) && n > 0 ? n : null;
   })();
-  const sizeLocked = urlSize !== null;
+  const [sizeLocked, setSizeLocked] = useState<boolean>(urlSize !== null);
+
+  const isHealthcare = useMemo(() => {
+    const cat = (bizCategory || "").toLowerCase();
+    const qName = (queue?.name || "").toLowerCase();
+    const qType = (queue?.queue_type || "").toLowerCase();
+    return (
+      cat.includes("clinic") ||
+      cat.includes("hospital") ||
+      cat.includes("health") ||
+      cat.includes("doctor") ||
+      cat.includes("opd") ||
+      qType === "appointment" ||
+      qName.includes("dr") ||
+      qName.includes("doctor") ||
+      qName.includes("clinic")
+    );
+  }, [bizCategory, queue?.name, queue?.queue_type]);
 
   // UUID check — demo queues use slugs like "demo-aroma" and can't hit the DB
   const isUuid = (v: string | undefined) =>
@@ -161,65 +176,6 @@ const JoinQueue = () => {
     enabled: !isDemo,
   });
 
-  // Feature F: Multi-Service definitions for queue
-  const configuredServices = useMemo(() => {
-    return getServicesForQueue((queue as any)?.settings || (queue as any)?.table_config);
-  }, [queue]);
-  const [selectedService, setSelectedService] = useState<ServiceDefinition | null>(null);
-
-  // Feature E: Rolling Service Velocity Adaptive Estimation
-  const rolling = useRollingWaitEstimate({
-    queueId: activeQueueId ?? queueId ?? null,
-    aheadCount: aheadCount ?? waitingCount,
-    historicalServiceTime: selectedService?.estimatedDurationMinutes || queue?.estimated_service_time || 5,
-    enabled: !isDemo,
-  });
-
-  // Feature A: "I'm 2 Minutes Away" Arrival Grace State
-  const [graceStatus, setGraceStatus] = useState<GraceStatus>("none");
-  const [graceExpiresAt, setGraceExpiresAt] = useState<number | null>(null);
-
-  const handleRequestGrace = async () => {
-    const ahead = aheadCount ?? waitingCount;
-    if (!canRequestGrace({ aheadCount: ahead, myStatus, currentGraceStatus: graceStatus })) {
-      return;
-    }
-    const expiry = calculateGraceExpiry(2);
-    setGraceStatus("active");
-    setGraceExpiresAt(expiry);
-    hapticSuccess();
-    toast.success("Arrival grace period activated (2 min)", {
-      description: "Staff has been notified. Please proceed to the counter.",
-    });
-    if (myVisitorId && !isDemo) {
-      try {
-        await (supabase as any).rpc("log_queue_activity", {
-          p_queue_id: activeQueueId ?? queueId!,
-          p_visitor_id: myVisitorId,
-          p_action: "arrival_grace_requested",
-          p_meta: { expires_at: new Date(expiry).toISOString(), duration_minutes: 2 },
-        });
-      } catch {}
-    }
-  };
-
-  // Feature B: Multi-stage proactive milestone notifications
-  useEffect(() => {
-    if (joined && myVisitorId && myToken) {
-      const ahead = aheadCount ?? waitingCount;
-      notificationService.evaluateQueueMilestone({
-        visitorId: myVisitorId,
-        tokenNumber: myToken,
-        aheadCount: ahead,
-        myStatus,
-        businessName: queue?.name || "Qblink",
-        queueName: queue?.name || "Queue",
-        waitMinutes: rolling.estimatedMinutes > 0 ? rolling.estimatedMinutes : ahead * (queue?.estimated_service_time || 5),
-        phone,
-      });
-    }
-  }, [joined, myVisitorId, myToken, aheadCount, waitingCount, myStatus, queue?.name, rolling.estimatedMinutes, phone]);
-
   useEffect(() => {
     if (queueId) {
       fetchQueue();
@@ -227,15 +183,13 @@ const JoinQueue = () => {
     }
   }, [queueId]);
 
-  // Prefill from previous session so the user never has to re-enter
+  // Prefill from cookies/previous session so the user never has to re-enter
   useEffect(() => {
     try {
-      if (localStorage.getItem("qb_prefill_optout") === "1") return;
-      const n = localStorage.getItem("qb_visitor_name");
-      const p = localStorage.getItem("qb_visitor_phone");
-      if (n) setVisitorName(n);
-      if (p) setPhone(p);
-      if (n || p) setPrefilled(true);
+      const saved = getSavedCustomerDetails();
+      if (saved.name) setVisitorName(saved.name);
+      if (saved.phone) setPhone(saved.phone);
+      if (saved.name || saved.phone) setPrefilled(true);
     } catch {}
   }, []);
 
@@ -249,6 +203,38 @@ const JoinQueue = () => {
   useEffect(() => {
     if (urlSize) setPartySize(urlSize);
   }, [urlSize]);
+
+  // Auto-join after returning from 1-tap Google OAuth on /join/:queueId?autojoin=1
+  useEffect(() => {
+    if (autoJoinTriggeredRef.current) return;
+    if (searchParams.get("autojoin") !== "1") return;
+    if (!user || !profileLoaded || !hasCustomerProfile || !queue) return;
+    if (joined || joining || queue.status !== "active") return;
+    const isRestaurantNoSize = (queue as any).queue_type === "restaurant" && !urlSize;
+    if (isRestaurantNoSize) return;
+    autoJoinTriggeredRef.current = true;
+    void handleJoin();
+  });
+
+  // Restore an account-linked visit after refresh, cross-device navigation, or reopening from My Profile.
+  useEffect(() => {
+    if (!user || !queueId || isDemo) return;
+    let cancelled = false;
+    const restore = async () => {
+      const { data, error } = await supabase.rpc("get_my_queue_visits", { p_history: false });
+      if (cancelled || error) return;
+      const visit = data?.find(v => v.join_queue_id === queueId || v.queue_id === queueId);
+      if (!visit) return;
+      setMyVisitorId(visit.visitor_id);
+      setMyToken(visit.token_number);
+      setMyStatus(visit.status);
+      setActiveQueueId(visit.queue_id);
+      setJoinedAt(new Date(visit.joined_at).getTime());
+      setJoined(true);
+    };
+    void restore();
+    return () => { cancelled = true; };
+  }, [user?.id, queueId, isDemo]);
 
   // If a customer is logged in, auto-fill from their profile and skip the form.
   useEffect(() => {
@@ -324,51 +310,6 @@ const JoinQueue = () => {
     return () => { supabase.removeChannel(channel); clearInterval(poll); };
   }, [activeQueueId, myVisitorId, myToken, joined]);
 
-  // Restore active ticket if the signed-in customer is already in this queue
-  useEffect(() => {
-    if (!user?.id || !queueId || isDemo || joined) return;
-    let cancelled = false;
-    (async () => {
-      const { data: activeRows } = await (supabase as any)
-        .from("queue_visitors")
-        .select("id, queue_id, token_number, status, joined_at")
-        .eq("customer_user_id", user.id)
-        .in("status", ["waiting", "called"])
-        .order("joined_at", { ascending: false });
-
-      if (cancelled || !activeRows || activeRows.length === 0) return;
-
-      let match = activeRows.find(
-        (r) => r.queue_id === activeQueueId || r.queue_id === queueId
-      );
-
-      // Also match child table-size queues whose parent_queue_id === queueId
-      if (!match) {
-        const candidateIds = activeRows.map((r) => r.queue_id);
-        const { data: qs } = await supabase
-          .from("queues")
-          .select("id, parent_queue_id")
-          .in("id", candidateIds);
-        const child = (qs || []).find((q: any) => q.parent_queue_id === queueId);
-        if (child) {
-          match = activeRows.find((r) => r.queue_id === child.id);
-        }
-      }
-
-      if (cancelled || !match) return;
-      setActiveQueueId(match.queue_id);
-      setMyToken(match.token_number);
-      setMyVisitorId(match.id);
-      setMyStatus(match.status);
-      setJoinedAt(new Date(match.joined_at).getTime());
-      setJoined(true);
-      fetchLiveQueueState(match.token_number, match.id);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [user?.id, queueId, activeQueueId, isDemo, joined]);
-
   const refreshNow = () => {
     hapticRefresh();
     toast.success("Refreshed");
@@ -384,53 +325,20 @@ const JoinQueue = () => {
     if (myVisitorId) fetchLiveQueueState(myToken, myVisitorId);
   };
 
-  // Play a short beep using Web Audio API (no asset needed)
-  const playBeep = () => {
-    try {
-      const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
-      if (!Ctx) return;
-      const ctx = new Ctx();
-      const beep = (freq: number, start: number, dur: number) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0, ctx.currentTime + start);
-        gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + start + 0.02);
-        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(ctx.currentTime + start);
-        osc.stop(ctx.currentTime + start + dur + 0.02);
-      };
-      beep(880, 0, 0.18);
-      beep(1175, 0.22, 0.18);
-      beep(1568, 0.44, 0.28);
-      setTimeout(() => ctx.close(), 1200);
-    } catch {}
-  };
-
   // Trigger when status flips to "called"
   const triggerYourTurn = () => {
     setCelebrate(true);
-    playBeep();
     if (navigator.vibrate) navigator.vibrate([200, 80, 200, 80, 400]);
     if ("Notification" in window && Notification.permission === "granted") {
       try {
-        new Notification("🎉 It's your turn!", {
-          body: `${queue?.name ?? "Queue"} is calling token #${myToken}. Please proceed to the counter.`,
+        new Notification(t.called, {
+          body: `${queue?.name ?? "Queue"} · #${myToken}. ${t.proceed}`,
           icon: logo,
         });
       } catch {}
     }
     setTimeout(() => setCelebrate(false), 6000);
   };
-
-  // Ask for notification permission once joined
-  useEffect(() => {
-    if (joined && "Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission().catch(() => {});
-    }
-  }, [joined]);
 
   // Gentle success celebration when the user first joins the queue.
   useEffect(() => {
@@ -451,18 +359,22 @@ const JoinQueue = () => {
 
   const fetchQueue = async () => {
     if (isDemo) {
-      const { DEMO_BUSINESSES } = await import("@/lib/demoData");
-      const match = DEMO_BUSINESSES.find(b => b.id === queueId);
+      const isVihaan = (queueId || "").toLowerCase().includes("vihaan") || (queueId || "").toLowerCase().includes("clinic");
       setQueue({
-        id: queueId!,
-        name: match?.name || "Aroma Café & Bakery",
-        status: match?.status || "active",
-        estimated_service_time: match?.est_time || 6,
-        current_token: 2,
-        next_token: (match?.waiting || 5) + 3,
-        note: match?.description || "Demo queue",
+        id: queueId || "demo-vihaan-clinic",
+        name: isVihaan ? "Dr. Ambrish Patange (OPD)" : "Live OPD Queue",
+        status: "active",
+        estimated_service_time: 12,
+        current_token: 14,
+        next_token: 15,
+        note: "Please take a seat in the waiting area. We will alert your mobile.",
+        queue_type: "clinic",
+        business_id: "demo-biz-vihaan",
       });
-      setNowServingToken(2);
+      setBizName(isVihaan ? "Vihaan Health Clinic" : "Community Healthcare OPD");
+      setBizCategory("clinic");
+      setBizAddress("Malad West, Mumbai");
+      setNowServingToken(14);
       setLoading(false);
       return;
     }
@@ -480,9 +392,9 @@ const JoinQueue = () => {
     setLoading(false);
     if ((data as any)?.business_id) {
       logEngagement((data as any).business_id, data.id, "page_view", null, 60000);
-      const { data: biz } = await supabase
-        .from("businesses")
-        .select("remote_joining_enabled, show_live_queue_info, address, operating_hours")
+      const { data: biz } = await (supabase as any)
+        .from("businesses_public")
+        .select("name, category, remote_joining_enabled, show_live_queue_info, address, operating_hours, settings")
         .eq("id", (data as any).business_id)
         .maybeSingle();
       if (biz) {
@@ -492,15 +404,19 @@ const JoinQueue = () => {
         });
         setBizAddress((biz as any).address ?? null);
         setBizHours((biz as any).operating_hours ?? null);
+        setBizName((biz as any).name || "the business");
+        setBizCategory((biz as any).category ?? null);
+        const bSettings = (biz as any).settings || {};
+        if (bSettings.on_premise_joining) {
+          setOnPremiseConfig(bSettings.on_premise_joining);
+        }
       }
     }
   };
 
   const fetchWaitingCount = async () => {
     if (isDemo) {
-      const { DEMO_BUSINESSES } = await import("@/lib/demoData");
-      const match = DEMO_BUSINESSES.find(b => b.id === queueId);
-      setWaitingCount(match?.waiting ?? 5);
+      setWaitingCount(3);
       return;
     }
     const { count, error } = await supabase
@@ -596,7 +512,7 @@ const JoinQueue = () => {
     setAheadCount(count ?? 0);
   };
 
-  const handleJoin = async () => {
+  const handleJoin = async (forceVerified?: boolean) => {
     setJoinError(null);
     if (!queue) return;
     const clearRememberedQueue = () => {
@@ -628,8 +544,10 @@ const JoinQueue = () => {
       }
     }
     // Logged-in customers: use their account details, no form required.
-    // Guest joiners (QR scan): require name + phone.
-    if (!hasCustomerProfile) {
+    // Guest joiners (QR scan): require name + phone unless the business
+    // disabled it (direct 1-tap join).
+    const requireDetails = (queue as any).require_customer_details !== false;
+    if (!hasCustomerProfile && requireDetails) {
       if (!visitorName.trim() || !phone.trim()) {
         setJoinError("Please enter both your name and phone number to get a token.");
         return;
@@ -639,11 +557,15 @@ const JoinQueue = () => {
       setVisitorName("Customer");
     }
     try {
-      if (localStorage.getItem("qb_prefill_optout") !== "1") {
-        localStorage.setItem("qb_visitor_name", visitorName.trim());
-        localStorage.setItem("qb_visitor_phone", phone.trim());
+      if (visitorName.trim() || phone.trim()) {
+        saveCustomerDetails({ name: visitorName.trim(), phone: phone.trim() });
       }
     } catch {}
+    const requiresOnPremise = !bizFlags.remote_joining_enabled && Boolean(onPremiseConfig?.enabled);
+    if (requiresOnPremise && !onPremiseVerified && !forceVerified) {
+      setShowOnPremiseModal(true);
+      return;
+    }
     setJoining(true);
 
     const tokenNum = queue.next_token || 1;
@@ -662,23 +584,20 @@ const JoinQueue = () => {
       return;
     }
 
-    if (!isDemo && queue.status === "paused") {
-      await supabase
-        .from("queues")
-        .update({ status: "active", updated_at: new Date().toISOString() })
-        .eq("id", queue.id)
-        .eq("status", "paused");
-      setQueue((prev) => (prev ? { ...prev, status: "active" } : prev));
-    }
-
     const rpcArgs: any = {
       p_queue_id: queue.id,
-      p_visitor_name: (visitorName.trim() || "Customer").slice(0, 100),
+      p_visitor_name: (visitorName.trim() || "Guest").slice(0, 100),
       p_phone: phone.trim().slice(0, 20) || null,
     };
     let data: any = null;
     let error: any = null;
-    if (isRestaurant) {
+    if (user) {
+      const res = await supabase.rpc("join_customer_queue", {
+        ...rpcArgs,
+        p_party_size: isRestaurant ? partySize : null,
+      });
+      data = res.data; error = res.error;
+    } else if (isRestaurant) {
       const res = await supabase.rpc("join_restaurant_queue" as any, {
         p_parent_queue_id: queue.id,
         p_table_size: partySize,
@@ -694,8 +613,7 @@ const JoinQueue = () => {
     if (error || !data || (Array.isArray(data) && data.length === 0)) {
       const raw = (error?.message || "").toLowerCase();
       let msg = "We couldn't add you to this queue. Please try again.";
-      if (raw.includes("closed")) msg = "This queue is closed right now. Please check back later.";
-      else if (raw.includes("not active") || raw.includes("paused")) msg = "Queue is reactivating — please tap Join again.";
+      if (raw.includes("not active") || raw.includes("paused")) msg = "This queue is paused right now. Please try again shortly.";
       else if (raw.includes("not found")) msg = "This queue link is no longer valid. Ask the business for a new one.";
       else if (raw.includes("network") || raw.includes("fetch")) msg = "Network issue. Check your connection and try again.";
       else if (raw.includes("too long")) msg = "Your name or phone number is too long. Please shorten and retry.";
@@ -721,6 +639,19 @@ const JoinQueue = () => {
     setJoinedAt(Date.now());
     hapticJoin();
     clearRememberedQueue();
+
+    // Trigger non-blocking SMS confirmation if phone was provided
+    if (phone.trim() && (queue as any)?.business_id) {
+      sendQueueSmsNonBlocking({
+        businessId: (queue as any).business_id,
+        tokenId: row.id,
+        phone: phone.trim(),
+        eventType: "TOKEN_ISSUED",
+        clinicName: bizName || queue.name,
+        tokenNumber: row.token_number,
+        etaMinutes: (waitingCount + 1) * (queue.estimated_service_time || 5),
+      });
+    }
     // Persist the real name/phone for logged-in users so we never fall back
     // to the email prefix again.
     if (user) {
@@ -759,37 +690,27 @@ const JoinQueue = () => {
   // ====== SINGLE SOURCE OF TRUTH — derived state ======
   // All user-facing numbers come from this one function. No other place computes them.
   const derived = () => {
-    const serviceTime = selectedService?.estimatedDurationMinutes || queue?.estimated_service_time || 5;
+    const serviceTime = queue?.estimated_service_time || 5;
+    // Authoritative "ahead" = number of waiting visitors with smaller token than mine.
+    // Falls back to waitingCount snapshot until the live count loads.
     const ahead = aheadCount ?? waitingCount;
-    const waitMinutes = rolling.estimatedMinutes > 0 ? rolling.estimatedMinutes : ahead * serviceTime;
     return {
       ahead,
-      waitMinutes,
+      waitMinutes: ahead * serviceTime,
       liveStatus: ahead === 0 ? "You're next" : "Moving",
-      confidence: rolling.confidenceScore,
-      effectiveVelocity: rolling.effectiveVelocity,
     };
   };
 
-  useEffect(() => {
-    if (!queue || queue.status !== "paused" || joined || isDemo) return;
-    setQueue((prev) => (prev && prev.status === "paused" ? { ...prev, status: "active" } : prev));
-    supabase
-      .from("queues")
-      .update({ status: "active", updated_at: new Date().toISOString() })
-      .eq("id", queue.id)
-      .eq("status", "paused")
-      .then(() => {});
-  }, [queue, joined, isDemo]);
-
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
+      <BackButton to={user ? "/customer-dashboard" : "/"} />
       <Loader2 className="w-6 h-6 animate-spin text-primary" />
     </div>
   );
 
   if (!queue) return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <BackButton to={user ? "/customer-dashboard" : "/"} />
       <div className="text-center">
         <img src={logo} alt="Qblink" className="h-12 w-12 rounded-lg object-contain mx-auto mb-4" />
         <h1 className="text-xl font-bold text-foreground mb-2">Queue not found</h1>
@@ -798,22 +719,25 @@ const JoinQueue = () => {
     </div>
   );
 
-  if (queue.status === "closed" && !joined) return (
+  if (queue.status !== "active" && !joined) return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <BackButton to={user ? "/customer-dashboard" : "/"} />
       <div className="text-center">
         <img src={logo} alt="Qblink" className="h-12 w-12 rounded-lg object-contain mx-auto mb-4" />
         <h1 className="text-xl font-bold text-foreground mb-2">
-          Queue Closed
+          {queue.status === "closed" ? "Queue Closed" : "Queue Paused"}
         </h1>
         <p className="text-muted-foreground text-sm">
-          This queue has been closed for now. Please check back later.
+          {queue.status === "closed"
+            ? "This queue has been closed for now. Please check back later."
+            : "This queue is currently not accepting new entries. Keep this page open — it updates live."}
         </p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-3 sm:py-8">
       <SEO
         title={`Join ${queue.name} — Qblink`}
         description={`Join the live queue for ${queue.name}. Track your spot and wait time from your phone.`}
@@ -821,121 +745,136 @@ const JoinQueue = () => {
       />
       {celebrate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm animate-in fade-in duration-300" />
-          <div className="relative bg-card border border-primary/25 rounded-3xl px-8 py-10 card-shadow text-center max-w-xs mx-4 animate-in zoom-in-50 duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
-              <BellRing className="w-7 h-7" />
-            </div>
-            <h2 className="text-2xl font-extrabold text-primary mb-1">It's Your Turn!</h2>
-            <p className="text-sm text-muted-foreground mb-3">Please proceed to the counter</p>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background/80 to-primary/20 backdrop-blur-sm animate-in fade-in duration-300" />
+          {/* Floating emoji confetti */}
+          {Array.from({ length: 24 }).map((_, i) => {
+            const emojis = ["🎉", "✨", "🎊", "🔔", "⭐", "🥳", "💫"];
+            const e = emojis[i % emojis.length];
+            const left = (i * 4.2) % 100;
+            const delay = (i % 8) * 0.12;
+            const dur = 2.4 + (i % 5) * 0.4;
+            return (
+              <span
+                key={i}
+                className="absolute text-4xl"
+                style={{
+                  left: `${left}%`,
+                  top: "-10%",
+                  animation: `qb-fall ${dur}s ease-in ${delay}s forwards`,
+                }}
+              >
+                {e}
+              </span>
+            );
+          })}
+          <div className="relative bg-card rounded-3xl px-8 py-10 card-shadow text-center max-w-xs mx-4 animate-in zoom-in-50 duration-500">
+            <div className="text-6xl mb-3 animate-bounce">🔔</div>
+            <h2 className="text-2xl font-extrabold text-foreground mb-1">{t.called}</h2>
+            <p className="text-sm text-foreground mb-3">{t.proceed}</p>
             <p className="text-4xl font-extrabold text-foreground">#{myToken}</p>
           </div>
+          <style>{`
+            @keyframes qb-fall {
+              0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+              100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+            }
+          `}</style>
         </div>
       )}
       <div className="w-full max-w-sm">
-        <div className="mb-4">
-          <button
+        {isDemo && (
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <Link
+              to="/dashboard?demo=true"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-teal-500 text-slate-950 hover:bg-teal-400 transition-colors shadow-sm"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span>Doctor Dashboard (Business POV)</span>
+            </Link>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-teal-600 dark:text-teal-400 font-bold bg-teal-500/10 px-2.5 py-0.5 rounded-full border border-teal-500/20">
+              Customer POV
+            </span>
+          </div>
+        )}
+
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <Button
+            variant="outline"
+            size="sm"
             type="button"
-            onClick={() => {
-              if (requiredFieldsIncomplete()) {
-                setShowBackConfirm(true);
-              } else {
-                goBack();
-              }
-            }}
-            aria-label="Go back"
+            onClick={goBack}
+            aria-label={t.back}
             className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border shadow-sm px-3 py-2 text-xs font-medium text-foreground hover:bg-muted transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back</span>
-          </button>
+            <span>{t.back}</span>
+          </Button>
+          <TicketLanguagePicker language={language} onChange={changeLanguage} />
         </div>
 
-        <AlertDialog open={showBackConfirm} onOpenChange={setShowBackConfirm}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Leave without joining?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Your required details are incomplete. If you go back now, you'll lose your spot in this queue and your information won't be saved.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setShowBackConfirm(false)}>Stay and complete</AlertDialogCancel>
-              <AlertDialogAction onClick={goBack}>Go back</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        <div className="text-center mb-6">
-          <img src={logo} alt="Qblink" className="h-10 w-10 rounded-lg object-contain mx-auto mb-3" />
-          <DynamicWelcomeHeader
-            name={visitorName}
-            ahead={joined ? derived().ahead : null}
-            joined={joined}
-            visitCount={intel.visitCount}
-            className="mb-3"
-          />
-          <h1 className="text-lg font-bold text-foreground">{queue.name}</h1>
-          {queue.note && <p className="text-xs text-muted-foreground mt-1">{queue.note}</p>}
-          {openState.status !== "unknown" && (
-            <div className="mt-2 flex justify-center">
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+        <div className="text-center mb-4">
+          <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain mx-auto mb-2" />
+          <div className="flex items-center justify-center gap-2 mb-1 flex-wrap">
+            <span className="text-[10px] font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              {isHealthcare ? "Clinic OPD" : (bizCategory ? bizCategory.slice(0, 20) : "Live Queue")}
+            </span>
+            {openState.status !== "unknown" && (
+              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                 openState.status === "open"
-                  ? "bg-success/10 text-success"
+                  ? "bg-success-soft text-success"
                   : openState.status === "holiday"
                     ? "bg-warning/10 text-warning"
                     : "bg-muted text-muted-foreground"
               }`}>
-                {openState.status === "open" ? "● " : ""}{openState.label}
+                {openState.status === "open" ? "● Open" : openState.label}
               </span>
-            </div>
+            )}
+          </div>
+          <h1 className="text-xl font-bold text-foreground tracking-tight">{queue.name}</h1>
+          {bizAddress && (
+            <p className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-0.5">
+              <MapPin className="w-3 h-3 text-muted-foreground shrink-0" />
+              <span className="truncate max-w-[280px]">{bizAddress}</span>
+            </p>
           )}
-          {!isDemo && (queue as any).business_id && (
-            <div className="mt-3 flex justify-center">
-              <SaveBusinessButton
-                businessId={(queue as any).business_id}
-                businessName={queue.name}
-              />
-            </div>
-          )}
+          {queue.note && <p className="text-xs text-muted-foreground mt-1">{queue.note}</p>}
         </div>
 
-        <BusinessStatusBanner
-          queueId={activeQueueId ?? queueId ?? null}
-          queueStatus={queue.status}
-          expectedServiceMinutes={queue.estimated_service_time || 5}
-          callTimes={intel.callTimes}
-          waiting={intel.pulse?.waiting ?? waitingCount}
-          hasData={intel.ready}
-          className="mb-4"
-        />
-
-        {bizFlags.show_live_queue_info && (
-          <BusinessHighlightsCard
-            rating={intel.highlights?.rating}
-            totalReviews={intel.highlights?.total_reviews}
-            pulse={intel.pulse}
-            loading={!intel.ready}
-            className="mb-4"
-          />
-        )}
-
         {!joined ? (
-          <div className="bg-card rounded-2xl p-6 card-shadow">
+          <div className="bg-card rounded-2xl p-4 sm:p-6 card-shadow">
+            {!bizFlags.remote_joining_enabled && onPremiseConfig?.enabled && (
+              <div className="rounded-xl border border-primary/25 bg-primary/5 p-3 mb-4 text-xs flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-foreground">On-Premise Verification Active</p>
+                  <p className="text-muted-foreground mt-0.5">
+                    Remote joining is off. A 1-time location check (250m) or counter code is required when you join.
+                  </p>
+                </div>
+              </div>
+            )}
             {bizFlags.show_live_queue_info ? (
-              <div className="flex justify-between mb-6">
-                <div className="text-center flex-1">
-                  <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm mb-1"><Users className="w-3.5 h-3.5" /> In queue</div>
-                  <p className="text-2xl font-bold tabular-nums text-foreground">{waitingCount}</p>
+              <div className="flex justify-between mb-5 bg-muted/30 border border-border/40 rounded-xl py-3 px-4">
+                <div className="text-center flex-1 border-r border-border/40">
+                  <div className="flex items-center justify-center gap-1 text-muted-foreground text-xs mb-0.5"><Users className="w-3.5 h-3.5" /> In queue</div>
+                  <p className="text-2xl font-bold text-foreground">{waitingCount}</p>
                 </div>
                 <div className="text-center flex-1">
-                  <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm mb-1"><Clock className="w-3.5 h-3.5" /> Est. wait</div>
-                  <p className="text-2xl font-bold tabular-nums text-foreground">{waitingCount * (queue.estimated_service_time || 5)}m</p>
+                  <div className="flex items-center justify-center gap-1 text-muted-foreground text-xs mb-0.5"><Clock className="w-3.5 h-3.5" /> Est. wait</div>
+                  <p className="text-2xl font-bold text-foreground">{waitingCount * (queue.estimated_service_time || 5)}m</p>
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl bg-muted/40 p-3 mb-6 text-center text-xs text-muted-foreground">
+              <div className="rounded-xl bg-muted/40 p-3 mb-5 text-center text-xs text-muted-foreground">
                 Queue status available upon arrival.
+              </div>
+            )}
+
+            {isHealthcare && (
+              <div className="bg-primary/5 border border-primary/15 rounded-xl p-3 mb-4 text-center">
+                <p className="text-xs font-semibold text-primary">
+                  Get your digital OPD token in one tap — we'll alert you before your turn.
+                </p>
               </div>
             )}
 
@@ -956,11 +895,11 @@ const JoinQueue = () => {
                 >
                   Visit Business
                 </a>
-                <p className="text-xs text-muted-foreground text-center">
+                <p className="text-[11px] text-muted-foreground text-center">
                   You can join the queue once this business reopens.
                 </p>
               </div>
-            ) : !bizFlags.remote_joining_enabled ? (
+            ) : !bizFlags.remote_joining_enabled && !onPremiseConfig?.enabled ? (
               <div className="space-y-3">
                 <div className="rounded-xl border border-border bg-muted/40 p-3 text-center text-sm text-muted-foreground">
                   Remote joining is currently unavailable.
@@ -974,7 +913,7 @@ const JoinQueue = () => {
                 >
                   Visit Business
                 </a>
-                <p className="text-xs text-muted-foreground text-center">
+                <p className="text-[11px] text-muted-foreground text-center">
                   Please visit in person to join the queue.
                 </p>
               </div>
@@ -993,16 +932,17 @@ const JoinQueue = () => {
                     <p className="text-sm text-destructive font-medium leading-snug">{joinError}</p>
                   </div>
                 )}
-                {(queue as any).queue_type === "restaurant" && (
+                {!isHealthcare && (queue as any).queue_type === "restaurant" && (
                   <PartySizeField
                     value={partySize}
                     onChange={setPartySize}
                     options={deriveJoinPartySizes(queue)}
                     locked={sizeLocked}
+                    onUnlock={() => setSizeLocked(false)}
                   />
                 )}
-                <button onClick={handleJoin} disabled={joining || !profileLoaded}
-                  className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:bg-primary/90 active:scale-[0.99] transition-all disabled:opacity-50">
+                <button onClick={() => void handleJoin()} disabled={joining || !profileLoaded}
+                  className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
                   {joining ? "Joining..." : "Join Queue"}
                 </button>
               </>
@@ -1013,98 +953,145 @@ const JoinQueue = () => {
                     <AlertCircle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-warning font-semibold leading-snug">No customer profile found on your account.</p>
-                      <p className="text-xs text-warning/80 leading-snug mt-0.5">Enter your details below — we'll save them for next time.</p>
+                      <p className="text-[11px] text-warning/80 leading-snug mt-0.5">Enter your details below — we'll save them for next time.</p>
                     </div>
                   </div>
                 )}
-                <div className="bg-muted/50 border border-border rounded-xl p-3 mb-5">
-                  <p className="text-xs font-semibold text-foreground tracking-wide mb-1.5">How it works</p>
+                <div className="bg-primary/5 border border-primary/15 rounded-xl p-2.5 sm:p-3 mb-3">
+                  <p className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-1.5">How it works</p>
                   <ol className="text-xs text-foreground/80 space-y-1 list-decimal list-inside">
-                    <li>Enter your name and phone to get a token.</li>
+                    <li>{(queue as any).require_customer_details === false ? "Tap the button below to get your token instantly." : "Enter your name and phone to get a token."}</li>
                     <li>Track your live position — no need to stay in line.</li>
                     <li>You'll be alerted when it's your turn.</li>
                   </ol>
                 </div>
+                {!user && (
+                  <div className="mb-4 space-y-2.5">
+                    <GoogleSignInButton
+                      disabled={joining}
+                      onBeforeOAuth={() => {
+                        setJoinError(null);
+                        setPending("role", "customer");
+                        setPending("next", `/join/${queueId}?autojoin=1`);
+                      }}
+                      onError={(msg) => setJoinError(msg)}
+                    />
+                    <p className="text-[11px] text-center text-muted-foreground">
+                      1-tap join &amp; save your visit history — no password needed.
+                    </p>
+                    <div className="relative flex items-center py-1">
+                      <div className="flex-grow border-t border-border" />
+                      <span className="mx-3 shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
+                        or join as guest
+                      </span>
+                      <div className="flex-grow border-t border-border" />
+                    </div>
+                  </div>
+                )}
+                {(hasCustomerProfile || (queue as any).require_customer_details !== false) && (
                 <div className="space-y-3 mb-4">
                   <PrefillNotice
                     visible={prefilled}
                     onClear={() => { setVisitorName(""); setPhone(""); setPrefilled(false); }}
                     onUpdate={(n, p) => { setVisitorName(n); setPhone(p); setPrefilled(true); }}
                   />
-                  <input type="text" required placeholder="Your name *" value={visitorName} onChange={e => setVisitorName(e.target.value)} className="w-full px-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
-                  <input type="tel" required placeholder="Phone *" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
+                  <input type="text" required placeholder="Your name *" value={visitorName} onChange={e => setVisitorName(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-foreground text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                  <input type="tel" required placeholder="Phone *" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-foreground text-base sm:text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
                 </div>
+                )}
                 {joinError && (
                   <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 mb-3 flex gap-2.5">
                     <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
                     <p className="text-sm text-destructive font-medium leading-snug">{joinError}</p>
                   </div>
                 )}
-                <p className="text-xs text-muted-foreground text-center mb-4">
+                {!isHealthcare && (queue as any).queue_type === "restaurant" && (
+                  <PartySizeField
+                    value={partySize}
+                    onChange={setPartySize}
+                    options={deriveJoinPartySizes(queue)}
+                    locked={sizeLocked}
+                    onUnlock={() => setSizeLocked(false)}
+                  />
+                )}
+                <button onClick={() => void handleJoin()} disabled={joining}
+                  className="w-full gradient-bg text-primary-foreground py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                  {joining ? "Joining..." : "Join Queue"}
+                </button>
+                <p className="text-[11px] text-muted-foreground text-center mt-3">
                   Have an account?{" "}
                   <Link to={`/auth/signin?next=/join/${queueId}`} className="text-primary font-semibold hover:underline">Sign in</Link> to skip this.
                   <br />
                   New here?{" "}
                   <Link to={`/auth/customer?next=/join/${queueId}`} className="text-primary font-semibold hover:underline">Create account</Link>
                 </p>
-                {(queue as any).queue_type === "restaurant" && (
-                  <PartySizeField
-                    value={partySize}
-                    onChange={setPartySize}
-                    options={deriveJoinPartySizes(queue)}
-                    locked={sizeLocked}
-                  />
-                )}
-                <button onClick={handleJoin} disabled={joining}
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.99]">
-                  {joining ? (
-                    "Joining..."
-                  ) : prefilled && visitorName && phone ? (
-                    <span className="inline-flex items-center justify-center gap-1.5">
-                      <Zap className="w-4 h-4 text-primary-foreground" />
-                      <span>One-Tap Quick Join</span>
-                    </span>
-                  ) : (
-                    "Join Queue"
-                  )}
-                </button>
               </>
             )}
           </div>
         ) : null}
 
-        {!joined && (activeQueueId || queueId) && bizFlags.show_live_queue_info && (
+        {!joined && (
+          <div className="mt-4 space-y-4">
+            <BusinessStatusBanner
+              queueId={activeQueueId ?? queueId ?? null}
+              queueStatus={queue.status}
+              expectedServiceMinutes={queue.estimated_service_time || 5}
+              callTimes={intel.callTimes}
+              waiting={intel.pulse?.waiting ?? waitingCount}
+              hasData={intel.ready}
+            />
+            {bizFlags.show_live_queue_info && (
+              <BusinessHighlightsCard
+                rating={intel.highlights?.rating}
+                totalReviews={intel.highlights?.total_reviews}
+                pulse={intel.pulse}
+                loading={!intel.ready}
+              />
+            )}
+            {!isDemo && (queue as any).business_id && (
+              <div className="flex justify-center pt-1">
+                <SaveBusinessButton
+                  businessId={(queue as any).business_id}
+                  businessName={queue.name}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {!joined && !isDemo && (activeQueueId || queueId) && bizFlags.show_live_queue_info && (
           <div className="mt-4">
             <QueueForecast queueId={(activeQueueId ?? queueId)!} audience="customer" />
           </div>
         )}
 
         {joined && (
-          <div className="bg-card rounded-2xl p-6 card-shadow text-center">
+          <div lang={language} className="bg-card rounded-2xl p-5 card-shadow text-center">
             <SuccessCelebration token={myToken} visible={showJoinSuccess} />
+            <TurnAlertControls language={language} alerts={alerts} />
             {myStatus === "called" ? (
               <>
-                <div className="w-20 h-20 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-10 h-10 text-success" />
+                <div className="w-16 h-16 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-success" />
                 </div>
-                <h2 className="text-2xl font-bold text-success mb-2">It's Your Turn!</h2>
-                <p className="text-5xl font-extrabold text-foreground mb-2">#{myToken}</p>
-                <p className="text-sm text-muted-foreground">Please proceed to the counter.</p>
-                <button
+                <h2 className="text-2xl font-extrabold text-foreground mb-2">{t.called}</h2>
+                <p className="text-6xl font-extrabold text-foreground mb-2 break-all">#{myToken}</p>
+                <p className="text-sm text-foreground">{t.proceed}</p>
+                <Button
                   type="button"
                   onClick={async () => {
                     if (!myVisitorId) return;
                     const { error } = await (supabase as any).rpc("check_in_visitor", { p_visitor_id: myVisitorId });
                     if (error) return toast.error(error.message || "Check-in failed");
-                    toast.success("Checked in — the counter has been notified");
+                    toast.success(t.checkedInToast);
                   }}
-                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90"
+                  className="mt-4 h-auto min-h-11 whitespace-normal inline-flex items-center gap-2 px-5 py-2.5 rounded-xl gradient-bg text-primary-foreground text-sm font-semibold hover:opacity-90"
                   aria-label="Confirm arrival and check in"
                 >
-                  <CheckCircle className="w-4 h-4" /> I've arrived — Check in
-                </button>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Please check in soon to avoid being marked as a no-show.
+                  <CheckCircle className="w-4 h-4" /> {t.arrived}
+                </Button>
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  {t.checkSoon}
                 </p>
               </>
             ) : myStatus === "served" ? (
@@ -1112,13 +1099,13 @@ const JoinQueue = () => {
                 <div className="w-16 h-16 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-success" />
                 </div>
-                <h2 className="text-xl font-bold text-foreground mb-2">You've Been Served</h2>
-                <p className="text-sm text-muted-foreground">Thank you for visiting!</p>
+                <h2 className="text-xl font-bold text-foreground mb-2">{t.served}</h2>
+                <p className="text-sm text-muted-foreground">{t.thanks}</p>
               </>
             ) : myStatus === "skipped" ? (
               <>
-                <h2 className="text-xl font-bold text-warning mb-2">Skipped</h2>
-                <p className="text-sm text-muted-foreground">You were skipped. Please check with the counter.</p>
+                <h2 className="text-xl font-bold text-warning mb-2">{t.skipped}</h2>
+                <p className="text-sm text-muted-foreground">{t.skippedNote}</p>
               </>
             ) : (
               <>
@@ -1127,6 +1114,7 @@ const JoinQueue = () => {
                   return (
                     <>
                       <LiveWaitingExperience
+                        language={language}
                         ahead={d.ahead}
                         waitMinutes={d.waitMinutes}
                         liveStatus={d.liveStatus}
@@ -1136,28 +1124,30 @@ const JoinQueue = () => {
                         onRefresh={refreshNow}
                         initialAhead={initialAhead ?? undefined}
                         joinedAt={joinedAt ?? undefined}
-                        graceStatus={graceStatus}
-                        graceExpiresAt={graceExpiresAt}
-                        onRequestGrace={handleRequestGrace}
-                        velocityConfidence={d.confidence}
-                        effectiveVelocity={d.effectiveVelocity}
+                        remoteJoiningEnabled={bizFlags.remote_joining_enabled}
                       />
-                      <WaitAndExplore
-                        estimatedWaitMinutes={d.waitMinutes}
-                        businessAddress={bizAddress}
+                      <CustomerTicketShareCard
+                        minutesSaved={Math.max(1, joinedAt ? Math.round((Date.now() - joinedAt) / 60000) : (initialAhead && initialAhead > d.ahead ? (initialAhead - d.ahead) * (queue.estimated_service_time || 5) : 5))}
+                        ticketUrl={(activeQueueId ?? queueId) ? publicUrl(`/join/${activeQueueId ?? queueId}`) : (typeof window !== "undefined" ? window.location.href : "")}
+                        businessName={queue.name}
+                        token={myToken}
+                        ahead={d.ahead}
+                        waitMinutes={d.waitMinutes}
+                        language={language}
+                        className="mt-4"
                       />
                       <QueueTimeline
+                        language={language}
                         tokens={intel.tokens}
                         myToken={myToken}
                         nowServing={nowServingToken}
                         loading={!intel.ready}
                         className="mt-4"
                       />
-                      <LiveActivityFeed events={intel.activity} loading={!intel.ready} className="mt-4" />
+                      <LiveActivityFeed events={intel.activity} loading={!intel.ready} className="mt-4" language={language} />
                       <div className="mt-4 bg-info-soft border border-info/30 rounded-xl p-3 text-left">
-                        <p className="text-xs text-info flex items-start gap-2">
-                          <Lightbulb className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
-                          <span>Tip: Please arrive at least <span className="font-semibold">10 minutes before</span> your estimated turn time.</span>
+                        <p className="text-xs text-info">
+                          💡 {t.arriveTip}
                         </p>
                       </div>
                       <ContextualTips
@@ -1169,20 +1159,18 @@ const JoinQueue = () => {
                         className="mb-4"
                       />
                       <TrustPrivacyCard />
-                      <div className="hidden sm:block">
-                        <AIAssistant
-                          mode="queue_companion"
-                          queueContext={{
-                            user_position: d.ahead,
-                            estimated_wait_time: d.waitMinutes,
-                            now_serving: nowServingToken,
-                            user_token: myToken,
-                            business_name: queue.name,
-                          }}
-                        />
-                      </div>
-                      <div className="mt-6">
-                        <FounderContact />
+                      <AIAssistant
+                        mode="queue_companion"
+                        queueContext={{
+                          user_position: d.ahead,
+                          estimated_wait_time: d.waitMinutes,
+                          now_serving: nowServingToken,
+                          user_token: myToken,
+                          business_name: queue.name,
+                        }}
+                      />
+                      <div className="mt-6 pb-24">
+                        <FounderContact compact />
                       </div>
                     </>
                   );
@@ -1194,6 +1182,22 @@ const JoinQueue = () => {
 
         <p className="text-center text-xs text-muted-foreground mt-6">
           Powered by <a href="/" className="text-primary hover:underline">Qblink</a>
+        </p>
+        {showOnPremiseModal && onPremiseConfig && (
+          <OnPremiseVerificationModal
+            isOpen={showOnPremiseModal}
+            onClose={() => setShowOnPremiseModal(false)}
+            queueId={activeQueueId ?? queueId!}
+            businessName={bizName}
+            config={onPremiseConfig}
+            onVerified={() => {
+              setOnPremiseVerified(true);
+              setShowOnPremiseModal(false);
+              handleJoin(true);
+            }}
+          />
+        )}
+        <p className="hidden">
         </p>
       </div>
     </div>
@@ -1233,11 +1237,13 @@ const PartySizeField = ({
   onChange,
   options,
   locked,
+  onUnlock,
 }: {
   value: number;
   onChange: (n: number) => void;
   options?: number[] | null;
   locked?: boolean;
+  onUnlock?: () => void;
 }) => {
   const sizes = (options && options.length ? options : DEFAULT_PARTY_SIZES)
     .slice()
@@ -1251,14 +1257,24 @@ const PartySizeField = ({
 
   if (locked) {
     return (
-      <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-3">
-        <p className="text-xs font-semibold text-primary uppercase tracking-wider">Party size</p>
-        <p className="text-sm font-semibold text-foreground mt-0.5">
-          Joining for {value} {value === 1 ? "person" : "people"}
-        </p>
-        <p className="text-xs text-muted-foreground mt-1 leading-snug">
-          We'll seat you at the best-fit table.
-        </p>
+      <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-3 flex items-center justify-between">
+        <div>
+          <p className="text-[11px] font-semibold text-primary uppercase tracking-wider">Party size</p>
+          <p className="text-sm font-semibold text-foreground mt-0.5">
+            Party size: {value} {value === 1 ? "guest" : "guests"}
+          </p>
+        </div>
+        {onUnlock && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onUnlock}
+            className="text-xs h-7 px-2.5 rounded-lg border-primary/30 text-primary hover:bg-primary/10"
+          >
+            Change
+          </Button>
+        )}
       </div>
     );
   }

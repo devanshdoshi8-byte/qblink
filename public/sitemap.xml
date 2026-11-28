@@ -1,38 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://qblink-real.lovable.app/</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://qblink.tech/</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://qblink.tech/og-image.png</image:loc>
+      <image:title>QBlink — Hardware-Free Virtual Queue Management</image:title>
+      <image:caption>Incubated at Inventure, IIT Gandhinagar. Started by Devansh with co-founders Mithil, Aarav, and Vihan Patange.</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://qblink-real.lovable.app/auth</loc>
+    <loc>https://qblink.tech/about</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://qblink.tech/og-image.png</image:loc>
+      <image:title>About Qblink Founders &amp; Achievements</image:title>
+      <image:caption>Qblink was started by Devansh and joined by co-founders Mithil, Aarav, and Vihan Patange. Incubated at Inventure, IIT Gandhinagar.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://qblink.tech/industries</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/roi</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/chaos-to-clarity</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/pitch</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/affiliate</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/install</loc>
+    <lastmod>2026-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://qblink-real.lovable.app/auth/signin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://qblink-real.lovable.app/auth/customer</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://qblink-real.lovable.app/auth/business</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://qblink-real.lovable.app/affiliate</loc>
+    <loc>https://qblink.tech/auth</loc>
+    <lastmod>2026-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://qblink-real.lovable.app/install</loc>
+    <loc>https://qblink.tech/auth/signin</loc>
+    <lastmod>2026-11-28</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/auth/customer</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/auth/business</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/privacy</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://qblink.tech/terms</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 </urlset>

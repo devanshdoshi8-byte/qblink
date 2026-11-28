@@ -1,23 +1,20 @@
-import { Rocket, CreditCard, BarChart3, Building, Users, Megaphone } from "lucide-react";
+import { Check, ShieldCheck, Users } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 import SectionHeading from "./SectionHeading";
 
 const tiers = [
-  { icon: Rocket, title: "Free Pilot", desc: "Early access with full features during the pilot phase. No strings attached." },
-  { icon: CreditCard, title: "Monthly SaaS Plans", desc: "Affordable plans for growing businesses once the product launches publicly." },
-  { icon: BarChart3, title: "Pro Plan", desc: "Advanced analytics, priority support, and custom controls for serious operations." },
-  { icon: Building, title: "Enterprise", desc: "Multi-location support, API access, and dedicated onboarding for chains." },
-  { icon: Users, title: "Affiliate Program", desc: "Earn commissions by referring businesses to Qblink. Simple and transparent." },
-  { icon: Megaphone, title: "Optional Ads (Free Tier)", desc: "Non-intrusive ads only on the free customer view — kept secondary and tasteful." },
+  { icon: Check, title: "Free to use", desc: "Qblink has no subscription, paid plan, or trial period." },
+  { icon: ShieldCheck, title: "No paywalls", desc: "There are no payment requirements to use Qblink." },
+  { icon: Users, title: "For every business", desc: "The same free access is available to clinics, salons, restaurants, and service counters." },
 ];
 
 const BusinessModel = () => (
   <section className="section-padding">
     <div className="section-container">
       <SectionHeading
-        badge="Business Model"
-        title="A Practical, Grounded Revenue Path"
-        subtitle="Built to grow sustainably across walk-in sectors — from free pilots to multi-location operations."
+        badge="Free access"
+        title="Qblink is free to use"
+        subtitle="No subscriptions, paid plans, trial periods, or payment requirements."
       />
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tiers.map((t, i) => (

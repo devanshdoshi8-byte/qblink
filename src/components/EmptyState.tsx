@@ -37,7 +37,7 @@ const EmptyState = ({
     cta.to ? (
       <Link
         to={cta.to}
-        className="inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+        className="inline-flex items-center justify-center gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
       >
         {cta.label}
       </Link>
@@ -45,7 +45,7 @@ const EmptyState = ({
       <button
         type="button"
         onClick={cta.onClick}
-        className="inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+        className="inline-flex items-center justify-center gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
       >
         {cta.label}
       </button>
@@ -55,7 +55,8 @@ const EmptyState = ({
   return (
     <div className={`flex flex-col items-center text-center ${compact ? "py-6" : "py-10"} ${className}`}>
       <div className="relative mb-4">
-        <div className="relative w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-sm">
+        <div className="absolute inset-0 rounded-2xl bg-primary/15 blur-2xl" aria-hidden />
+        <div className="relative w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center shadow-lg shadow-primary/20">
           <Icon className="w-7 h-7 text-primary-foreground" strokeWidth={2} />
         </div>
       </div>

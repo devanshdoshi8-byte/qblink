@@ -1224,6 +1224,7 @@ export type Database = {
           assigned_table_size: number | null
           called_at: string | null
           checked_in_at: string | null
+          customer_user_id: string | null
           id: string
           joined_at: string
           party_size: number | null
@@ -1240,6 +1241,7 @@ export type Database = {
           assigned_table_size?: number | null
           called_at?: string | null
           checked_in_at?: string | null
+          customer_user_id?: string | null
           id?: string
           joined_at?: string
           party_size?: number | null
@@ -1256,6 +1258,7 @@ export type Database = {
           assigned_table_size?: number | null
           called_at?: string | null
           checked_in_at?: string | null
+          customer_user_id?: string | null
           id?: string
           joined_at?: string
           party_size?: number | null
@@ -1296,6 +1299,7 @@ export type Database = {
           party_size_mode: string
           party_sizes: number[]
           queue_type: string
+          require_customer_details: boolean
           seating_policy: string
           status: string
           table_config: Json
@@ -1319,6 +1323,7 @@ export type Database = {
           party_size_mode?: string
           party_sizes?: number[]
           queue_type?: string
+          require_customer_details?: boolean
           seating_policy?: string
           status?: string
           table_config?: Json
@@ -1342,6 +1347,7 @@ export type Database = {
           party_size_mode?: string
           party_sizes?: number[]
           queue_type?: string
+          require_customer_details?: boolean
           seating_policy?: string
           status?: string
           table_config?: Json
@@ -1552,6 +1558,22 @@ export type Database = {
           wait_score: number
         }[]
       }
+      get_my_queue_visits: {
+        Args: { p_history?: boolean; p_offset?: number }
+        Returns: {
+          business_name: string
+          counter_name: string
+          join_queue_id: string
+          joined_at: string
+          party_size: number
+          queue_id: string
+          served_at: string
+          status: string
+          table_size: number
+          token_number: number
+          visitor_id: string
+        }[]
+      }
       get_owner_health_branches: {
         Args: { p_days?: number }
         Returns: {
@@ -1642,6 +1664,20 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      join_customer_queue: {
+        Args: {
+          p_party_size?: number
+          p_phone?: string
+          p_queue_id: string
+          p_visitor_name?: string
+        }
+        Returns: {
+          child_queue_id: string
+          id: string
+          table_size: number
+          token_number: number
+        }[]
+      }
       join_queue: {
         Args: {
           p_party_size?: number
@@ -1669,6 +1705,7 @@ export type Database = {
           token_number: number
         }[]
       }
+      leave_my_queue: { Args: { p_visitor_id: string }; Returns: undefined }
       log_queue_activity: {
         Args: {
           p_action: string
@@ -1748,12 +1785,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1777,11 +1814,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1802,11 +1839,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1827,11 +1864,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1844,11 +1881,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

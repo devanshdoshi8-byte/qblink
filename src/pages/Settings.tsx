@@ -3,19 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import BusinessLayout from "@/components/business/BusinessLayout";
 import { useAuth } from "@/hooks/useAuth";
-import { Building2, Bell, Lock, Trash2, Save, BellRing, Send, Eye, Globe, LogIn, Clock, Users as UsersIcon } from "lucide-react";
+import { Building2, Bell, Lock, Trash2, Save, BellRing, Send, Eye, Globe, LogIn, Clock, Users as UsersIcon, MessageSquare } from "lucide-react";
 import InfoHint from "@/components/InfoHint";
 import OperatingHoursCard from "@/components/business/OperatingHoursCard";
-import GlideSelect from "@/components/reactbits/GlideSelect";
-import WakeSlider from "@/components/reactbits/WakeSlider";
-import {
-  DEFAULT_INACTIVITY_MINUTES,
-  MAX_INACTIVITY_MINUTES,
-  MIN_INACTIVITY_MINUTES,
-  clampInactivityMinutes,
-  readStoredInactivityMinutes,
-  writeStoredInactivityMinutes,
-} from "@/lib/queueInactivity";
+import DailyResetCard from "@/components/business/DailyResetCard";
+import { OnPremiseJoiningCard } from "@/components/business/OnPremiseJoiningCard";
+import { OnPremiseConfig, DEFAULT_RADIUS_METERS } from "@/lib/onPremiseVerification";
+import { sendTestSms } from "@/lib/sms";
 
 const CATEGORIES = ["Restaurant", "Clinic", "Hospital", "Salon", "Bank", "Government Service", "Hotel", "Service Center", "Other"];
 
@@ -40,6 +34,13 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
   const { user, signOut } = useAuth();
   const [biz, setBiz] = useState({ name: "", category: "Restaurant", description: "", address: "" });
   const [notif, setNotif] = useState({ email: true, push: true, sms: false });
+  const [smsConfig, setSmsConfig] = useState({
+    enabled: false,
+    triggerOnJoin: true,
+    triggerNearTurn: true,
+  });
+  const [testPhone, setTestPhone] = useState("");
+  const [sendingTestSms, setSendingTestSms] = useState(false);
   const [newPass, setNewPass] = useState("");
   const [saving, setSaving] = useState(false);
   const [alerts, setAlerts] = useState<string[]>([]);
@@ -51,11 +52,13 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
     show_live_queue_info: true,
   });
   const [savingVisibility, setSavingVisibility] = useState(false);
-  const [defaultSettings, setDefaultSettings] = useState<Record<string, any>>({});
-  const [inactivityMinutes, setInactivityMinutes] = useState<number>(() =>
-    readStoredInactivityMinutes(businessId)
-  );
-  const [savingInactivity, setSavingInactivity] = useState(false);
+  const [onPremiseConfig, setOnPremiseConfig] = useState<OnPremiseConfig>({
+    enabled: false,
+    radius_meters: DEFAULT_RADIUS_METERS,
+    latitude: null,
+    longitude: null,
+    counter_code: "1234",
+  });
 
   useEffect(() => { fetchBiz(); }, [businessId]);
 
@@ -70,14 +73,6 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
         address: data.address || "",
       });
       const ds: any = (data as any).default_settings ?? {};
-      setDefaultSettings(ds);
-      const loadedMinutes = clampInactivityMinutes(
-        typeof ds.inactivity_pause_minutes === "number"
-          ? ds.inactivity_pause_minutes
-          : readStoredInactivityMinutes(businessId)
-      );
-      setInactivityMinutes(loadedMinutes);
-      writeStoredInactivityMinutes(businessId, loadedMinutes);
       setAlerts(Array.isArray(ds.alerts) ? ds.alerts : []);
       setIndustry(data.category || "");
       const d: any = data;
@@ -86,7 +81,66 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
         remote_joining_enabled: d.remote_joining_enabled ?? true,
         show_live_queue_info: d.show_live_queue_info ?? true,
       });
+      const bSettings: any = d.settings || {};
+      if (bSettings.on_premise_joining) {
+        setOnPremiseConfig(bSettings.on_premise_joining);
+      }
+      setSmsConfig({
+        enabled: d.sms_enabled ?? false,
+        triggerOnJoin: d.sms_trigger_on_join ?? true,
+        triggerNearTurn: d.sms_trigger_near_turn ?? true,
+      });
     }
+  };
+
+  const updateSmsConfig = async (patch: Partial<{ enabled: boolean; triggerOnJoin: boolean; triggerNearTurn: boolean }>) => {
+    const next = { ...smsConfig, ...patch };
+    setSmsConfig(next);
+    const dbPayload: any = {};
+    if (patch.enabled !== undefined) dbPayload.sms_enabled = patch.enabled;
+    if (patch.triggerOnJoin !== undefined) dbPayload.sms_trigger_on_join = patch.triggerOnJoin;
+    if (patch.triggerNearTurn !== undefined) dbPayload.sms_trigger_near_turn = patch.triggerNearTurn;
+
+    const { error } = await supabase.from("businesses").update(dbPayload).eq("id", businessId);
+    if (error) {
+      toast.error("Failed to update SMS settings");
+    } else {
+      toast.success("SMS settings updated");
+    }
+  };
+
+  const handleSendTestSms = async () => {
+    if (!testPhone.trim()) return;
+    setSendingTestSms(true);
+    try {
+      const res = await sendTestSms(businessId, testPhone.trim(), biz.name || "Clinic");
+      if (res.success) {
+        if (res.status === "simulated") {
+          toast.success("Test SMS simulated successfully (Dry-Run Mode)", {
+            description: `Audit log recorded for ${res.phoneMasked || testPhone}. Ready for live cellular SMS.`,
+          });
+        } else {
+          toast.success("Test SMS sent successfully!", {
+            description: `Delivered via ${res.provider} to ${res.phoneMasked}`,
+          });
+        }
+      } else {
+        toast.error(res.reason || "Failed to send test SMS");
+      }
+    } catch {
+      toast.error("Network error while sending test SMS");
+    } finally {
+      setSendingTestSms(false);
+    }
+  };
+
+  const handleSaveOnPremise = async (nextConfig: OnPremiseConfig) => {
+    setOnPremiseConfig(nextConfig);
+    const { data: current } = await supabase.from("businesses").select("settings").eq("id", businessId).single();
+    const currentSettings = ((current as any)?.settings as any) || {};
+    const updatedSettings = { ...currentSettings, on_premise_joining: nextConfig };
+    const { error } = await supabase.from("businesses").update({ settings: updatedSettings } as any).eq("id", businessId);
+    if (error) throw error;
   };
 
   const updateVisibility = async (patch: Partial<typeof visibility>) => {
@@ -117,25 +171,6 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
     } finally {
       setTimeout(() => setTesting(null), 600);
     }
-  };
-
-  const saveInactivityMinutes = async () => {
-    const clamped = clampInactivityMinutes(inactivityMinutes);
-    setInactivityMinutes(clamped);
-    writeStoredInactivityMinutes(businessId, clamped);
-    setSavingInactivity(true);
-    const nextSettings = {
-      ...defaultSettings,
-      inactivity_pause_minutes: clamped,
-    };
-    setDefaultSettings(nextSettings);
-    const { error } = await supabase
-      .from("businesses")
-      .update({ default_settings: nextSettings } as any)
-      .eq("id", businessId);
-    setSavingInactivity(false);
-    if (error) toast.error("Failed to save inactivity timeout");
-    else toast.success(`Auto-pause set to ${clamped} min`);
   };
 
   const saveProfile = async () => {
@@ -173,21 +208,16 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Category</label>
-            <GlideSelect
-              value={biz.category}
-              onChange={(val) => setBiz({ ...biz, category: val })}
-              ariaLabel="Category"
-              menuWidth="100%"
-              options={CATEGORIES.map((c) => ({ value: c, label: c }))}
-              className="w-full"
-            />
+            <select value={biz.category} onChange={e => setBiz({ ...biz, category: e.target.value })} className="input">
+              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+            </select>
           </div>
           <Input label="Address" value={biz.address} onChange={v => setBiz({ ...biz, address: v })} />
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Description</label>
             <textarea value={biz.description} onChange={e => setBiz({ ...biz, description: e.target.value })} rows={3} className="input resize-none" />
           </div>
-          <button onClick={saveProfile} disabled={saving} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
+          <button onClick={saveProfile} disabled={saving} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
             <Save className="w-4 h-4" /> {saving ? "Saving…" : "Save Changes"}
           </button>
         </Card>
@@ -195,55 +225,83 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
         {/* Opening Hours */}
         <OperatingHoursCard businessId={businessId} />
 
-        {/* Queue Auto-Pause Inactivity */}
-        <Card icon={<Clock className="w-5 h-5 text-primary" />} title="Queue Auto-Pause Timeout">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-sm font-medium text-foreground">
-              Inactivity threshold
-            </span>
-            <span className="rounded-lg bg-primary/10 px-2.5 py-1 font-mono text-xs font-bold text-primary">
-              {inactivityMinutes} min
-            </span>
-          </div>
-          <WakeSlider
-            value={inactivityMinutes}
-            min={MIN_INACTIVITY_MINUTES}
-            max={MAX_INACTIVITY_MINUTES}
-            step={5}
-            bars={32}
-            height={42}
-            restHeight={10}
-            gap={4}
-            ariaLabel="Queue inactivity auto-pause minutes"
-            onChange={(val) => {
-              setInactivityMinutes(val);
-              writeStoredInactivityMinutes(businessId, val);
-            }}
-          />
-          <div className="flex justify-between text-[11px] text-muted-foreground font-mono">
-            <span>{MIN_INACTIVITY_MINUTES}m</span>
-            <span>{DEFAULT_INACTIVITY_MINUTES}m (default)</span>
-            <span>{MAX_INACTIVITY_MINUTES}m</span>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Automatically pause active queues after {inactivityMinutes} minutes without any joins,
-            calls, or serves, and void stale wait-time data from that idle period.
-          </p>
-          <button
-            type="button"
-            onClick={saveInactivityMinutes}
-            disabled={savingInactivity}
-            className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            <Save className="w-4 h-4" /> {savingInactivity ? "Saving…" : "Save Inactivity Limit"}
-          </button>
-        </Card>
+        {/* Daily Queue Reset Schedule */}
+        <DailyResetCard businessId={businessId} />
 
         {/* Notifications */}
         <Card icon={<Bell className="w-5 h-5 text-primary" />} title="Notifications">
           <Toggle label="Email Alerts" desc="Get notified about queue activity by email" value={notif.email} onChange={v => setNotif({ ...notif, email: v })} />
           <Toggle label="Push Notifications" desc="Real-time alerts in your browser" value={notif.push} onChange={v => setNotif({ ...notif, push: v })} />
-          <Toggle label="SMS Notifications" desc="Text alerts for critical events" value={notif.sms} onChange={v => setNotif({ ...notif, sms: v })} />
+        </Card>
+
+        {/* SMS Notifications (India Cellular / DLT-Ready) */}
+        <Card
+          icon={<MessageSquare className="w-5 h-5 text-primary" />}
+          title={
+            <div className="flex items-center justify-between flex-wrap gap-2 w-full">
+              <span>SMS Notifications (India Cellular)</span>
+              <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                smsConfig.enabled
+                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                  : "bg-muted text-muted-foreground"
+              }`}>
+                {smsConfig.enabled ? "Active (Grant-Safe / Dry-Run)" : "Disabled"}
+              </span>
+            </div>
+          }
+        >
+          <p className="text-xs text-muted-foreground -mt-1 leading-relaxed">
+            Send instant SMS alerts to Indian mobile numbers (+91) without requiring patients or customers to install any app. DLT & DPDP compliant with automatic deduplication.
+          </p>
+
+          <Toggle
+            label="Enable SMS Dispatch"
+            desc="Send live SMS updates to patients and visitors"
+            value={smsConfig.enabled}
+            onChange={(v) => updateSmsConfig({ enabled: v })}
+          />
+
+          {smsConfig.enabled && (
+            <div className="space-y-4 pt-3 border-t border-border">
+              <Toggle
+                label="Trigger on Token Issued"
+                desc="Send digital OPD token confirmation with ETA upon queue join"
+                value={smsConfig.triggerOnJoin}
+                onChange={(v) => updateSmsConfig({ triggerOnJoin: v })}
+              />
+              <Toggle
+                label="Trigger When Turn is Near / Called"
+                desc="Send turn alert when 2 visits away or when doctor taps Call Next"
+                value={smsConfig.triggerNearTurn}
+                onChange={(v) => updateSmsConfig({ triggerNearTurn: v })}
+              />
+
+              {/* Test SMS Onboarding tool */}
+              <div className="rounded-xl border border-border bg-background/50 p-3.5 space-y-2.5">
+                <p className="text-xs font-semibold text-foreground">Send Test SMS</p>
+                <p className="text-[11px] text-muted-foreground leading-snug">
+                  Enter an Indian mobile number to verify SMS connectivity.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="tel"
+                    placeholder="10-digit mobile (e.g. 9876543210)"
+                    value={testPhone}
+                    onChange={(e) => setTestPhone(e.target.value)}
+                    className="flex-1 min-w-0 px-3 py-2.5 rounded-xl bg-card border border-border text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSendTestSms}
+                    disabled={sendingTestSms || !testPhone.trim()}
+                    className="gradient-bg text-primary-foreground text-xs font-semibold px-4 py-2.5 min-h-[40px] rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity shrink-0"
+                  >
+                    {sendingTestSms ? "Sending…" : "Send Test"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </Card>
 
         {/* Industry Alerts */}
@@ -322,6 +380,13 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
           <VisibilityPreview visibility={visibility} businessName={biz.name || "Your business"} />
         </Card>
 
+        {/* On-Premise Joining Settings */}
+        <OnPremiseJoiningCard
+          remoteJoiningEnabled={visibility.remote_joining_enabled}
+          config={onPremiseConfig}
+          onSave={handleSaveOnPremise}
+        />
+
         {/* Security */}
         <Card icon={<Lock className="w-5 h-5 text-primary" />} title="Security">
           <Input label="New Password" type="password" value={newPass} onChange={setNewPass} placeholder="At least 6 characters" />
@@ -339,13 +404,13 @@ const SettingsContent = ({ businessId }: { businessId: string }) => {
         </Card>
       </div>
 
-      <style>{`.input{width:100%;padding:0.625rem 0.875rem;border-radius:0.75rem;background:hsl(var(--background));border:1px solid hsl(var(--border));color:hsl(var(--foreground));font-size:0.875rem}.input:focus{outline:none;box-shadow:0 0 0 2px hsl(var(--primary)/0.3)}`}</style>
+      <style>{`.input{width:100%;min-width:0;padding:0.625rem 0.875rem;border-radius:0.75rem;background:hsl(var(--background));border:1px solid hsl(var(--border));color:hsl(var(--foreground));font-size:1rem}@media(min-width:640px){.input{font-size:0.875rem}}.input:focus{outline:none;box-shadow:0 0 0 2px hsl(var(--primary)/0.3)}`}</style>
     </div>
   );
 };
 
-const Card = ({ icon, title, children, danger }: { icon: React.ReactNode; title: string; children: React.ReactNode; danger?: boolean }) => (
-  <div className={`bg-card rounded-2xl p-6 card-shadow ${danger ? "border border-danger/30" : ""}`}>
+const Card = ({ icon, title, children, danger }: { icon: React.ReactNode; title: React.ReactNode; children: React.ReactNode; danger?: boolean }) => (
+  <div className={`min-w-0 bg-card rounded-2xl p-4 sm:p-6 card-shadow ${danger ? "border border-danger/30" : ""}`}>
     <div className="flex items-center gap-2 mb-4">
       {icon}
       <h2 className="font-bold text-foreground">{title}</h2>
@@ -367,7 +432,7 @@ const Toggle = ({ label, desc, value, onChange }: { label: string; desc: string;
       <p className="text-sm font-medium text-foreground">{label}</p>
       <p className="text-xs text-muted-foreground">{desc}</p>
     </div>
-    <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors ${value ? "bg-primary" : "bg-muted"}`}>
+    <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors ${value ? "gradient-bg" : "bg-muted"}`}>
       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${value ? "translate-x-5" : ""}`} />
     </button>
   </div>
@@ -405,7 +470,7 @@ const VisibilityRow = ({
       <button
         onClick={() => onChange(!value)}
         aria-label={`Toggle ${label}`}
-        className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? "bg-primary" : "bg-muted"}`}
+        className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${value ? "gradient-bg" : "bg-muted"}`}
       >
         <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${value ? "translate-x-5" : ""}`} />
       </button>
@@ -428,7 +493,7 @@ const VisibilityPreview = ({
   const { discovery_enabled, remote_joining_enabled, show_live_queue_info } = visibility;
 
   return (
-    <div className="mt-2 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+    <div className="mt-2 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-background p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">Customer preview</p>
         <span className="text-[10px] text-muted-foreground">Live</span>
@@ -465,7 +530,7 @@ const VisibilityPreview = ({
           )}
 
           {remote_joining_enabled ? (
-            <button className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold">
+            <button className="w-full gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold">
               Join Queue
             </button>
           ) : (

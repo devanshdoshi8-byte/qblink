@@ -1,4 +1,5 @@
-import { Award, Cpu, Smartphone } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Award, Cpu, Smartphone, ArrowRight } from "lucide-react";
 import MagicBento from "@/components/reactbits/MagicBento";
 import GlassSurface from "@/components/reactbits/GlassSurface";
 
@@ -36,6 +37,15 @@ export const FoundersBento = () => {
               co-founders Mithil, Aarav, and Vihaan Patange to scale Qblink into
               a full-fledged customer flow intelligence platform.
             </p>
+            <div className="mt-4">
+              <Link
+                to="/about"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+              >
+                <span>Read our full founding story &amp; achievements</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
           <div className="lg:col-span-5 lg:flex lg:justify-end">

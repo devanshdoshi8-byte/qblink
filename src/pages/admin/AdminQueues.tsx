@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { getActiveWaitMinutes } from "@/lib/queueInactivity";
 import { toast } from "sonner";
-import { Pause, Play, RotateCcw, X as XIcon, RefreshCw, Activity, Clock, Users } from "lucide-react";
+import { Pause, Play, RotateCcw, X as XIcon, RefreshCw, Activity, Clock, Users, AlertTriangle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { collectSupabaseErrors } from "@/lib/adminAnalytics";
 
 interface LiveQueue {
   id: string;
@@ -33,7 +33,7 @@ const STATUS_CLS: Record<string, string> = {
 const AdminQueues = () => {
   const [queues, setQueues] = useState<LiveQueue[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
-  const [overallAvgWait, setOverallAvgWait] = useState(0);
+  const [queryErrors, setQueryErrors] = useState<string[]>([]);
 
   useEffect(() => {
     fetchQueues();
@@ -45,43 +45,38 @@ const AdminQueues = () => {
   }, []);
 
   const fetchQueues = async () => {
-    const [{ data: qs }, { data: bizs }, { data: visitors }, { data: recent }, { data: servedRows }] = await Promise.all([
+    const [qsRes, bizsRes, visitorsRes, recentRes] = await Promise.all([
       supabase.from("queues").select("id, name, status, current_token, business_id, estimated_service_time, updated_at"),
       supabase.from("businesses").select("id, name"),
-      supabase.from("queue_visitors").select("queue_id, status").eq("status", "waiting"),
+      supabase.from("queue_visitors").select("queue_id, status").in("status", ["waiting", "called"]),
       supabase.from("queue_visitors").select("queue_id, status, joined_at, called_at, served_at, token_number").order("joined_at", { ascending: false }).limit(40),
-      supabase.from("queue_visitors").select("queue_id, joined_at, served_at").eq("status", "served").not("served_at", "is", null),
     ]);
+    setQueryErrors(
+      collectSupabaseErrors([
+        { source: "queues", error: qsRes.error },
+        { source: "businesses", error: bizsRes.error },
+        { source: "queue_visitors", error: visitorsRes.error || recentRes.error },
+      ]),
+    );
+    const qs = qsRes.data;
+    const bizs = bizsRes.data;
+    const visitors = visitorsRes.data;
+    const recent = recentRes.data;
 
     const bizMap = new Map((bizs || []).map(b => [b.id, b.name]));
     const qNameMap = new Map((qs || []).map(q => [q.id, q.name]));
     const qBizMap = new Map((qs || []).map(q => [q.id, bizMap.get(q.business_id) || "—"]));
 
-    const waitsByQueue = new Map<string, number[]>();
-    const allWaits: number[] = [];
-    (servedRows || []).forEach((v: any) => {
-      const [mins] = getActiveWaitMinutes([{ status: "served", joined_at: v.joined_at, served_at: v.served_at }]);
-      if (mins === undefined) return;
-      allWaits.push(mins);
-      const arr = waitsByQueue.get(v.queue_id) || [];
-      arr.push(mins);
-      waitsByQueue.set(v.queue_id, arr);
-    });
-    setOverallAvgWait(allWaits.length ? Math.round(allWaits.reduce((a, b) => a + b, 0) / allWaits.length) : 0);
-
-    const real: LiveQueue[] = (qs || []).map(q => {
-      const qWaits = waitsByQueue.get(q.id) || [];
-      return {
-        id: q.id,
-        queue: q.name,
-        business: bizMap.get(q.business_id) || "—",
-        status: q.status,
-        current: q.current_token || 0,
-        waiting: (visitors || []).filter(v => v.queue_id === q.id).length,
-        avgWait: qWaits.length ? Math.round(qWaits.reduce((a, b) => a + b, 0) / qWaits.length) : 0,
-        updated: formatDistanceToNow(new Date(q.updated_at), { addSuffix: true }),
-      };
-    });
+    const real: LiveQueue[] = (qs || []).map(q => ({
+      id: q.id,
+      queue: q.name,
+      business: bizMap.get(q.business_id) || "—",
+      status: q.status,
+      current: q.current_token || 0,
+      waiting: (visitors || []).filter(v => v.queue_id === q.id).length,
+      avgWait: q.estimated_service_time || 5,
+      updated: formatDistanceToNow(new Date(q.updated_at), { addSuffix: true }),
+    }));
     setQueues(real);
 
     // Build live event log from recent visitor activity
@@ -122,10 +117,20 @@ const AdminQueues = () => {
         </button>
       </div>
 
+      {queryErrors.length > 0 && (
+        <div className="bg-danger-soft border border-danger/30 rounded-2xl p-4 mb-6 flex items-start justify-between gap-3">
+          <div className="flex items-start gap-2.5 text-sm">
+            <AlertTriangle className="w-4 h-4 text-danger mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">Database query issue: {queryErrors.join(" · ")}</p>
+          </div>
+          <button onClick={fetchQueues} className="px-3 py-1 rounded-lg bg-card text-xs font-semibold border border-border">Retry</button>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <Mini icon={<Activity className="w-4 h-4 text-success" />} label="Active queues" value={queues.filter(q => q.status === "active").length} />
         <Mini icon={<Users className="w-4 h-4 text-primary" />} label="Total waiting" value={queues.reduce((a, q) => a + q.waiting, 0)} />
-        <Mini icon={<Clock className="w-4 h-4 text-warning" />} label="Avg wait (all)" value={`${overallAvgWait}m`} />
+        <Mini icon={<Clock className="w-4 h-4 text-warning" />} label="Avg wait (all)" value={`${Math.round(queues.reduce((a, q) => a + q.avgWait, 0) / Math.max(queues.length, 1))}m`} />
         <Mini icon={<Pause className="w-4 h-4 text-warning" />} label="Paused" value={queues.filter(q => q.status === "paused").length} />
       </div>
 
@@ -134,7 +139,7 @@ const AdminQueues = () => {
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <h2 className="font-semibold text-foreground">Live Queues</h2>
             <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-success" /> Live
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Live
             </span>
           </div>
           <div className="overflow-x-auto">

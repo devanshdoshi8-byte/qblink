@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 
 export default {
   darkMode: ["class"],
@@ -33,7 +34,10 @@ export default {
         "ink-accent": "hsl(var(--ink-accent))",
         ink: "hsl(var(--ink))",
         deep: "hsl(var(--deep))",
-        teal: "hsl(var(--teal))",
+        teal: {
+          ...colors.teal,
+          DEFAULT: "hsl(var(--teal))",
+        },
         glow: "hsl(var(--glow))",
         cream: "hsl(var(--cream))",
         paper: "hsl(var(--paper))",

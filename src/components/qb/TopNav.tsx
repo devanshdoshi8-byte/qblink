@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown, Menu, Play, Activity, Tv, Layers, DollarSign, X, ArrowRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { ChevronDown, Menu, Play, Activity, Tv, Layers, DollarSign, X, ArrowRight, Download } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useOptionalTheme } from "@/hooks/useTheme";
-import PillNav from "@/components/reactbits/PillNav";
-import GlassSurface from "@/components/reactbits/GlassSurface";
+import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
+import { savePreferredRole } from "@/lib/storage/cookieStorage";
 import { QBlinkWordmark } from "@/components/qb/QBlinkWordmark";
 import { motion, AnimatePresence } from "framer-motion";
+
+const openInstall = () => window.dispatchEvent(new Event("qb:open-install"));
 
 const demoLinks = [
   {
@@ -51,27 +53,38 @@ const demoLinks = [
   },
 ];
 
-const links = [
+const rawLinks = [
   { label: "Product", href: "#product" },
+  { label: "Pilots", href: "#pilots" },
+  { label: "About", href: "/about" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
-  { label: "Demo Videos", href: "#demo" },
 ];
 
 /**
- * Horizontal product navigation for the marketing surface.
- * Transparent over the hero stage, glass once scrolled.
+ * Combined TopNav — fuses QBlinkWordmark, Interactive Live Demos dropdown,
+ * PillNav + GlassSurface, Inventure IIT Gandhinagar recognition badge,
+ * Auth-aware Dashboard routing, and responsive mobile drawer without overflow.
  */
 export const TopNav = () => {
-  const themeCtx = useOptionalTheme();
-  const isDarkTheme = themeCtx ? themeCtx.theme === "dark" : true;
+  const { user } = useAuth();
+  const { roles } = useUserRole();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [demosOpen, setDemosOpen] = useState(false);
-  const [activeHref, setActiveHref] = useState("#product");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const pillTheme: "dark" | "light" = scrolled && !isDarkTheme ? "light" : "dark";
+  const businessHref = user
+    ? (roles.includes("business") ? "/dashboard" : "/auth/business")
+    : "/auth/business";
+
+  const links = rawLinks.map((l) => ({
+    ...l,
+    href: l.href.startsWith("#") ? (isHome ? l.href : `/${l.href}`) : l.href,
+  }));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -86,29 +99,39 @@ export const TopNav = () => {
         setDemosOpen(false);
       }
     };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDemosOpen(false);
+    };
     document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-          scrolled ? "bg-background/95 border-b border-border shadow-sm" : "bg-transparent"
+          scrolled ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-sm" : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-[4.5rem] flex items-center gap-3 sm:gap-6">
-          <Link to="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="QBlink home">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-[4.5rem] flex items-center gap-3 sm:gap-5">
+          <Link to="/" className="flex items-center gap-2 shrink-0 min-h-[44px]" aria-label="Qblink home">
             <QBlinkWordmark textClassName={`text-lg sm:text-xl ${scrolled ? "text-foreground" : "stage-text"}`} />
+            <span className="hidden 2xl:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/25 whitespace-nowrap">
+              Inventure · IIT Gandhinagar
+            </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 text-sm">
+          <div className="hidden xl:flex items-center gap-3 text-sm">
             {/* Interactive Demos Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
                 onClick={() => setDemosOpen(!demosOpen)}
-                className={`inline-flex items-center gap-1.5 font-medium px-2.5 py-1.5 rounded-md transition-colors ${
+                className={`inline-flex items-center gap-1.5 font-medium px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
                   demosOpen
                     ? "text-primary bg-primary/10"
                     : scrolled
@@ -175,46 +198,38 @@ export const TopNav = () => {
               </AnimatePresence>
             </div>
 
-            <GlassSurface
-              width="auto"
-              height="auto"
-              borderRadius={999}
-              backgroundOpacity={0}
-              opacity={1}
-              blur={14}
-              displace={0.3}
-              distortionScale={-120}
-              className="p-0.5 !border-white/20 !shadow-none"
+            <nav aria-label="Primary" className="flex items-center gap-1">
+              {links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`whitespace-nowrap rounded-full px-3 py-2 transition-colors ${
+                    scrolled ? "text-foreground hover:bg-muted" : "stage-text hover:bg-primary/10"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
+            <button
+              type="button"
+              onClick={openInstall}
+              className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
+                scrolled ? "text-muted-foreground hover:text-foreground" : "stage-muted hover:text-[hsl(var(--brand-cream))]"
+              }`}
             >
-              <PillNav
-                items={links}
-                activeHref={activeHref}
-                onItemClick={(item) => {
-                  if (item.href) setActiveHref(item.href);
-                }}
-                theme={pillTheme}
-                size="sm"
-                surface="glass"
-                itemStyle="bare"
-                hoverEffect="fill"
-                indicator="dot"
-                collapse="never"
-                highlightColor={pillTheme === "light" ? "#10637f" : "#51c2c2"}
-                highlightTextColor={pillTheme === "light" ? "#ffffff" : "#0e1e34"}
-                barColor="transparent"
-                textColor={pillTheme === "light" ? "#0e1e34" : "#f4f2eb"}
-                ariaLabel="Primary"
-              />
-            </GlassSurface>
+              <Download className="w-3.5 h-3.5" /> Install App
+            </button>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <div className="ml-auto flex items-center gap-2 sm:gap-2.5">
             <div className="hidden sm:block">
-              <ThemeToggle overStage={!scrolled} />
+              <ThemeToggle />
             </div>
             <Link
               to="/pitch"
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg border transition-all ${
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg border transition-all whitespace-nowrap ${
                 scrolled
                   ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
                   : "border-primary/40 bg-primary/20 text-[hsl(var(--brand-cream))] hover:bg-primary/30"
@@ -223,45 +238,63 @@ export const TopNav = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-success" />
               <span>Pitch Demo</span>
             </Link>
-            <Link
-              to="/auth/signin"
-              className={`hidden sm:inline-block text-sm px-3 py-2 rounded-lg transition-colors ${
-                scrolled ? "text-foreground hover:bg-muted" : "stage-text hover:bg-[hsl(var(--brand-cream)/0.1)]"
-              }`}
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/auth"
-              className="hidden sm:inline-flex items-center text-sm font-medium px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-            >
-              Start free
-            </Link>
-            <Link
-              to="/join"
-              className="sm:hidden inline-flex items-center text-xs font-semibold px-3 py-2 min-h-[40px] rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-            >
-              Join queue
-            </Link>
+            {user ? (
+              <Link
+                to={roles.includes("business") ? "/dashboard" : "/customer-dashboard"}
+                className="text-sm font-semibold px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity whitespace-nowrap"
+              >
+                Dashboard →
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/auth/signin"
+                  className={`hidden sm:inline-block text-sm px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
+                    scrolled ? "text-foreground hover:bg-muted" : "stage-text hover:bg-[hsl(var(--brand-cream)/0.1)]"
+                  }`}
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to={businessHref}
+                  onClick={() => savePreferredRole("business")}
+                  className="hidden sm:inline-flex items-center text-sm font-medium px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity whitespace-nowrap"
+                >
+                  Start 1st Month Free
+                </Link>
+                <Link
+                  to="/customer-dashboard"
+                  className="sm:hidden inline-flex items-center text-xs font-semibold px-3 py-2 min-h-[40px] rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity whitespace-nowrap"
+                >
+                  Join queue
+                </Link>
+              </>
+            )}
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className={`md:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg ${scrolled ? "text-foreground" : "stage-text"}`}
+              className={`xl:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg ${scrolled ? "text-foreground" : "stage-text"}`}
             >
               {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile & Tablet Navigation Drawer */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
+          className={`xl:hidden overflow-hidden transition-all duration-300 ease-out ${
             open ? "max-h-[85vh] overflow-y-auto" : "max-h-0"
           }`}
         >
-          <div className="bg-background border-b border-border px-5 pb-6 pt-2 space-y-4">
+          <div className="bg-background border-b border-border px-5 pb-24 pt-2 space-y-4">
+            <div className="flex items-center justify-between pt-1">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/25">
+                Incubated at Inventure · IIT Gandhinagar
+              </span>
+            </div>
+
             <div>
               <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold mb-2">
                 Interactive Demos
@@ -288,16 +321,37 @@ export const TopNav = () => {
                 Explore
               </p>
               <div className="space-y-1">
-                {links.map((l) => (
-                  <a
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center min-h-[44px] py-2 text-sm text-foreground hover:text-primary transition-colors"
-                  >
-                    {l.label}
-                  </a>
-                ))}
+                {links.map((l) =>
+                  l.href.startsWith("/") && !l.href.startsWith("/#") ? (
+                    <Link
+                      key={l.href}
+                      to={l.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center min-h-[44px] py-2 text-sm text-foreground hover:text-primary transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center min-h-[44px] py-2 text-sm text-foreground hover:text-primary transition-colors"
+                    >
+                      {l.label}
+                    </a>
+                  )
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    openInstall();
+                  }}
+                  className="flex items-center gap-2 min-h-[44px] py-2 text-sm text-foreground hover:text-primary transition-colors w-full text-left"
+                >
+                  <Download className="w-4 h-4" /> Install App
+                </button>
               </div>
             </div>
 
@@ -306,16 +360,26 @@ export const TopNav = () => {
                 <ThemeToggle />
                 <span className="text-xs font-medium text-muted-foreground">Appearance</span>
               </div>
-              <Link to="/auth/signin" onClick={() => setOpen(false)} className="inline-flex items-center min-h-[44px] px-2 text-sm font-medium text-foreground">
-                Sign in
-              </Link>
+              {user ? (
+                <Link
+                  to={roles.includes("business") ? "/dashboard" : "/customer-dashboard"}
+                  onClick={() => setOpen(false)}
+                  className="inline-flex items-center min-h-[44px] px-3 text-sm font-semibold text-primary"
+                >
+                  Dashboard →
+                </Link>
+              ) : (
+                <Link to="/auth/signin" onClick={() => setOpen(false)} className="inline-flex items-center min-h-[44px] px-2 text-sm font-medium text-foreground">
+                  Sign in
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </header>
 
       {/* Sticky Mobile Action Bar on Home */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-background/95 backdrop-blur-lg border-t border-border flex items-center gap-2.5">
+      <div className="xl:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-background/95 backdrop-blur-lg border-t border-border flex items-center gap-2.5">
         <Link
           to="/pitch"
           className="flex-1 min-h-[44px] px-3 rounded-xl border border-primary/30 bg-primary/10 text-primary font-semibold text-xs text-center flex items-center justify-center gap-1.5 shadow-sm"
@@ -324,10 +388,11 @@ export const TopNav = () => {
           <span>Try Pitch Demo</span>
         </Link>
         <Link
-          to="/auth/signin?role=business"
+          to={businessHref}
+          onClick={() => savePreferredRole("business")}
           className="flex-1 min-h-[44px] px-3 rounded-xl bg-primary text-primary-foreground font-semibold text-xs text-center flex items-center justify-center gap-1 shadow-sm"
         >
-          <span>Start Free</span>
+          <span>Start 1st Month Free</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

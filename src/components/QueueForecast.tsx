@@ -109,6 +109,7 @@ const QueueForecast = ({ queueId, audience }: Props) => {
   }, [rows, summary]);
 
   if (loading) {
+    if (audience === "customer") return null;
     return (
       <Card>
         <CardHeader>
@@ -124,6 +125,7 @@ const QueueForecast = ({ queueId, audience }: Props) => {
   const insufficient = !summary || summary.totalSample < 5 || summary.days < 2 || summary.peak <= 0;
 
   if (insufficient) {
+    if (audience === "customer") return null;
     return (
       <Card>
         <CardHeader className="pb-3">

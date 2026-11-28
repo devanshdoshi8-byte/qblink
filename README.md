@@ -408,31 +408,7 @@ Make it feel like a new system for walk-in flow.
 
 
 
-Add a simple monetization section.
-
-
-
-Use this structure:
-
-
-
-Free early access / pilot phase
-
-Paid monthly SaaS plans later
-
-Pro plan for businesses with analytics and advanced controls
-
-Enterprise pricing for chains and multi-location businesses
-
-Affiliate program for referrals
-
-Optional ads only for free tier later, but keep it secondary
-
-
-
-
-
-Make the business model feel practical and scalable.
+Explain that Qblink is free to use, with no subscriptions, paid plans, trial periods, or payment requirements.
 
 
 
@@ -564,7 +540,7 @@ Can it work for multiple counters?
 
 Is this only for one industry?
 
-Is there a free pilot?
+Does Qblink cost anything? It is free to use, with no subscriptions, paid plans, trial periods, or payment requirements.
 
 
 

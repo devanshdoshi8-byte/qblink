@@ -1,5 +1,5 @@
 import {
-  ArrowRight, Check, Eye, Info, Plus, Trash2,
+  ArrowRight, Check, Eye, Info, Plus, Sparkles, Trash2,
   Users, Utensils, Wand2, X, Zap,
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -147,7 +147,7 @@ const RestaurantTableConfig = ({
               type="button"
               onClick={() => onPartySizeModeChange(m)}
               className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
-                partySizeMode === m ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:text-foreground"
+                partySizeMode === m ? "gradient-bg text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:text-foreground"
               }`}
             >
               {m}
@@ -213,7 +213,7 @@ const RestaurantTableConfig = ({
       </div>
 
       <div>
-        <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm">
+        <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/[0.04] via-card to-card p-4 sm:p-5 shadow-sm">
           <div className="flex items-start justify-between gap-3 mb-1">
             <div>
               <div className="flex items-center gap-2">
@@ -283,7 +283,7 @@ const RestaurantTableConfig = ({
           </div>
 
           <div className="mt-4 rounded-xl border border-primary/25 bg-primary/[0.06] p-3 flex gap-2.5">
-            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-[11.5px] text-foreground/80 leading-snug">
               <span className="font-semibold text-foreground">Most restaurants benefit from Flexible Matching</span> —
               customers join faster while Qblink manages queue assignment behind the scenes.
@@ -353,18 +353,18 @@ const PolicyCard = ({
     onKeyDown={onKeyDown}
   >
     {active && (
-      <div aria-hidden="true" className={`absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md ${justSelected ? "animate-check-pop" : ""}`}>
+      <div aria-hidden="true" className={`absolute -top-2 -right-2 w-6 h-6 rounded-full gradient-bg text-primary-foreground flex items-center justify-center shadow-md ${justSelected ? "animate-check-pop" : ""}`}>
         <Check className="w-3.5 h-3.5" strokeWidth={3} />
       </div>
     )}
     <div className="flex items-center gap-2 mb-1">
-      <span aria-hidden="true" className={`w-7 h-7 rounded-lg flex items-center justify-center ${active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"}`}>
+      <span aria-hidden="true" className={`w-7 h-7 rounded-lg flex items-center justify-center ${active ? "gradient-bg text-primary-foreground" : "bg-primary/10 text-primary"}`}>
         {icon}
       </span>
       <p id={titleId} className="text-sm font-bold text-foreground">{title}</p>
       {badge && (
         <span className="inline-flex items-center gap-1 text-[9.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-primary/15 text-primary">
-          {badge}
+          <Sparkles className="w-2.5 h-2.5" aria-hidden="true" /> {badge}
         </span>
       )}
     </div>
@@ -392,10 +392,10 @@ const PolicyCard = ({
       <div className="flex items-center justify-between gap-1 text-[10px]">
         {flow.map((step, i) => (
           <div key={step} className="contents">
-            <span className={`px-1.5 py-0.5 rounded font-semibold ${i === 1 && active ? "bg-primary text-primary-foreground" : "bg-card text-foreground/70 border border-border/50"}`}>
+            <span className={`px-1.5 py-0.5 rounded font-semibold ${i === 1 && active ? "gradient-bg text-primary-foreground" : "bg-card text-foreground/70 border border-border/50"}`}>
               {step}
             </span>
-            {i < flow.length - 1 && <ArrowRight aria-hidden="true" className={`w-3 h-3 shrink-0 ${active ? "text-primary" : "text-muted-foreground/60"}`} />}
+            {i < flow.length - 1 && <ArrowRight aria-hidden="true" className={`w-3 h-3 shrink-0 ${active ? "text-primary animate-pulse" : "text-muted-foreground/60"}`} />}
           </div>
         ))}
       </div>
@@ -531,7 +531,7 @@ const CustomerPreviewModal = ({
           </button>
         </div>
 
-        <div className="p-5 bg-muted/30">
+        <div className="p-5 bg-gradient-to-b from-muted/40 to-transparent">
           {/* Phone frame */}
           <div aria-hidden="true" className="mx-auto w-[280px] rounded-[2rem] border-[10px] border-foreground/90 bg-background shadow-xl overflow-hidden">
             <div className="h-5 bg-foreground/90 relative">
@@ -587,7 +587,7 @@ const CustomerPreviewModal = ({
                           Auto-assigned to {routed}-seat table queue
                         </p>
                       ) : (
-                        <p className="text-[10px] text-primary mt-0.5">Finding best table…</p>
+                        <p className="text-[10px] text-primary mt-0.5 animate-pulse">Finding best table…</p>
                       )
                     ) : (
                       <p className="text-[11px] font-semibold text-foreground mt-0.5">
@@ -596,7 +596,7 @@ const CustomerPreviewModal = ({
                     )}
                   </div>
                   {(mode === "strict" || routed) && (
-                    <button type="button" className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-[12px] font-bold">
+                    <button type="button" className="w-full py-2 rounded-lg gradient-bg text-primary-foreground text-[12px] font-bold">
                       Join Queue
                     </button>
                   )}
@@ -627,7 +627,7 @@ const CustomerPreviewModal = ({
             <div className="relative pt-6">
               {/* Traveler dot */}
               <div
-                className="absolute top-0 left-0 h-4 w-4 rounded-full bg-primary shadow-md shadow-primary/40 flex items-center justify-center text-[8px] font-bold text-primary-foreground transition-all duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+                className="absolute top-0 left-0 h-4 w-4 rounded-full gradient-bg shadow-md shadow-primary/40 flex items-center justify-center text-[8px] font-bold text-primary-foreground transition-all duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{
                   opacity: chosen != null ? 1 : 0,
                   transform:
@@ -640,7 +640,7 @@ const CustomerPreviewModal = ({
               </div>
 
               {/* Routing rail */}
-              <div className="relative h-px bg-border mb-2" />
+              <div className="relative h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mb-2" />
 
               {/* Lanes */}
               <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${lanes.length}, minmax(0, 1fr))` }}>
@@ -657,7 +657,7 @@ const CustomerPreviewModal = ({
                       }`}
                     >
                       {isRouted && (
-                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary" />
+                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary animate-ping" />
                       )}
                       <p className={`text-[9px] font-semibold uppercase tracking-wide ${isRouted ? "text-primary" : "text-muted-foreground"}`}>
                         {seats}-seat
@@ -739,7 +739,7 @@ const LearnMoreModal = ({ onClose }: { onClose: () => void }) => {
 
         <div className="p-4 sm:p-5 space-y-4">
           {/* Why this exists */}
-          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5">
+          <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/[0.04] via-card to-card p-4 sm:p-5">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-start">
               <div className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <svg aria-hidden="true" viewBox="0 0 64 64" className="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -764,7 +764,7 @@ const LearnMoreModal = ({ onClose }: { onClose: () => void }) => {
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-primary/30 bg-primary/[0.04] p-4 sm:p-5">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
+                <span className="w-8 h-8 rounded-xl gradient-bg text-primary-foreground flex items-center justify-center">
                   <Wand2 className="w-4 h-4" aria-hidden="true" />
                 </span>
                 <div>
@@ -929,7 +929,7 @@ const LearnMoreModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Decision hint */}
           <div className="rounded-xl border border-primary/25 bg-primary/[0.06] p-3.5 flex gap-2.5">
-            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-[11.5px] text-foreground/80 leading-snug">
               <span className="font-semibold text-foreground">Start with Flexible Matching</span> unless your seating categories are part of the guest experience — like a rooftop, private room, or tasting menu area. You can switch modes anytime without changing your queues or losing data.
             </p>

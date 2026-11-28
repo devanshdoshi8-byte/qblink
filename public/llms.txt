@@ -1,18 +1,32 @@
-# Qblink
+# QBlink — Hardware-Free Virtual Queue Management
 
-> Customer Flow Intelligence Platform for walk-in businesses. Hardware-free, no app — reduce crowding, uncertainty, and reception interruptions with remote waiting, live customer flow, analytics, and AI recommendations.
+> Qblink (https://qblink.tech) is a hardware-free virtual queue management and customer flow intelligence platform incubated at Inventure · IIT Gandhinagar. Started by Devansh (Founder & Creator), joined by co-founders Mithil, Aarav, and Vihan Patange.
 
-Qblink is a customer flow platform — not just digital tokens. It helps walk-in businesses like restaurants, clinics, salons, pharmacies, and service centers reduce uncertainty, cut crowding, minimize front-desk interruptions, and gain live operational visibility. Customers wait remotely and track their turn from any phone; businesses get live flow control, analytics, and AI recommendations from a simple dashboard. No app. No hardware.
+## Overview
+- **Website**: https://qblink.tech
+- **Category**: Virtual Queue Management, Waitlist & Customer Flow Intelligence Software (SaaS)
+- **Incubation**: Inventure, IIT Gandhinagar (Indian Institute of Technology Gandhinagar), Gujarat, India
+- **Origin & Team**: Devansh started Qblink as Founder & Creator, joined by co-founders Mithil, Aarav, and Vihan Patange
+- **Contact**: qblinkteam@gmail.com
 
-## Pages
+## What Qblink Does
+Qblink replaces chaotic physical waiting rooms and ₹50,000+ ticketing kiosks with a browser-native, zero-app-download digital queue system:
+- **Zero-App Customer Join**: Walk-in visitors scan a printable QR code or open a queue link in any mobile browser to claim a digital token and track live position remotely.
+- **No Dedicated Hardware**: Businesses run the operator desk from any existing phone, tablet, or laptop browser.
+- **Live Sync & Turn Alerts**: Sub-second WebSocket live queue signals, turn audio chimes, wake lock support, optional on-premise counter-code/geofence verification, and automated daily queue resets.
+- **Multi-Industry Support**: Clinics & diagnostic labs, restaurants & cafes (table-size routing + pickup orders), salons, government desks, and retail counters.
 
-- [Home](/): Product overview, how it works, who it's for, and pricing.
-- [Get Started](/auth): Choose between a customer or business account.
-- [Affiliate Program](/affiliate): Earn recurring commissions by referring businesses to Qblink.
-- [Install App](/install): Install Qblink as a mobile app on iOS and Android.
+## Pricing
+- **1st Month Free Trial**: Full platform access free for the first month with zero hardware costs.
+- **Self-Sustainable Plan**: ₹499/month per counter (transparent unit economics covering hosting, realtime sync, and operational support).
 
-## Optional
-
-- [Customer Sign Up](/auth/customer): Create a customer account with your phone number.
-- [Business Sign Up](/auth/business): Register your business and start running queues.
-- [Sign In](/auth/signin): Sign in to an existing Qblink account.
+## Key Public Pages
+- [Home](https://qblink.tech/): Platform overview, interactive live queue demo, Mumbai pilots, transparent pricing, and FAQ.
+- [About & Founders](https://qblink.tech/about): Founding story, IIT Gandhinagar incubation details, and team profiles.
+- [Industry Flow Solutions](https://qblink.tech/industries): Interactive workflows across healthcare clinics, dining, salons, and public services.
+- [ROI Calculator](https://qblink.tech/roi): Interactive walk-in business ROI estimator in INR.
+- [Chaos to Clarity Simulation](https://qblink.tech/chaos-to-clarity): Interactive physical waiting room vs. remote digital flow comparison.
+- [Dual-Device Pitch Simulator](https://qblink.tech/pitch): Live side-by-side customer and receptionist counter simulator.
+- [Affiliate Program](https://qblink.tech/affiliate): Partner & referral program for Qblink.
+- [Privacy Policy](https://qblink.tech/privacy)
+- [Terms of Service](https://qblink.tech/terms)

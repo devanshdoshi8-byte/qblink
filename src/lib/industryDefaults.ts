@@ -32,6 +32,11 @@ export interface IndustryDefaults {
   join_cooldown_minutes: number;
   estimated_service_time: number; // minutes
   party_size_enabled: boolean;
+  /**
+   * For clinics & healthcare: calling the next patient automatically completes
+   * the prior consultation. No manual "Mark Served" action or button is needed.
+   */
+  auto_complete_on_call?: boolean;
   alerts: string[]; // labels of enabled alert toggles
   highlights: string[]; // short bullets shown to the user during signup
 }
@@ -45,11 +50,13 @@ export const INDUSTRY_DEFAULTS: Record<Industry, IndustryDefaults> = {
     join_cooldown_minutes: 15,
     estimated_service_time: 8,
     party_size_enabled: false,
+    auto_complete_on_call: true,
     alerts: ["doctor_delay"],
     highlights: [
       "Single Queue",
       "Arrival Window: 10 min",
       "Doctor Delay Alerts ON",
+      "Auto-completes on Next Patient (No manual 'Served' click)",
     ],
   },
   Restaurant: {
@@ -176,3 +183,22 @@ export const INDUSTRY_DEFAULTS: Record<Industry, IndustryDefaults> = {
 
 export const getIndustryDefaults = (industry: string): IndustryDefaults =>
   INDUSTRY_DEFAULTS[(industry as Industry)] ?? INDUSTRY_DEFAULTS.Others;
+
+/**
+ * Checks whether a business or category is a clinic or healthcare facility.
+ * Clinics follow a continuous consultation model where calling the next patient
+ * auto-completes the previous one without requiring a separate manual "Mark Served" button.
+ */
+export const isClinicIndustry = (category: string | null | undefined): boolean => {
+  if (!category) return false;
+  const s = category.toLowerCase().trim();
+  return (
+    s.includes("clinic") ||
+    s.includes("hospital") ||
+    s.includes("doctor") ||
+    s.includes("medical") ||
+    s.includes("dental") ||
+    s.includes("healthcare") ||
+    s.includes("diagnostic")
+  );
+};

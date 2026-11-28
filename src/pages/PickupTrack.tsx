@@ -29,29 +29,54 @@ const PickupTrack = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   const [businessName, setBusinessName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!orderId) return;
+    if (!orderId) {
+      setLoading(false);
+      return;
+    }
     let businessLoaded = false;
+    let active = true;
+    let poll: number | null = null;
     const load = async () => {
-      // Secure lookup by unguessable order id — excludes customer phone number
-      const { data } = await (supabase as any).rpc("get_pickup_order", { p_order_id: orderId });
+      const { data, error } = await (supabase as any).rpc("get_pickup_order", { p_order_id: orderId });
       const row = Array.isArray(data) ? data[0] : data;
+      if (!active) return false;
+      if (error || !row) {
+        setLoading(false);
+        return false;
+      }
       if (row) {
         setOrder(row as Order);
+        setLoading(false);
         if (!businessLoaded) {
           businessLoaded = true;
-          const { data: b } = await supabase.from("businesses").select("name").eq("id", row.business_id).maybeSingle();
-          setBusinessName(b?.name ?? "");
+          const { data: b } = await (supabase as any).from("businesses_public").select("name").eq("id", row.business_id).maybeSingle();
+          if (active) setBusinessName(b?.name ?? "");
         }
       }
+      return true;
     };
-    load();
-    const poll = setInterval(load, 5000);
-    return () => clearInterval(poll);
+    void load().then((found) => {
+      if (found && active) poll = window.setInterval(() => { void load(); }, 5000);
+    });
+    return () => {
+      active = false;
+      if (poll !== null) window.clearInterval(poll);
+    };
   }, [orderId]);
 
-  if (!order) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
+  if (!order) return (
+    <div className="min-h-screen flex items-center justify-center px-4 text-center">
+      <div className="max-w-sm space-y-3">
+        <p className="font-semibold text-foreground">Order not available for this account</p>
+        <p className="text-sm text-muted-foreground">Sign in with the account used to place the order, then reload this page.</p>
+        <Link to="/" className="block text-sm text-primary hover:underline">Back to Qblink</Link>
+      </div>
+    </div>
+  );
 
   const stageIdx = STAGES.findIndex(s => s.key === order.status);
   const isDone = order.status === "picked_up";
@@ -93,7 +118,7 @@ const PickupTrack = () => {
               const current = !isDone && i === stageIdx;
               return (
                 <div key={s.key} className={`flex items-center gap-3 ${reached ? "" : "opacity-40"}`}>
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${current ? "bg-primary text-primary-foreground" : reached ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${current ? "gradient-bg text-primary-foreground" : reached ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1">

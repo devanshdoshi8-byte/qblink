@@ -24,10 +24,13 @@ dist-ssr
 *.sw?
 test-results/
 playwright-report/
-
-# Environment files
-.env
-.env.*
-!.env.example
-
 .vercel
+
+.env*
+
+# Local test & scratch artifacts
+scratch/
+lab/
+.agents/
+start-lab.bat
+supabase/.temp/

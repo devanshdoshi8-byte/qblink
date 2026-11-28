@@ -91,7 +91,7 @@ const Shell = ({
       type="button"
       onClick={onCta}
       disabled={ctaDisabled}
-      className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.99] transition-all elevated-shadow disabled:opacity-50 disabled:hover:scale-100"
+      className="w-full inline-flex items-center justify-center gap-2 gradient-bg text-primary-foreground px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.99] transition-all elevated-shadow disabled:opacity-50 disabled:hover:scale-100"
     >
       {cta}
       {ctaIcon ?? <ArrowRight className="w-4 h-4" aria-hidden="true" />}
@@ -294,7 +294,7 @@ const CustomerScreen3 = ({ onNext }: { onNext: () => void }) => {
         </div>
         <div className="relative h-2 rounded-full bg-muted overflow-hidden">
           <motion.div
-            className="absolute inset-y-0 left-0 bg-primary rounded-full"
+            className="absolute inset-y-0 left-0 gradient-bg rounded-full"
             initial={false}
             animate={{ width: `${((POSITIONS[0] - POSITIONS[idx]) / POSITIONS[0]) * 100}%` }}
             transition={{ duration: 0.6, ease: "easeOut" }}
@@ -354,7 +354,7 @@ const CustomerScreen4 = ({ onNext }: { onNext: () => void }) => {
               initial={{ opacity: 0, x: -10 }}
               animate={i < step ? { opacity: 1, x: 0 } : { opacity: 0.25, x: -6 }}
               transition={{ duration: 0.35 }}
-              className="flex items-start gap-2.5 rounded-xl border border-border bg-card p-2.5"
+              className="flex items-start gap-2.5 rounded-xl border border-border bg-card/80 backdrop-blur p-2.5"
             >
               <span
                 className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
@@ -384,7 +384,7 @@ const CustomerScreen4 = ({ onNext }: { onNext: () => void }) => {
             transition={{ duration: 0.6 }}
           />
           {!done && (
-            <div className="absolute inset-0 bg-background/35 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background/40 pointer-events-none" />
           )}
         </div>
       </div>
@@ -398,7 +398,7 @@ const CustomerScreen4 = ({ onNext }: { onNext: () => void }) => {
 const NETWORK_CATS = [
   { icon: Stethoscope, label: "Clinics", tint: "text-success bg-success-soft" },
   { icon: Utensils, label: "Restaurants", tint: "text-danger bg-danger-soft" },
-  { icon: Scissors, label: "Salons", tint: "text-primary bg-primary/10" },
+  { icon: Scissors, label: "Salons", tint: "text-primary bg-primary" },
   { icon: Microscope, label: "Diagnostics", tint: "text-info bg-info-soft" },
 ];
 
@@ -414,7 +414,7 @@ const NetworkOrbit = ({ cta }: { cta: React.ReactNode }) => (
       animate={{ rotate: -360 }}
       transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
     />
-    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-primary flex items-center justify-center elevated-shadow">
+    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full gradient-bg flex items-center justify-center elevated-shadow">
       {cta}
     </div>
     {NETWORK_CATS.map((c, i) => {
@@ -486,7 +486,7 @@ const BusinessScreen1 = ({ onNext }: { onNext: () => void }) => {
           <span className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground">
             Reception
           </span>
-          <span className={`text-[11px] font-semibold ${stress > 65 ? "text-danger" : stress > 35 ? "text-warning" : "text-success"}`}>
+          <span className="text-[11px] font-semibold" style={{ color: `hsl(${10 + (1 - stress / 100) * 60}, 80%, 45%)` }}>
             Stress {Math.round(stress)}%
           </span>
         </div>
@@ -507,7 +507,7 @@ const BusinessScreen1 = ({ onNext }: { onNext: () => void }) => {
         </div>
         <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">
           <motion.div
-            className={`h-full ${stress > 65 ? "bg-danger" : "bg-warning"}`}
+            className="h-full bg-gradient-to-r from-warning to-danger"
             initial={false}
             animate={{ width: `${stress}%` }}
             transition={{ duration: 0.5 }}

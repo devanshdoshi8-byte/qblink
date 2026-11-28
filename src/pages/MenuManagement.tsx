@@ -154,7 +154,7 @@ const MenuBoard = ({ businessId, businessName }: { businessId: string; businessN
           <button
             onClick={submit}
             disabled={saving}
-            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 disabled:opacity-60"
+            className="gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {editingId ? "Save changes" : "Add item"}

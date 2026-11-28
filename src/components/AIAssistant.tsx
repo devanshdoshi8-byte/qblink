@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, X, Send, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isStandaloneMode } from "@/integrations/supabase/client";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -328,6 +328,20 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
     setInput("");
     setLoading(true);
 
+    if (isStandaloneMode) {
+      setTimeout(() => {
+        setMessages((m) => [
+          ...m,
+          {
+            role: "assistant",
+            content: `Dr. Patange, the OPD queue currently has 3 patients waiting. Token #14 (Kavita Rao) is in consultation. Token #15 (Rahul Sharma) is next in line. All operations are running locally.`,
+          },
+        ]);
+        setLoading(false);
+      }, 400);
+      return;
+    }
+
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/qblink-ai`;
       const { data: sessionData } = await supabase.auth.getSession();
@@ -397,7 +411,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
     <>
       <motion.button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-50 bg-primary text-primary-foreground rounded-full p-4 shadow-lg flex items-center gap-2"
+        className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] right-4 md:bottom-6 md:right-6 z-50 gradient-bg text-primary-foreground rounded-full p-3.5 sm:p-4 shadow-lg flex items-center gap-2"
         aria-label="Open AI assistant"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{
@@ -427,11 +441,11 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.97 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
-          className="fixed inset-0 sm:inset-auto sm:bottom-5 sm:right-5 z-50 sm:w-[380px] sm:h-[560px] bg-card sm:rounded-2xl elevated-shadow flex flex-col border border-border"
+          className="fixed inset-0 sm:inset-auto sm:bottom-5 sm:right-5 z-50 sm:w-[380px] sm:h-[560px] bg-card sm:rounded-2xl elevated-shadow flex flex-col border border-border pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] sm:pt-0 sm:pb-0"
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-primary-foreground" />
               </div>
               <div>
@@ -447,8 +461,8 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
                 </p>
               </div>
             </div>
-            <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-muted">
-              <X className="w-4 h-4 text-muted-foreground" />
+            <button onClick={() => setOpen(false)} aria-label="Close AI assistant" className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg hover:bg-muted">
+              <X className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
 
@@ -460,7 +474,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
                 transition={{ duration: 0.3 }}
                 className="text-center py-6"
               >
-                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-3">
                   <Sparkles className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Hi! How can I help?</p>
@@ -483,7 +497,7 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
               >
                 <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm ${
                   m.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-br-sm"
+                    ? "gradient-bg text-primary-foreground rounded-br-sm"
                     : "bg-muted text-foreground rounded-bl-sm"
                 }`}>
                   {m.role === "assistant"
@@ -553,13 +567,14 @@ export default function AIAssistant({ mode, businessId, suggestions, queueContex
                   ? "Ask about your operations…"
                   : "Ask about your wait…"
               }
-              className="flex-1 px-3 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="flex-1 min-w-0 px-3 py-2.5 rounded-xl bg-background border border-border text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               disabled={loading}
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="bg-primary text-primary-foreground rounded-xl px-3 disabled:opacity-50"
+              aria-label="Send message"
+              className="gradient-bg text-primary-foreground rounded-xl px-3.5 min-w-[44px] min-h-[44px] flex items-center justify-center disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>

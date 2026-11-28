@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { setLastActiveMode } from "@/lib/auth/roles";
 
 const AdminRoute = ({ children }: { children: ReactNode }) => {
   const { user, loading: authLoading } = useAuth();
@@ -30,7 +31,7 @@ const AdminRoute = ({ children }: { children: ReactNode }) => {
           <p className="text-sm text-muted-foreground mb-5">
             This area is restricted to Qblink platform administrators.
           </p>
-          <Link to="/" replace className="inline-block bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold">
+          <Link to="/" replace className="inline-block gradient-bg text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold">
             Back to Home
           </Link>
         </div>
@@ -38,6 +39,7 @@ const AdminRoute = ({ children }: { children: ReactNode }) => {
     );
   }
 
+  setLastActiveMode("admin");
   return <>{children}</>;
 };
 

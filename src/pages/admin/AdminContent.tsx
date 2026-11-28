@@ -54,7 +54,7 @@ const AdminContent = () => {
       <div className="grid md:grid-cols-[240px,1fr] gap-6">
         <div className="bg-card rounded-2xl p-3 card-shadow self-start">
           {DEFAULT_KEYS.map((k) => (
-            <button key={k.key} onClick={() => setActiveKey(k.key)} className={`w-full text-left px-3 py-2 rounded-lg text-sm mb-1 ${activeKey === k.key ? "bg-primary text-primary-foreground font-semibold" : "hover:bg-muted text-foreground"}`}>
+            <button key={k.key} onClick={() => setActiveKey(k.key)} className={`w-full text-left px-3 py-2 rounded-lg text-sm mb-1 ${activeKey === k.key ? "gradient-bg text-primary-foreground font-semibold" : "hover:bg-muted text-foreground"}`}>
               {k.label}
             </button>
           ))}
@@ -87,7 +87,7 @@ const ObjectEditor = ({ fields, value, onSave }: { fields: string[]; value: any;
           )}
         </div>
       ))}
-      <button onClick={() => onSave(local)} className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 self-start"><Save className="w-4 h-4" /> Save changes</button>
+      <button onClick={() => onSave(local)} className="gradient-bg text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 self-start"><Save className="w-4 h-4" /> Save changes</button>
     </div>
   );
 };
@@ -109,7 +109,7 @@ const ListEditor = ({ value, onSave }: { value: any[]; onSave: (v: any[]) => voi
       ))}
       <div className="flex gap-2">
         <button onClick={add} className="bg-card border border-border px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2"><Plus className="w-4 h-4" /> Add item</button>
-        <button onClick={() => onSave(items)} className="bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2"><Save className="w-4 h-4" /> Save list</button>
+        <button onClick={() => onSave(items)} className="gradient-bg text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2"><Save className="w-4 h-4" /> Save list</button>
       </div>
     </div>
   );

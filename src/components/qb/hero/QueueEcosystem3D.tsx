@@ -12,10 +12,10 @@ import * as THREE from "three";
  * not a set of decorative objects.
  */
 
-const NAVY = "#0e1e34";
-const TEAL = "#10637f";
-const CYAN = "#51c2c2";
-const CREAM = "#f4f2eb";
+const NAVY = "#0b1b2d";
+const TEAL = "#3fb8bf";
+const CYAN = "#22a7e0";
+const CREAM = "#f2eee4";
 
 const CURVE = new THREE.CatmullRomCurve3([
   new THREE.Vector3(-2.6, -2.6, -1.6),

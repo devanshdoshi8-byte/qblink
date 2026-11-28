@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import InfoHint from "@/components/InfoHint";
+import { busiestBucketIndex } from "@/lib/queueAnalytics";
 
 interface VisitorRow {
   joined_at: string;
@@ -40,8 +41,8 @@ const PeakHourHeatmap = ({ visitors }: Props) => {
       }
     });
     const max = Math.max(1, ...g.flat());
-    const bdIdx = dayTotals.indexOf(Math.max(...dayTotals));
-    const bhIdx = hourTotals.indexOf(Math.max(...hourTotals));
+    const bdIdx = busiestBucketIndex(dayTotals);
+    const bhIdx = busiestBucketIndex(hourTotals);
     const avg = waits.length
       ? Math.round(waits.reduce((a, b) => a + b, 0) / waits.length)
       : 0;

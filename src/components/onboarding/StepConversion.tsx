@@ -97,7 +97,7 @@ const StepConversion = ({ data, onChange, onNext }: Props) => {
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.35 }}
           >
-            <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-5 elevated-shadow">
+            <div className="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5 elevated-shadow">
               <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-center text-foreground leading-tight mb-2">
@@ -181,7 +181,7 @@ const StepConversion = ({ data, onChange, onNext }: Props) => {
 
             <button
               onClick={() => setScreen("form")}
-              className="w-full bg-primary text-primary-foreground px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.01] transition-all elevated-shadow inline-flex items-center justify-center gap-2"
+              className="w-full gradient-bg text-primary-foreground px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.01] transition-all elevated-shadow inline-flex items-center justify-center gap-2"
             >
               Continue <ArrowRight className="w-4 h-4" />
             </button>
@@ -248,7 +248,7 @@ const StepConversion = ({ data, onChange, onNext }: Props) => {
             <button
               onClick={submit}
               disabled={submitting || (isBusiness ? !validBusiness : !validCustomer)}
-              className="w-full bg-primary text-primary-foreground px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all elevated-shadow inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full gradient-bg text-primary-foreground px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all elevated-shadow inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {isBusiness ? "Request Access" : "Join Early Access"}
@@ -282,7 +282,7 @@ const StepConversion = ({ data, onChange, onNext }: Props) => {
             </p>
             <button
               onClick={onNext}
-              className="bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-all elevated-shadow"
+              className="gradient-bg text-primary-foreground px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-all elevated-shadow"
             >
               Finish
             </button>

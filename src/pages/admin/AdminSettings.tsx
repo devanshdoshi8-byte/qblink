@@ -12,7 +12,7 @@ const AdminSettings = () => {
   const [admins, setAdmins] = useState<AdminEmail[]>([]);
   const [newEmail, setNewEmail] = useState("");
   const [notif, setNotif] = useState({ alerts: true, weekly: true, growth: false });
-  const [platform, setPlatform] = useState({ defaultWait: 5, maxQueue: 100, maintenance: false, allowDemo: true });
+  const [platform, setPlatform] = useState({ defaultWait: 5, maxQueue: 100, maintenance: false, allowDemo: false });
   const [newPass, setNewPass] = useState("");
 
   useEffect(() => { fetchAdmins(); }, []);
@@ -67,7 +67,7 @@ const AdminSettings = () => {
           <p className="text-xs text-muted-foreground -mt-2">These emails have full admin access. Add or remove admins to update access.</p>
           <div className="flex gap-2">
             <input value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="newadmin@example.com" className="input flex-1" />
-            <button onClick={addAdmin} className="bg-primary text-primary-foreground px-4 rounded-xl text-sm font-semibold flex items-center gap-2"><Plus className="w-4 h-4" /> Add</button>
+            <button onClick={addAdmin} className="gradient-bg text-primary-foreground px-4 rounded-xl text-sm font-semibold flex items-center gap-2"><Plus className="w-4 h-4" /> Add</button>
           </div>
           <div className="bg-muted/30 rounded-xl divide-y divide-border">
             {admins.length === 0 && <p className="p-4 text-xs text-muted-foreground text-center">No admins configured</p>}
@@ -131,7 +131,7 @@ const Toggle = ({ label, desc, value, onChange }: { label: string; desc: string;
       <p className="text-sm font-medium text-foreground">{label}</p>
       <p className="text-xs text-muted-foreground">{desc}</p>
     </div>
-    <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors ${value ? "bg-primary" : "bg-muted"}`}>
+    <button onClick={() => onChange(!value)} className={`relative w-11 h-6 rounded-full transition-colors ${value ? "gradient-bg" : "bg-muted"}`}>
       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${value ? "translate-x-5" : ""}`} />
     </button>
   </div>

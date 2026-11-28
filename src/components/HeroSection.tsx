@@ -28,7 +28,7 @@ const HeroSection = () => (
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] mb-6">
             Reduce Walk-In Chaos Without{" "}
-            <span className="text-primary">Changing How Your Business Operates</span>
+            <span className="gradient-text">Changing How Your Business Operates</span>
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-lg">
             Qblink is a Customer Flow Intelligence Platform — reduce crowding,
@@ -46,7 +46,7 @@ const HeroSection = () => (
             <Link
               to="/onboarding"
               onClick={() => trackEvent("cta_click", { cta: "see_demo", location: "hero" })}
-              className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold transition-all duration-300 hover:bg-primary/90 active:scale-95"
+              className="cta-glow gradient-bg text-primary-foreground inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 hover:opacity-95 active:scale-95"
             >
               <Play className="w-4 h-4 fill-current" aria-hidden="true" />
               See Demo

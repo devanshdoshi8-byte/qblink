@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import {
   LayoutDashboard, Building2, Users, Activity, BarChart3, DollarSign, Settings, Inbox, Compass,
   LogOut, Menu, X, ShieldCheck, FileText, Megaphone, Tag, LayoutTemplate, Sparkles, Bell,
@@ -67,6 +68,7 @@ const GROUPS: NavGroup[] = [
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
   const { user, signOut } = useAuth();
+  const { roles } = useUserRole();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -77,7 +79,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen soft-bg flex w-full">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-64 shrink-0 flex-col bg-card border-r border-border p-4 sticky top-0 h-screen">
+      <aside className="hidden md:flex w-64 flex-col bg-card border-r border-border p-4 sticky top-0 h-screen">
         <Link to="/" className="flex items-center gap-2 mb-6 px-2">
           <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain" />
           <span className="font-bold text-foreground">Qblink</span>
@@ -85,7 +87,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         </Link>
 
         <div className="bg-muted/50 rounded-xl p-3 mb-6 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
+          <div className="w-9 h-9 rounded-lg gradient-bg flex items-center justify-center text-primary-foreground font-bold text-sm">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div className="min-w-0">
@@ -98,33 +100,96 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
           <GroupedNav location={location} />
         </nav>
 
+        <div className="pt-2 border-t border-border flex flex-col gap-1 mb-2">
+          {roles.includes("business") && (
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            >
+              <Building2 className="w-3.5 h-3.5 text-primary shrink-0" /> Business Dashboard
+            </Link>
+          )}
+          <Link
+            to="/customer-dashboard"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <Users className="w-3.5 h-3.5 text-primary shrink-0" /> Customer View
+          </Link>
+        </div>
+
         <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
           <LogOut className="w-4 h-4" /> Sign Out
         </button>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 z-40 bg-card border-b border-border">
+      <div className="md:hidden fixed top-0 inset-x-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
         <div className="flex items-center justify-between px-4 h-14">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain" />
+            <img src={logo} alt="Qblink" className="h-8 w-8 rounded-lg object-contain" />
             <span className="font-bold text-foreground text-sm">Qblink Admin</span>
           </Link>
-          <button onClick={() => setMobileOpen(o => !o)} className="p-2 rounded-lg hover:bg-muted">
+          <button onClick={() => setMobileOpen(o => !o)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground" aria-label="Toggle navigation">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-        {mobileOpen && (
-          <div className="border-t border-border px-2 py-2 flex flex-col gap-1 max-h-[75vh] overflow-y-auto">
-            <GroupedNav location={location} onNavigate={() => setMobileOpen(false)} />
-            <button onClick={signOut} className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:bg-muted">
-              <LogOut className="w-4 h-4" /> Sign Out
-            </button>
-          </div>
-        )}
       </div>
 
-      <main className="flex-1 min-w-0 pt-16 md:pt-0 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 overflow-x-hidden">
+      {/* Mobile slide-out drawer with backdrop */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+      <div
+        className={`md:hidden fixed inset-y-0 left-0 z-50 h-[100dvh] w-72 bg-[#0B1220] text-slate-100 border-r border-slate-800 p-4 flex flex-col transition-transform duration-300 ease-in-out ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
+        }`}
+      >
+        <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+          <Link to="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+            <img src={logo} alt="Qblink" className="h-8 w-8 rounded-lg object-contain" />
+            <span className="font-bold text-white text-sm">Qblink Admin</span>
+          </Link>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+            aria-label="Close navigation"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto pr-1">
+          <GroupedNav location={location} onNavigate={() => setMobileOpen(false)} />
+        </div>
+        <div className="flex flex-col gap-1 mt-auto border-t border-slate-800 pt-3">
+          {roles.includes("business") && (
+            <Link
+              to="/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <Building2 className="w-3.5 h-3.5 text-primary shrink-0" /> Business Dashboard
+            </Link>
+          )}
+          <Link
+            to="/customer-dashboard"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          >
+            <Users className="w-3.5 h-3.5 text-primary shrink-0" /> Customer View
+          </Link>
+          <button
+            onClick={signOut}
+            className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-colors pt-2"
+          >
+            <LogOut className="w-4 h-4" /> Sign Out
+          </button>
+        </div>
+      </div>
+
+      <main className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 pt-20 md:pt-6 pb-28 md:pb-8 overflow-x-hidden">
         <OfflineBanner />
         {children}
       </main>
@@ -174,7 +239,7 @@ const GroupedNav = ({ location, onNavigate }: { location: ReturnType<typeof useL
                   onClick={onNavigate}
                   className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                     active
-                      ? "bg-primary text-primary-foreground"
+                      ? "gradient-bg text-primary-foreground"
                       : item.highlight
                         ? "text-primary bg-primary/10 hover:bg-primary/15 font-semibold"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"

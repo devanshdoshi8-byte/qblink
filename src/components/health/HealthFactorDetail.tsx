@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { computeWaitMinutes, MAX_VALID_WAIT_MINUTES } from "@/lib/adminAnalytics";
 import { Activity } from "lucide-react";
 
 interface Props { businessId: string; }
@@ -70,9 +71,14 @@ export default function HealthFactorDetail({ businessId }: Props) {
       const total = visitors?.length || 0;
       const served = (visitors || []).filter((v: any) => v.status === "served");
       const abandoned = (visitors || []).filter((v: any) => ["skipped","removed","no_show"].includes(v.status));
-      const waits = served.filter((v: any) => v.served_at).map((v: any) => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000);
+      const waits = served
+        .map((v: any) => computeWaitMinutes(v))
+        .filter((n: number | null): n is number => n !== null);
       const avgWait = waits.length ? waits.reduce((a: number, b: number) => a + b, 0) / waits.length : 0;
-      const serviceTimes = served.filter((v: any) => v.called_at && v.served_at).map((v: any) => (new Date(v.served_at).getTime() - new Date(v.called_at).getTime()) / 60000);
+      const serviceTimes = served
+        .filter((v: any) => v.called_at && v.served_at)
+        .map((v: any) => (new Date(v.served_at).getTime() - new Date(v.called_at).getTime()) / 60000)
+        .filter((n: number) => Number.isFinite(n) && n >= 0 && n <= MAX_VALID_WAIT_MINUTES);
       const avgService = serviceTimes.length ? serviceTimes.reduce((a: number, b: number) => a + b, 0) / serviceTimes.length : 0;
       const estAvg = (queues || []).reduce((s: number, q: any) => s + (q.estimated_service_time || 5), 0) / Math.max(1, (queues || []).length);
       const delays = serviceTimes.filter((t: number) => t > 1.5 * estAvg).length;
@@ -96,6 +102,20 @@ export default function HealthFactorDetail({ businessId }: Props) {
 
   if (!data) return <div className="bg-card rounded-2xl card-shadow h-64 animate-pulse" />;
   const { health, metrics } = data;
+
+  if (metrics.total_joined_7d === 0) {
+    return (
+      <div className="bg-card rounded-2xl card-shadow p-8 text-center border border-border flex flex-col items-center justify-center min-h-[260px]">
+        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-3">
+          <Activity className="w-6 h-6" />
+        </div>
+        <h4 className="font-semibold text-foreground text-sm">No Queue Sessions in the Last 7 Days</h4>
+        <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto leading-relaxed">
+          Health factors and AI diagnostic scoring unlock automatically once this business issues and completes its first few queue tokens.
+        </p>
+      </div>
+    );
+  }
 
   const factors: Factor[] = Object.entries(FACTOR_META).map(([key, meta]) => {
     const score = Number(health?.[key] ?? 0);

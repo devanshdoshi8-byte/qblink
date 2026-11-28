@@ -21,7 +21,7 @@ const businessSteps = [
 const StepCard = ({ step, index, delay }: { step: typeof customerSteps[0]; index: number; delay: number }) => (
   <AnimatedSection delay={delay} className="flex flex-col items-center text-center">
     <div className="relative mb-4">
-      <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center">
+      <div className="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center">
         <step.icon className="w-6 h-6 text-primary-foreground" />
       </div>
       <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-foreground text-background text-xs font-bold flex items-center justify-center">

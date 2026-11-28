@@ -207,7 +207,7 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
                         initial={{ opacity: 0, scaleY: 0 }}
                         animate={{ opacity: 1, scaleY: 1 }}
                         transition={{ delay: 1.6 + i * 0.45 + 0.3, duration: 0.3 }}
-                        className="block w-0.5 h-5 bg-primary/30 origin-top my-1"
+                        className="block w-0.5 h-5 bg-gradient-to-b from-primary/60 to-primary/10 origin-top my-1"
                         aria-hidden="true"
                       />
                     )}
@@ -222,7 +222,7 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.6 + chain.steps.length * 0.45, duration: 0.4 }}
-              className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
+              className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
             >
               I've felt this <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </motion.button>
@@ -267,8 +267,8 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
                           : "border-border bg-card card-shadow hover:border-primary/40"
                       }`}
                     >
-                      <div className="mb-2 text-primary" aria-hidden="true">
-                        <c.icon className="w-5 h-5" />
+                      <div className="text-2xl mb-2" aria-hidden="true">
+                        {c.emoji}
                       </div>
                       <p className="font-bold text-sm text-foreground leading-tight">{c.title}</p>
                       <AnimatePresence initial={false}>
@@ -294,7 +294,7 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
               <button
                 type="button"
                 onClick={advance}
-                className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
+                className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
               >
                 Keep going <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -376,7 +376,7 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
               disabled={!frequency}
               initial={false}
               animate={{ opacity: frequency ? 1 : 0.4 }}
-              className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:pointer-events-none"
+              className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:pointer-events-none"
             >
               Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </motion.button>
@@ -397,7 +397,7 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 14 }}
-              className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-6 elevated-shadow"
+              className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6 elevated-shadow"
             >
               <Sparkles className="w-8 h-8 text-primary-foreground" aria-hidden="true" />
             </motion.div>
@@ -421,7 +421,7 @@ const StepConsequence = ({ data, onChange, onNext }: Props) => {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.6, duration: 0.4 }}
-              className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
+              className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
             >
               Show me <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </motion.button>

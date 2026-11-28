@@ -1,0 +1,52 @@
+# Qblink (QBlink) — Full Knowledge Base & Architecture Documentation
+
+## Corporate & Entity Knowledge
+- Brand Entity: Qblink
+- Synonyms & Search Aliases: QBlink, Q-blink, Qblink Tech, qblink.tech, Qblink Technologies
+- Production URL: https://qblink.tech
+- Founding Date: 2025
+- Geographic Origin: India
+- Academic & Research Incubation: Inventure, Indian Institute of Technology Gandhinagar (IIT Gandhinagar)
+
+## Leadership & Founding Team
+- **Devansh (Founder & Creator)**:
+  - Started Qblink.
+  - Conceived the core insight that waiting lines should be managed through browser-native smartphone connections rather than physical queue kiosks.
+  - Built the initial platform foundation and leads product vision, system architecture, and overall engineering.
+- **Mithil (Co-founder)**:
+  - Joined Devansh as co-founder.
+  - Leads platform scaling, merchant counter operations, multi-counter stability, and enterprise adoption.
+- **Aarav (Co-founder)**:
+  - Joined Devansh as co-founder.
+  - Leads real-time queue synchronization, sub-second signals, responsive UI performance, and mobile accessibility.
+- **Vihan Patange (Co-founder)**:
+  - Joined Devansh as co-founder.
+  - Leads customer flow predictive analytics, queue throughput optimization algorithms, and automated peak-hour intelligence.
+
+## Problem Statement & Innovation
+Walk-in businesses suffer from three universal queue failures:
+1. **Physical Congestion**: Crowded waiting rooms increase infection risk in clinics, create noise and stress in restaurants, and deter prospective customers from walking in.
+2. **Operational Opacity**: Receptionists and doctors are repeatedly interrupted with "How much longer?", while staff cannot predict upcoming surges.
+3. **Hardware Expense & Complexity**: Traditional queue management systems require expensive touchscreen kiosks, thermal printers, proprietary controllers, and dedicated staff training.
+
+Qblink solves all three without any hardware and without requiring customer app downloads:
+- Zero Hardware: Runs on any browser on existing tablets, phones, or desktops.
+- Zero App Download: Customers scan a standard QR code and hold their place directly in mobile Safari/Chrome.
+- Remote Waiting: Customers wander nearby, wait in their cars or homes, and arrive right when called.
+- Live Queue Signals: PII-free real-time updates push live wait estimates and sound an audible turn chime when called.
+- Predictive Analytics: Automatically computes throughput and peak-hour metrics.
+
+## Supported Business Environments
+1. **Healthcare & Clinics**: General physicians, pediatricians, dental practices, diagnostic labs, diagnostic sample collection centers.
+2. **Food & Dining**: Fast-casual cafes, dessert parlors, crowded weekend dining waitlists, pickup counters.
+3. **Personal Care & Wellness**: Salons, barbershops, spas, nail studios.
+4. **Retail & Services**: Bank counters, government service desks, mobile repair centers, university administration.
+
+## Pricing Model
+- 1 Month Free Pilot: Full unrestricted access for 30 days.
+- Subsequent Pricing: ₹499/month self-sustainable social initiative incubated at Inventure, IIT Gandhinagar, strictly covering infrastructure costs.
+
+## Technical & Contact Details
+- Web: https://qblink.tech
+- Email: teamqblink@gmail.com, qblink2025@gmail.com
+- Founder: Devansh (+91 93720 90507, devanshdoshi8@gmail.com)

@@ -92,7 +92,7 @@ const ContinueBtn = ({ onClick, label = "Continue" }: { onClick: () => void; lab
     <button
       type="button"
       onClick={onClick}
-      className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
+      className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
     >
       {label} <ArrowRight className="w-4 h-4" aria-hidden="true" />
     </button>
@@ -295,7 +295,7 @@ const CustomerDiscovery = ({ onNext }: { onNext: () => void }) => {
           type="button"
           onClick={onNext}
           disabled={!picked}
-          className="mx-auto block bg-primary text-primary-foreground px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:pointer-events-none"
+          className="mx-auto block gradient-bg text-primary-foreground px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:pointer-events-none"
         >
           Continue
         </button>
@@ -487,7 +487,7 @@ const ImpactSplit = ({ name, onNext }: { name: string; onNext: () => void }) => 
           animate={{ scaleY: merged ? 0 : 1, opacity: merged ? 0 : 1 }}
           transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
           aria-hidden="true"
-          className="absolute left-1/2 top-6 bottom-2 w-px -translate-x-1/2 origin-top bg-border"
+          className="absolute left-1/2 top-6 bottom-2 w-px -translate-x-1/2 origin-top bg-gradient-to-b from-primary/40 via-primary/20 to-transparent"
         />
 
         <div className="flex items-start gap-2.5">
@@ -536,7 +536,7 @@ const ImpactSplit = ({ name, onNext }: { name: string; onNext: () => void }) => 
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
-              <div className="bg-card border border-primary/20 rounded-2xl px-5 py-4 elevated-shadow text-center max-w-[280px]">
+              <div className="bg-card/95 backdrop-blur-sm border border-primary/20 rounded-2xl px-5 py-4 elevated-shadow text-center max-w-[280px]">
                 <p className="text-[10px] uppercase tracking-widest text-primary font-bold mb-1.5">The truth</p>
                 <p className="text-base font-extrabold text-foreground leading-snug">
                   One queue problem.
@@ -676,7 +676,7 @@ const BusinessRealization = ({ onNext }: { onNext: () => void }) => {
           type="button"
           onClick={onNext}
           disabled={!picked}
-          className="mx-auto block bg-primary text-primary-foreground px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:pointer-events-none"
+          className="mx-auto block gradient-bg text-primary-foreground px-7 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow disabled:pointer-events-none"
         >
           Continue
         </button>
@@ -696,7 +696,7 @@ const EndingPage = ({ headline, onNext }: { headline: string; onNext: () => void
         initial={{ scale: 0, rotate: -20 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 14 }}
-        className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-6 elevated-shadow"
+        className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6 elevated-shadow"
       >
         <Sparkles className="w-8 h-8 text-primary-foreground" aria-hidden="true" />
       </motion.div>

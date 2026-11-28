@@ -7,16 +7,15 @@ import { Users, TrendingUp, Clock, Star } from "lucide-react";
 import TrendBadge from "@/components/TrendBadge";
 import InfoHint from "@/components/InfoHint";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { format, subDays, startOfDay } from "date-fns";
-import { computeActiveAvgWaitMinutes } from "@/lib/queueInactivity";
-import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
+import { format, parseISO } from "date-fns";
+import { analyticsPeriodStart, dailyVisitorTrend, hourlyVisitorTraffic } from "@/lib/queueAnalytics";
 import {
   SkeletonStatGrid,
   SkeletonChartCard,
   SkeletonPageHeader,
 } from "@/components/skeletons/DashboardSkeletons";
 
-const COLORS = CHART_SERIES;
+const COLORS = ["hsl(205 100% 50%)", "hsl(185 100% 45%)", "hsl(160 70% 50%)", "hsl(280 70% 60%)"];
 
 const Analytics = () => (
   <BusinessLayout>{(business) => <AnalyticsContent businessId={business.id} />}</BusinessLayout>
@@ -26,7 +25,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
   const [range, setRange] = useState<"week" | "month" | "90d">("week");
   const [stats, setStats] = useState({ total: 0, served: 0, avgWait: 0 });
   const [rating, setRating] = useState<{ avg: number; count: number }>({ avg: 0, count: 0 });
-  const [weekly, setWeekly] = useState<{ day: string; served: number; skipped: number }[]>([]);
+  const [weekly, setWeekly] = useState<{ date: string; served: number; skipped: number }[]>([]);
   const [hourly, setHourly] = useState<{ hour: string; visitors: number }[]>([]);
   const [byQueue, setByQueue] = useState<{ name: string; value: number }[]>([]);
   const [rawVisitors, setRawVisitors] = useState<{ joined_at: string; status: string; served_at: string | null }[]>([]);
@@ -37,7 +36,8 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
   const fetchAnalytics = async () => {
     setLoading(true);
     const days = range === "week" ? 7 : range === "month" ? 30 : 90;
-    const since = startOfDay(subDays(new Date(), days)).toISOString();
+    const now = new Date();
+    const since = analyticsPeriodStart(days, now).toISOString();
 
     const { data: queues } = await supabase.from("queues").select("id, name").eq("business_id", businessId);
     const queueIds = queues?.map(q => q.id) || [];
@@ -65,34 +65,17 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
     const served = all.filter(v => v.status === "served");
     const skipped = all.filter(v => v.status === "skipped");
 
-    const avgWait = computeActiveAvgWaitMinutes(served);
+    const waitTimes = served
+      .flatMap(v => v.served_at
+        ? [(new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000]
+        : [])
+      .filter(n => Number.isFinite(n) && n >= 0 && n < 1440);
+    const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
 
     setStats({ total: all.length, served: served.length, avgWait });
 
-    // Weekly
-    const dayBuckets: Record<string, { served: number; skipped: number }> = {};
-    for (let i = days - 1; i >= 0; i--) {
-      const d = format(subDays(new Date(), i), "EEE");
-      dayBuckets[d] = { served: 0, skipped: 0 };
-    }
-    all.forEach(v => {
-      const d = format(new Date(v.joined_at), "EEE");
-      if (dayBuckets[d]) {
-        if (v.status === "served") dayBuckets[d].served++;
-        if (v.status === "skipped") dayBuckets[d].skipped++;
-      }
-    });
-    setWeekly(Object.entries(dayBuckets).slice(-7).map(([day, v]) => ({ day, ...v })));
-
-    // Hourly
-    const hourBuckets: Record<string, number> = {};
-    for (let h = 9; h <= 20; h++) hourBuckets[`${h}:00`] = 0;
-    all.forEach(v => {
-      const h = new Date(v.joined_at).getHours();
-      const key = `${h}:00`;
-      if (hourBuckets[key] !== undefined) hourBuckets[key]++;
-    });
-    setHourly(Object.entries(hourBuckets).map(([hour, visitors]) => ({ hour, visitors })));
+    setWeekly(dailyVisitorTrend(all, days, now));
+    setHourly(hourlyVisitorTraffic(all));
 
     // By queue
     const queueCounts: Record<string, number> = {};
@@ -128,7 +111,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
         <div className="flex gap-1 bg-card rounded-xl p-1 card-shadow">
           {(["week", "month", "90d"] as const).map(r => (
             <button key={r} onClick={() => setRange(r)} className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              range === r ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              range === r ? "gradient-bg text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}>
               {r === "week" ? "This Week" : r === "month" ? "This Month" : "Last 90 Days"}
             </button>
@@ -138,7 +121,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
 
       {isEmpty && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-6 text-sm text-muted-foreground">
-          No queue activity yet. Charts will populate live as customers join your queues.
+          📊 No queue activity yet. Charts will populate live as customers join your queues.
         </div>
       )}
 
@@ -196,7 +179,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
       <div className="grid lg:grid-cols-3 gap-4 mb-6">
         <div className="lg:col-span-2 bg-card rounded-2xl p-5 card-shadow">
           <div className="flex items-center gap-1.5 mb-1">
-            <h3 className="font-semibold text-foreground">Weekly Visitors</h3>
+            <h3 className="font-semibold text-foreground">{range === "week" ? "Weekly Visitors" : "Daily Visitors"}</h3>
             <InfoHint
               title="Weekly Visitors"
               description="Daily count of customers you served vs those who left the queue before being called."
@@ -207,11 +190,11 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={weekly}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <XAxis dataKey="date" tickFormatter={date => format(parseISO(date), range === "week" ? "EEE" : "MMM d")} minTickGap={24} stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-              <Line type="monotone" dataKey="served" stroke={CHART_COLORS.primary} strokeWidth={2.5} dot={false} />
-              <Line type="monotone" dataKey="skipped" stroke={CHART_COLORS.secondary} strokeWidth={2.5} dot={false} />
+              <Tooltip labelFormatter={date => format(parseISO(String(date)), "MMM d, yyyy")} contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
+              <Line type="monotone" dataKey="served" stroke="hsl(205 100% 50%)" strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="skipped" stroke="hsl(185 100% 45%)" strokeWidth={2.5} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -262,7 +245,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
             <XAxis dataKey="hour" stroke="hsl(var(--muted-foreground))" fontSize={12} />
             <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
             <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-            <Bar dataKey="visitors" fill={CHART_COLORS.primary} radius={[8, 8, 0, 0]} />
+            <Bar dataKey="visitors" fill="hsl(205 100% 50%)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

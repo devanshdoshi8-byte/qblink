@@ -1,10 +1,11 @@
 import { getOpenState } from "@/lib/operatingHours";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Search, Star, Users, LogOut, MapPin, ArrowLeft, ArrowRight, UtensilsCrossed, X, Clock, Zap, Ticket } from "lucide-react";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Search, Star, Users, LogOut, MapPin, ArrowLeft, ArrowRight, UtensilsCrossed, X, Clock, Zap, Activity, ChevronDown, Shield } from "lucide-react";
 import { SkeletonCardGrid, SkeletonStatGrid, SkeletonPageHeader } from "@/components/skeletons/DashboardSkeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import EmptyState from "@/components/EmptyState";
@@ -12,11 +13,15 @@ import { toast } from "sonner";
 import logo from "@/assets/qblink-logo.png";
 import { CATEGORIES, getCategoryForBusiness, getCategoryByKey } from "@/lib/categories";
 import AIAssistant from "@/components/AIAssistant";
+import MobileBottomNav from "@/components/MobileBottomNav";
+import { motion, AnimatePresence } from "framer-motion";
 import FavoriteBusinesses from "@/components/FavoriteBusinesses";
 import NotificationBell from "@/components/customer/NotificationBell";
 import UpcomingAppointments from "@/components/customer/UpcomingAppointments";
-import CustomerAnalyticsBento from "@/components/customer/CustomerAnalyticsBento";
 import { AnimatedNumber } from "@/components/AnimatedNumber";
+import { Button } from "@/components/ui/button";
+import { useMyQueueVisits } from "@/hooks/useMyQueueVisits";
+import { setLastActiveMode } from "@/lib/auth/roles";
 
 interface Business {
   id: string;
@@ -52,21 +57,13 @@ interface QueueOption {
   waiting: number;
 }
 
-interface ActiveTicket {
-  id: string;
-  queue_id: string;
-  business_id: string;
-  business_name: string;
-  queue_name: string;
-  token_number: number;
-  status: string;
-}
-
 const CustomerDashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const { role, loading: roleLoading } = useUserRole();
+  const { roles, loading: roleLoading } = useUserRole();
+  const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
   const [profileName, setProfileName] = useState("");
+  const { active: myQueues } = useMyQueueVisits();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [queueMap, setQueueMap] = useState<Record<string, QueueInfo>>({});
   const [queuesByBiz, setQueuesByBiz] = useState<Record<string, QueueOption[]>>({});
@@ -77,17 +74,36 @@ const CustomerDashboard = () => {
     } catch { return {}; }
   });
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [activeTickets, setActiveTickets] = useState<ActiveTicket[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeCategory, setActiveCategory] = useState<string | null>(searchParams.get("category"));
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth/signin");
-    if (!roleLoading && user && role === "business") navigate("/dashboard");
-  }, [user, role, authLoading, roleLoading, navigate]);
+    setActiveCategory(searchParams.get("category"));
+  }, [searchParams]);
+
+  const selectCategory = (key: string | null) => {
+    setActiveCategory(key);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (key) {
+        next.set("category", key);
+      } else {
+        next.delete("category");
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    // Business-only accounts go to their dashboard; accounts with both roles may stay.
+    if (!roleLoading && user && roles.includes("business") && !roles.includes("customer")) navigate("/dashboard");
+  }, [user, roles, roleLoading, navigate]);
 
   useEffect(() => {
     if (user) {
+      setLastActiveMode("customer");
       supabase.from("customer_profiles").select("full_name").eq("user_id", user.id).maybeSingle()
         .then(({ data }) => data?.full_name && setProfileName(data.full_name));
     }
@@ -170,8 +186,8 @@ const CustomerDashboard = () => {
   }, [queuesByBiz, pickerBiz]);
 
   const fetchData = async () => {
-    const { data: bizRaw } = await supabase
-      .from("businesses")
+    const { data: bizRaw } = await (supabase as any)
+      .from("businesses_public")
       .select("*")
       .order("is_sponsored" as any, { ascending: false })
       .order("is_featured" as any, { ascending: false })
@@ -229,47 +245,8 @@ const CustomerDashboard = () => {
     setBusinesses(biz);
     setQueueMap(map);
     setQueuesByBiz(byBiz);
-
-    if (user?.id) {
-      const { data: myActive } = await (supabase as any)
-        .from("queue_visitors")
-        .select("id, queue_id, token_number, status")
-        .eq("customer_user_id", user.id)
-        .in("status", ["waiting", "called"])
-        .order("joined_at", { ascending: false });
-
-      const qLookup = new Map<string, any>((queues || []).map((q: any) => [q.id, q]));
-      const bLookup = new Map<string, any>((bizRaw || []).map((b: any) => [b.id, b]));
-      const resolvedTickets: ActiveTicket[] = (myActive || []).map((t: any) => {
-        const qRow = qLookup.get(t.queue_id);
-        const bRow = qRow ? bLookup.get(qRow.business_id) : null;
-        return {
-          id: t.id,
-          queue_id: t.queue_id,
-          business_id: qRow?.business_id || "",
-          business_name: bRow?.name || "Business",
-          queue_name: qRow?.name || "Queue",
-          token_number: t.token_number,
-          status: t.status,
-        };
-      });
-      setActiveTickets(resolvedTickets);
-    } else {
-      setActiveTickets([]);
-    }
-
     setLoading(false);
   };
-
-  const activeTicketByBiz = useMemo(() => {
-    const map: Record<string, ActiveTicket> = {};
-    activeTickets.forEach((t) => {
-      if (t.business_id && !map[t.business_id]) {
-        map[t.business_id] = t;
-      }
-    });
-    return map;
-  }, [activeTickets]);
 
   // Count businesses per category for grid badges.
   const categoryCounts = useMemo(() => {
@@ -280,6 +257,15 @@ const CustomerDashboard = () => {
     });
     return counts;
   }, [businesses]);
+
+  const { visibleCategories, hasZeroCategories } = useMemo(() => {
+    const populated = CATEGORIES.filter(c => (categoryCounts[c.key] ?? 0) > 0);
+    const zero = CATEGORIES.filter(c => (categoryCounts[c.key] ?? 0) === 0);
+    if (showAllCategories || populated.length === 0) {
+      return { visibleCategories: CATEGORIES, hasZeroCategories: false };
+    }
+    return { visibleCategories: populated, hasZeroCategories: zero.length > 0 };
+  }, [categoryCounts, showAllCategories]);
 
   const activeCat = activeCategory ? getCategoryByKey(activeCategory) : null;
 
@@ -323,146 +309,142 @@ const CustomerDashboard = () => {
 
   return (
     <div className="min-h-screen soft-bg">
-      <header className="bg-card/90 border-b border-border sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 shrink-0 min-h-[44px] min-w-[44px] justify-center sm:justify-start">
-            <img src={logo} alt="Qblink" className="h-8 w-8 rounded-lg object-contain" />
+      <header className="bg-card/80 backdrop-blur border-b border-border sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-4">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain" />
             <span className="font-bold text-foreground hidden sm:block">Qblink</span>
           </Link>
-          <div className="flex-1 max-w-md relative">
+          <div className="flex-1 min-w-0 max-w-xl relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search places or areas…"
-              className="w-full min-h-[40px] pl-9 pr-3 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              placeholder="Search businesses by name or location…"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border border-border text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
-          <div className="flex items-center gap-1.5 ml-auto">
-            <NotificationBell />
-            <div className="hidden sm:flex w-9 h-9 rounded-full bg-primary items-center justify-center text-primary-foreground text-xs font-bold">
-              {profileName?.[0]?.toUpperCase() || "C"}
-            </div>
-            <button onClick={signOut} className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl hover:bg-muted transition-colors" title="Sign out" aria-label="Sign out">
-              <LogOut className="w-4 h-4 text-muted-foreground" />
-            </button>
-          </div>
+          {user ? (
+            <>
+              {isAdmin && (
+                <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex items-center gap-1.5 text-primary border-primary/30 hover:bg-primary/10">
+                  <Link to="/admin">
+                    <Shield className="w-4 h-4" /> Admin
+                  </Link>
+                </Button>
+              )}
+              <NotificationBell />
+              <Button asChild variant="ghost" size="icon" aria-label="My profile">
+                <Link to="/customer-dashboard/profile" title="My profile" className="shrink-0">
+                  <span className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-primary-foreground text-xs font-bold">
+                    {profileName?.[0]?.toUpperCase() || "C"}
+                  </span>
+                </Link>
+              </Button>
+              <button onClick={signOut} className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg hover:bg-muted transition-colors" title="Sign out" aria-label="Sign out">
+                <LogOut className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </>
+          ) : (
+            <Button asChild size="sm" className="rounded-xl shrink-0">
+              <Link to="/auth/signin">Sign In</Link>
+            </Button>
+          )}
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-7 sm:space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-32 md:pb-12">
+        <nav aria-label="Customer portal" className="mb-6 flex flex-wrap items-center gap-2">
+          <Button variant="secondary" onClick={() => { selectCategory(null); setSearch(""); }}>Discovery</Button>
+          <Button asChild variant="outline"><Link to="/customer-dashboard/profile">My Profile{myQueues.data && myQueues.data.length > 0 ? ` · ${myQueues.data.length} current` : ""}</Link></Button>
+          {roles.includes("business") && (
+            <Button asChild variant="outline"><Link to="/dashboard">Business Dashboard</Link></Button>
+          )}
+          {isAdmin && (
+            <Button asChild variant="outline" className="text-primary border-primary/30 hover:bg-primary/10">
+              <Link to="/admin" className="flex items-center gap-1.5">
+                <Shield className="w-4 h-4" /> Admin Panel
+              </Link>
+            </Button>
+          )}
+        </nav>
         {!activeCat && !search && (
           <>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-                  Hi {profileName?.split(" ")[0] || "there"}
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Your queue activity and live venues nearby
-                </p>
-              </div>
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-                {CATEGORIES.map(c => {
-                  const count = categoryCounts[c.key] ?? 0;
-                  return (
-                    <button
-                      key={c.key}
-                      onClick={() => setActiveCategory(c.key)}
-                      className="min-h-[40px] shrink-0 px-3.5 py-2 rounded-xl bg-card card-shadow hover:border-primary/40 border border-transparent text-xs font-bold text-foreground transition-colors inline-flex items-center gap-1.5"
-                    >
-                      <span>{c.label}</span>
-                      <span className="text-muted-foreground font-semibold">{count}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {activeTickets.length > 0 && (
-              <section aria-label="Your active queues" className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2">
-                    <Ticket className="w-5 h-5 text-primary" />
-                    <span>Your Active Queues</span>
-                  </h2>
-                  <span className="text-xs font-semibold text-muted-foreground">
-                    {activeTickets.length} active
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {activeTickets.map((t) => (
-                    <div
-                      key={t.id}
-                      className="bg-card rounded-2xl p-5 card-shadow border border-primary/25 flex items-center justify-between gap-4"
-                    >
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/15 text-primary">
-                            #{t.token_number}
-                          </span>
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-bold capitalize ${
-                              t.status === "called"
-                                ? "bg-warning-soft text-warning"
-                                : "bg-success-soft text-success"
-                            }`}
-                          >
-                            {t.status}
-                          </span>
-                        </div>
-                        <p className="font-bold text-foreground text-base truncate">
-                          {t.business_name}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {t.queue_name}
-                        </p>
-                      </div>
-                      <Link
-                        to={`/join/${t.queue_id}`}
-                        className="min-h-[44px] shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
-                      >
-                        <span>Open Queue</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Bold Admin-style Bento Grid: Left = Personal Analytics, Right = Live Near You + Appointments */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-              <div className="lg:col-span-8 min-w-0">
-                {user && <CustomerAnalyticsBento userId={user.id} />}
-              </div>
-              <div className="lg:col-span-4 space-y-5 min-w-0">
-                <LiveDiscoveryBento
-                  businesses={businesses}
-                  queueMap={queueMap}
-                  queuesByBiz={queuesByBiz}
-                  selectedQueueByBiz={selectedQueueByBiz}
-                  activeTicketByBiz={activeTicketByBiz}
-                />
-                <UpcomingAppointments
-                  businesses={businesses.map((b) => ({ id: b.id, name: b.name }))}
-                  customerName={profileName}
-                />
-              </div>
+            <div className="mb-6">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                Hi {profileName?.split(" ")[0] || "there"} 👋
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                What kind of service do you need today?
+              </p>
             </div>
 
             <FavoriteBusinesses />
 
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl font-bold text-foreground">Recommended places</h2>
+            <UpcomingAppointments
+              businesses={businesses.map((b) => ({ id: b.id, name: b.name }))}
+              customerName={profileName}
+            />
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
+              {visibleCategories.map(c => {
+                const Icon = c.icon;
+                const count = categoryCounts[c.key] ?? 0;
+                return (
+                  <button
+                    key={c.key}
+                    onClick={() => selectCategory(c.key)}
+                    className="bg-card rounded-2xl card-shadow hover:elevated-shadow transition-all p-4 sm:p-5 flex flex-col items-start gap-3 sm:gap-4 text-left"
+                  >
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center ${c.tint}`}>
+                      <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
+                    </div>
+                    <div className="w-full">
+                      <p className="font-bold text-foreground text-sm sm:text-base leading-tight">{c.label}</p>
+                      <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">{c.description}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-xs font-semibold text-primary">{count} places</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {hasZeroCategories && (
+              <div className="flex justify-center mb-8">
+                <button
+                  type="button"
+                  onClick={() => setShowAllCategories(true)}
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted px-4 py-2 rounded-full transition-colors"
+                >
+                  <span>More categories</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+
+            {/* Recommended strip */}
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold text-foreground">Recommended for you</h2>
             </div>
           </>
+        )}
+
+        {!activeCat && !search && (
+          <LiveDiscoveryStrip
+            businesses={businesses}
+            queueMap={queueMap}
+            queuesByBiz={queuesByBiz}
+            selectedQueueByBiz={selectedQueueByBiz}
+          />
         )}
 
         {(activeCat || search) && (
           <div className="flex items-center gap-3 mb-6">
             <button
-              onClick={() => { setActiveCategory(null); setSearch(""); }}
+              onClick={() => { selectCategory(null); setSearch(""); }}
               className="w-9 h-9 rounded-xl bg-card card-shadow flex items-center justify-center hover:bg-muted"
               aria-label="Back"
             >
@@ -485,12 +467,12 @@ const CustomerDashboard = () => {
               description={search
                 ? `We couldn't find any business matching "${search}" in your area right now.`
                 : "No businesses in this category are live on Qblink yet — check back soon."}
-              cta={{ label: "Browse all categories", onClick: () => { setActiveCategory(null); setSearch(""); } }}
+              cta={{ label: "Browse all categories", onClick: () => { selectCategory(null); setSearch(""); } }}
               tip="Try a broader keyword like 'cafe' or 'clinic', or tap a category chip above."
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {(activeCat || search
               ? filtered
               : businesses.filter(b => b.is_sponsored || b.is_featured || b.is_recommended)
@@ -502,56 +484,59 @@ const CustomerDashboard = () => {
               const cat = getCategoryForBusiness(b.category);
               const showPickup = cat.supportsPickup;
               return (
-                <div key={b.id} className="bg-card rounded-2xl p-5 card-shadow flex flex-col gap-3.5 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${isActive ? "bg-success-soft text-success" : "bg-muted text-muted-foreground"}`}>
+                <div key={b.id} className="bg-card rounded-2xl p-5 card-shadow hover:elevated-shadow transition-all flex flex-col">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isActive ? "bg-success-soft text-success" : "bg-muted text-muted-foreground"}`}>
                       {isClosedByHours ? (
                         openState.label
                       ) : isActive ? (
                         b.show_live_queue_info === false
-                          ? "Open"
-                          : <><AnimatedNumber value={q.waiting} suffix=" waiting" invertHighlight /></>
+                          ? "● Open"
+                          : <>● <AnimatedNumber value={q.waiting} suffix=" waiting" invertHighlight /></>
                       ) : q ? "Queue closed" : "No queue"}
                     </span>
                     {b.is_sponsored ? (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                         Sponsored
                       </span>
                     ) : b.is_featured ? (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-info-soft text-info font-medium">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-info-soft text-info font-medium">
                         Featured
                       </span>
                     ) : b.is_recommended && (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-warning-soft text-warning font-medium inline-flex items-center gap-1">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-warning-soft text-warning font-medium flex items-center gap-1">
                         <Star className="w-3 h-3 fill-current" /> Top Pick
                       </span>
                     )}
                   </div>
 
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-foreground text-base truncate">{b.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{b.category || cat.label}</p>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${cat.tint} mb-3`}>
+                    <cat.icon className="w-5 h-5" />
                   </div>
 
-                  <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    {b.address && <span className="inline-flex items-center gap-1 truncate"><MapPin className="w-3 h-3 shrink-0" /> {b.address}</span>}
+                  <h3 className="font-bold text-foreground mb-1 line-clamp-1">{b.name}</h3>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    {b.category && cat.label.toLowerCase().includes(b.category.toLowerCase())
+                      ? b.category
+                      : cat.label}
+                  </p>
+                  {b.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-1">{b.description}</p>}
+
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
+                    {b.address && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {b.address}</span>}
                     {b.rating && (b.total_reviews ?? 0) > 0 && (
-                      <span className="inline-flex items-center gap-1">
+                      <span className="flex items-center gap-1">
                         <Star className="w-3 h-3 fill-warning text-warning" /> {b.rating}
+                        <span className="opacity-70">({b.total_reviews})</span>
                       </span>
                     )}
-                    {q && isActive && b.show_live_queue_info !== false && <span>~<AnimatedNumber value={q.waiting * q.est_time} suffix="m" invertHighlight /></span>}
+                    {q && isActive && b.show_live_queue_info !== false && (
+                      <span>{q.waiting === 0 ? "No wait" : <>~<AnimatedNumber value={q.waiting * q.est_time} suffix="m" invertHighlight /></>}</span>
+                    )}
                   </div>
 
                   <div className="space-y-2 mt-auto">
-                    {activeTicketByBiz[b.id] ? (
-                      <Link
-                        to={`/join/${activeTicketByBiz[b.id].queue_id}`}
-                        className="w-full min-h-[44px] text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
-                      >
-                        <Ticket className="w-4 h-4" /> Open Ticket (#{activeTicketByBiz[b.id].token_number})
-                      </Link>
-                    ) : isActive ? (() => {
+                    {isActive ? (() => {
                       const activeQs = (queuesByBiz[b.id] || []).filter(x => x.status === "active");
                       const remembered = selectedQueueByBiz[b.id];
                       const rememberedStillActive = remembered && activeQs.some(x => x.id === remembered);
@@ -559,7 +544,7 @@ const CustomerDashboard = () => {
                         return (
                           <button
                             onClick={() => setPickerBiz(b)}
-                            className="w-full text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                            className="w-full text-center gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
                           >
                             <Users className="w-4 h-4" /> Choose Counter ({activeQs.length})
                           </button>
@@ -567,15 +552,22 @@ const CustomerDashboard = () => {
                       }
                       const targetId = rememberedStillActive
                         ? remembered!
-                        : (!b.id.startsWith("demo-") && q?.queue_id ? q.queue_id : b.id);
+                        : (q?.queue_id ? q.queue_id : b.id);
                       const targetName = activeQs.find(x => x.id === targetId)?.name;
                       return (
                         <div className="space-y-1.5">
                           <Link
                             to={`/join/${targetId}`}
-                            className="w-full text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                            className="w-full text-center gradient-bg text-primary-foreground py-2 px-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex flex-col items-center justify-center leading-tight gap-0.5"
                           >
-                            <Users className="w-4 h-4" /> Join {targetName || "Counter"}
+                            <span className="flex items-center gap-1.5">
+                              <Users className="w-4 h-4" /> Join Queue
+                            </span>
+                            {targetName && (
+                              <span className="text-[11px] font-normal opacity-90 truncate max-w-full">
+                                {targetName}
+                              </span>
+                            )}
                           </Link>
                           {activeQs.length > 1 && (
                             <button
@@ -607,6 +599,12 @@ const CustomerDashboard = () => {
           </div>
         )}
       </main>
+      <MobileBottomNav
+        items={[
+          { to: "/customer-dashboard", label: "Discovery", icon: Search, end: true },
+          { to: "/customer-dashboard/profile", label: "My Visits", icon: Users },
+        ]}
+      />
       <AIAssistant mode="customer" />
       {pickerBiz && (
         <div
@@ -669,19 +667,19 @@ const CustomerDashboard = () => {
 
 export default CustomerDashboard;
 
-// ===== Live Discovery Bento =====
-const LiveDiscoveryBento = ({
+// ===== Live Discovery Strip =====
+// Dynamic, real-time row of the most accessible active queues right now,
+// ranked by current wait time. Animates when wait positions shift.
+const LiveDiscoveryStrip = ({
   businesses,
   queueMap,
   queuesByBiz,
   selectedQueueByBiz,
-  activeTicketByBiz,
 }: {
   businesses: Business[];
   queueMap: Record<string, QueueInfo>;
   queuesByBiz: Record<string, QueueOption[]>;
   selectedQueueByBiz: Record<string, string>;
-  activeTicketByBiz: Record<string, ActiveTicket>;
 }) => {
   const live = useMemo(() => {
     return businesses
@@ -700,72 +698,86 @@ const LiveDiscoveryBento = ({
         };
       })
       .filter(Boolean)
-      .sort((a, b) => a!.wait - b!.wait) as Array<{
-      biz: Business;
-      waiting: number;
-      wait: number;
-      queueId: string;
-      showLive: boolean;
-      remoteJoin: boolean;
-    }>;
+      .sort((a, b) => (a!.wait - b!.wait)) as Array<{
+        biz: Business;
+        waiting: number;
+        wait: number;
+        queueId: string;
+        showLive: boolean;
+        remoteJoin: boolean;
+      }>;
   }, [businesses, queueMap]);
 
-  const top = live.slice(0, 4);
+  if (live.length === 0) return null;
+  const top = live.slice(0, 8);
 
   return (
-    <div className="bg-card rounded-2xl p-5 card-shadow space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-bold text-foreground">Live near you</h2>
-          <p className="text-xs text-muted-foreground">Shortest wait right now</p>
+    <section className="mb-8">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="relative inline-flex h-2 w-2">
+            <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-60" />
+            <span className="relative inline-block h-2 w-2 rounded-full bg-primary" />
+          </span>
+          <h2 className="text-lg font-bold text-foreground">Live near you</h2>
+          <span className="text-[11px] text-muted-foreground">
+            · sorted by shortest wait
+          </span>
         </div>
-        <Zap className="w-4 h-4 text-primary" />
       </div>
-
-      {top.length === 0 ? (
-        <p className="text-xs text-muted-foreground py-2">
-          No active queues nearby at the moment.
-        </p>
-      ) : (
-        <div className="divide-y divide-border">
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
+        <AnimatePresence initial={false}>
           {top.map((row) => {
-            const existing = activeTicketByBiz[row.biz.id];
             const activeQs = (queuesByBiz[row.biz.id] || []).filter(
               (x) => x.status === "active"
             );
             const remembered = selectedQueueByBiz[row.biz.id];
-            const targetId = existing
-              ? existing.queue_id
-              : activeQs.find((x) => x.id === remembered)?.id ||
-                (!row.biz.id.startsWith("demo-") ? row.queueId : row.biz.id);
+            const targetId =
+              activeQs.find((x) => x.id === remembered)?.id ||
+              (row.queueId || row.biz.id);
             return (
-              <div
+              <motion.div
                 key={row.biz.id}
-                className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
+                layout
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ type: "spring", stiffness: 260, damping: 28 }}
+                className="snap-start shrink-0 w-[220px] bg-card rounded-2xl card-shadow border border-border/60 p-3"
               >
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-foreground truncate">
-                    {row.biz.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {existing
-                      ? `In queue · Token #${existing.token_number}`
-                      : row.showLive
-                      ? `~${row.wait}m · ${row.waiting} waiting`
+                <div className="flex items-center justify-between mb-2">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                    <Activity className="w-3 h-3" /> LIVE
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {row.showLive
+                      ? <AnimatedNumber value={row.waiting} suffix=" waiting" invertHighlight />
                       : "Open"}
-                  </p>
+                  </span>
                 </div>
-                <Link
-                  to={`/join/${targetId}`}
-                  className="min-h-[40px] inline-flex items-center px-3.5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 shrink-0"
-                >
-                  {existing ? "Open" : row.remoteJoin ? "Join" : "Visit"}
-                </Link>
-              </div>
+                <p className="font-semibold text-sm text-foreground line-clamp-1">
+                  {row.biz.name}
+                </p>
+                <p className="text-[11px] text-muted-foreground line-clamp-1 mb-2">
+                  {row.biz.category || "Service"}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-foreground">
+                    <Zap className="w-3 h-3 text-primary" />
+                    {row.showLive ? (row.wait === 0 ? "No wait" : `~${row.wait}m`) : "Status on arrival"}
+                  </span>
+                  <Link
+                    to={`/join/${targetId}`}
+                    className="text-[11px] font-semibold gradient-bg text-primary-foreground px-2.5 py-1 rounded-lg hover:opacity-90"
+                  >
+                    {row.remoteJoin ? "Join" : "Visit"}
+                  </Link>
+                </div>
+              </motion.div>
             );
           })}
-        </div>
-      )}
-    </div>
+        </AnimatePresence>
+      </div>
+    </section>
   );
 };

@@ -1,6 +1,8 @@
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { backDestination } from "@/lib/backNavigation";
 
 interface BackButtonProps {
   to?: string;
@@ -10,23 +12,21 @@ interface BackButtonProps {
 
 /**
  * Small back button rendered at the top-left of a page.
- * Falls back to browser history when `to` is not provided.
+ * Uses a safe in-app parent when `to` is not provided.
  */
 export const BackButton = ({ to, className, label = "Back" }: BackButtonProps) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const belowNavbar = pathname === "/affiliate";
 
   const handleClick = () => {
-    if (to) {
-      navigate(to);
-    } else if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    navigate(to ?? backDestination(pathname));
   };
 
   return (
-    <button
+    <Button
+      variant="outline"
+      size="sm"
       type="button"
       onClick={handleClick}
       aria-label={label}
@@ -36,12 +36,13 @@ export const BackButton = ({ to, className, label = "Back" }: BackButtonProps) =
         "px-2.5 py-1.5 text-xs font-medium text-foreground",
         "hover:bg-background hover:shadow transition-all",
         "md:top-6 md:left-8 md:px-3 md:py-2 md:text-sm",
+        belowNavbar && "top-20 md:top-20",
         className,
       )}
     >
       <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
       <span className="hidden sm:inline">{label}</span>
-    </button>
+    </Button>
   );
 };
 

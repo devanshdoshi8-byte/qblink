@@ -46,8 +46,8 @@ const Install = () => {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "https://qblink-real.lovable.app/" },
-              { "@type": "ListItem", position: 2, name: "Install", item: "https://qblink-real.lovable.app/install" },
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://qblink.tech/" },
+              { "@type": "ListItem", position: 2, name: "Install", item: "https://qblink.tech/install" },
             ],
           },
           {
@@ -55,7 +55,7 @@ const Install = () => {
             "@type": "HowTo",
             name: "Install Qblink on your device",
             step: [
-              { "@type": "HowToStep", position: 1, name: "Open Qblink", text: "Visit qblink-real.lovable.app in your browser." },
+              { "@type": "HowToStep", position: 1, name: "Open Qblink", text: "Visit qblink.tech in your browser." },
               { "@type": "HowToStep", position: 2, name: "Add to home screen", text: "Tap the browser share menu and choose 'Add to Home Screen' (iOS) or 'Install app' (Android/desktop)." },
               { "@type": "HowToStep", position: 3, name: "Launch", text: "Open Qblink from your home screen for an app-like experience." },
             ],
@@ -77,7 +77,7 @@ const Install = () => {
         ) : deferred ? (
           <button
             onClick={handleInstall}
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
+            className="w-full gradient-bg text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
           >
             <Download className="w-4 h-4" /> Install App
           </button>

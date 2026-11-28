@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import BusinessLayout from "@/components/business/BusinessLayout";
 import { Activity, TrendingUp, TrendingDown, Lightbulb } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { CHART_COLORS } from "@/lib/chartPalette";
 import { format } from "date-fns";
 import HealthAIAssistant from "@/components/health/HealthAIAssistant";
 import HealthFactorDetail from "@/components/health/HealthFactorDetail";
@@ -160,7 +159,7 @@ const Content = ({ businessId, businessName }: { businessId: string; businessNam
                   <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={11} />
                   <YAxis domain={[0, 100]} stroke="hsl(var(--muted-foreground))" fontSize={11} />
                   <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.75rem" }} />
-                  <Line type="monotone" dataKey="score" stroke={CHART_COLORS.primary} strokeWidth={2.5} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="score" stroke="hsl(205 100% 50%)" strokeWidth={2.5} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             )}

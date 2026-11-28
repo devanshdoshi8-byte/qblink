@@ -3,14 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { Mail, Lock, Building2, Tag, FileText, MapPin, ArrowLeft, Sparkles, Check, Clock, BellRing, Users } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
+import { Mail, Lock, Building2, Tag, FileText, MapPin, ArrowLeft, Sparkles, Check, Clock, BellRing, Users, Loader2 } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
-import { GoogleButton, AuthDivider } from "@/components/auth/GooglePickerModal";
-import { signInWithGoogle, ensureRoleAndProfile } from "@/lib/auth/authService";
-import GlideSelect from "@/components/reactbits/GlideSelect";
-import WakeSlider from "@/components/reactbits/WakeSlider";
 import { INDUSTRIES, getIndustryDefaults, type IndustryDefaults } from "@/lib/industryDefaults";
+import { stashPendingBusiness } from "@/lib/auth/authService";
+import { setPending } from "@/lib/auth/pendingAuth";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { getSavedBusinessDraft, saveBusinessDraft, clearBusinessDraft, getSavedCustomerDetails, saveCustomerDetails } from "@/lib/storage/cookieStorage";
 
 const ALERT_LABELS: Record<string, string> = {
   doctor_delay: "Doctor Delay Alerts",
@@ -34,9 +35,9 @@ const BusinessSignUp = () => {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleBusy, setGoogleBusy] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { roles, loading: roleLoading } = useUserRole();
   const defaults = getIndustryDefaults(category);
   const [overrides, setOverrides] = useState<IndustryDefaults>(defaults);
 
@@ -45,14 +46,113 @@ const BusinessSignUp = () => {
     setOverrides(getIndustryDefaults(category));
   }, [category]);
 
+  const [checkingBusiness, setCheckingBusiness] = useState(true);
+
+  // Restore draft from cookies so user never has to re-enter details
   useEffect(() => {
-    if (user) navigate("/dashboard");
-  }, [user, navigate]);
+    try {
+      const draft = getSavedBusinessDraft<{
+        email?: string;
+        businessName?: string;
+        category?: string;
+        description?: string;
+        address?: string;
+      }>();
+      if (draft) {
+        if (draft.businessName) setBusinessName(draft.businessName);
+        if (draft.category) setCategory(draft.category);
+        if (draft.description) setDescription(draft.description);
+        if (draft.address) setAddress(draft.address);
+        if (draft.email && !email) setEmail(draft.email);
+      } else {
+        const saved = getSavedCustomerDetails();
+        if (saved.email && !email) setEmail(saved.email);
+      }
+    } catch {}
+  }, []);
+
+  // Auto-save draft to cookies so inputs persist across refreshes
+  useEffect(() => {
+    if (businessName || description || address) {
+      saveBusinessDraft({
+        email,
+        businessName,
+        category,
+        description,
+        address,
+      });
+    }
+  }, [email, businessName, category, description, address]);
+
+  // Auto-fill email if user is already signed in (e.g. customer expanding into business)
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user?.email, email]);
+
+  // Signed-in users who already own a business go straight to their dashboard.
+  // Signed-in customers stay here so they can register a business too.
+  useEffect(() => {
+    if (authLoading || roleLoading) {
+      return;
+    }
+
+    if (!user) {
+      setCheckingBusiness(false);
+      return;
+    }
+
+    if (roles.includes("business")) {
+      navigate("/dashboard", { replace: true });
+      return;
+    }
+
+    let isCancelled = false;
+    supabase.from("businesses").select("id").eq("owner_id", user.id).limit(1)
+      .then(({ data }) => {
+        if (isCancelled) return;
+        if (data && data.length > 0) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          setCheckingBusiness(false);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) setCheckingBusiness(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user, roles, authLoading, roleLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user && password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
     setLoading(true);
     try {
+      if (user) {
+        await supabase.from("user_roles").insert({ user_id: user.id, role: "business" });
+        const { error: bErr } = await supabase.from("businesses").insert({
+          owner_id: user.id,
+          name: businessName,
+          category,
+          description: description || null,
+          address: address || null,
+          default_settings: overrides as any,
+        });
+        if (bErr) throw bErr;
+
+        clearBusinessDraft();
+        toast.success(`Business account created — ${category} defaults enabled`);
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -72,6 +172,7 @@ const BusinessSignUp = () => {
         });
       }
 
+      clearBusinessDraft();
       toast.success(`Business account created — ${category} defaults enabled`);
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
@@ -80,56 +181,16 @@ const BusinessSignUp = () => {
     }
   };
 
-  const continueWithGoogle = async () => {
-    if (!businessName.trim()) {
-      toast.error("Enter your business name before continuing with Google.");
-      return;
-    }
-    setGoogleBusy(true);
-    try {
-      // Stash the draft so it can be created once a real session exists.
-      sessionStorage.setItem(
-        "qblink.pendingBusiness",
-        JSON.stringify({ name: businessName, category, description, address, default_settings: overrides }),
-      );
-      await signInWithGoogle("business");
-      await ensureRoleAndProfile();
-      await createPendingBusiness();
-    } catch (err: any) {
-      toast.error(err?.message ?? "Couldn't sign in with Google");
-    } finally {
-      setGoogleBusy(false);
-    }
-  };
-
-  /** Creates the stashed business draft for the signed-in owner, if any. */
-  const createPendingBusiness = async () => {
-    const raw = sessionStorage.getItem("qblink.pendingBusiness");
-    if (!raw) return;
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return;
-    const draft = JSON.parse(raw);
-    const { data: existing } = await supabase
-      .from("businesses").select("id").eq("owner_id", data.user.id).limit(1);
-    if (!existing || existing.length === 0) {
-      await supabase.from("businesses").insert({
-        owner_id: data.user.id,
-        name: draft.name,
-        category: draft.category,
-        description: draft.description || null,
-        address: draft.address || null,
-        default_settings: draft.default_settings as any,
-      });
-    }
-    sessionStorage.removeItem("qblink.pendingBusiness");
-    toast.success("Business account ready");
-  };
-
-  // Finish the Google flow when the browser returns from the provider.
-  useEffect(() => {
-    if (user) { createPendingBusiness().catch(() => {}); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  if (authLoading || roleLoading || checkingBusiness) {
+    return (
+      <div className="min-h-screen soft-bg flex flex-col items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
+        <p className="text-sm text-muted-foreground">
+          {user && roles.includes("business") ? "Redirecting to dashboard..." : "Checking business profile..."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen soft-bg flex items-center justify-center px-4 py-10">
@@ -146,33 +207,49 @@ const BusinessSignUp = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 card-shadow space-y-4">
-          <GoogleButton onClick={continueWithGoogle} loading={googleBusy} />
-          <p className="text-xs text-center text-muted-foreground -mt-1">
-            <span className="font-semibold text-primary">Recommended</span> · Use your business Google account
-          </p>
-          <AuthDivider />
-
+          {!user && (
+            <>
+              <GoogleSignInButton
+                disabled={loading}
+                onBeforeOAuth={() => {
+                  setPending("role", "business");
+                  if (businessName.trim()) {
+                    stashPendingBusiness({
+                      name: businessName.trim(),
+                      category,
+                      description: description || null,
+                      address: address || null,
+                      default_settings: overrides,
+                    });
+                  }
+                }}
+              />
+              <div className="relative flex items-center py-1">
+                <div className="flex-grow border-t border-border" />
+                <span className="mx-3 shrink-0 text-xs uppercase tracking-wider text-muted-foreground">or</span>
+                <div className="flex-grow border-t border-border" />
+              </div>
+            </>
+          )}
           <Field icon={<Building2 className="w-4 h-4" />} label="Business Name">
             <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} required placeholder="e.g. Sharma Dental Clinic"
-              className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </Field>
           <Field icon={<Mail className="w-4 h-4" />} label="Business Email">
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="business@email.com"
-              className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </Field>
-          <Field icon={<Lock className="w-4 h-4" />} label="Password">
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••"
-              className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
-          </Field>
+          {!user && (
+            <Field icon={<Lock className="w-4 h-4" />} label="Password">
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} placeholder="••••••••"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            </Field>
+          )}
           <Field icon={<Tag className="w-4 h-4" />} label="Industry">
-            <GlideSelect
-              options={INDUSTRIES.map((c) => ({ value: c, label: c }))}
-              value={category}
-              onChange={(val) => setCategory(val)}
-              ariaLabel="Industry"
-              menuWidth="100%"
-              className="w-full pl-7"
-            />
+            <select value={category} onChange={e => setCategory(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 appearance-none">
+              {INDUSTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </Field>
 
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-3">
@@ -184,7 +261,7 @@ const BusinessSignUp = () => {
               <button
                 type="button"
                 onClick={() => setOverrides(getIndustryDefaults(category))}
-                className="text-xs font-semibold text-primary hover:underline"
+                className="text-[11px] font-semibold text-primary hover:underline"
               >
                 Reset
               </button>
@@ -192,14 +269,14 @@ const BusinessSignUp = () => {
 
             {/* Arrival window */}
             <div>
-              <p className="text-xs font-medium text-foreground mb-1.5">Arrival window</p>
+              <p className="text-[11px] font-medium text-foreground mb-1.5">Arrival window</p>
               <div className="flex flex-wrap gap-1.5">
                 {ARRIVAL_WINDOWS.map(m => (
                   <button
                     key={m}
                     type="button"
                     onClick={() => setOverrides({ ...overrides, arrival_window_minutes: m })}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
                       overrides.arrival_window_minutes === m
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background text-muted-foreground border-border hover:bg-muted"
@@ -213,20 +290,17 @@ const BusinessSignUp = () => {
 
             {/* Estimated service time */}
             <div>
-              <p className="text-xs font-medium text-foreground mb-1.5">
+              <p className="text-[11px] font-medium text-foreground mb-1.5">
                 Estimated service time · <span className="text-primary">{overrides.estimated_service_time} min</span>
               </p>
-              <WakeSlider
+              <input
+                type="range"
                 min={2}
                 max={60}
                 step={1}
-                bars={28}
-                height={36}
-                restHeight={8}
-                gap={3}
                 value={overrides.estimated_service_time}
-                ariaLabel="Estimated service time"
-                onChange={v => setOverrides({ ...overrides, estimated_service_time: v })}
+                onChange={e => setOverrides({ ...overrides, estimated_service_time: Number(e.target.value) })}
+                className="w-full accent-primary"
               />
             </div>
 
@@ -240,7 +314,7 @@ const BusinessSignUp = () => {
             {/* Alerts */}
             {defaults.alerts.length > 0 && (
               <div>
-                <p className="text-xs font-medium text-foreground mb-1.5">Alerts</p>
+                <p className="text-[11px] font-medium text-foreground mb-1.5">Alerts</p>
                 <div className="space-y-1.5">
                   {defaults.alerts.map(key => {
                     const on = overrides.alerts.includes(key);
@@ -264,7 +338,7 @@ const BusinessSignUp = () => {
               </div>
             )}
 
-            <p className="text-xs text-muted-foreground flex items-start gap-1">
+            <p className="text-[11px] text-muted-foreground flex items-start gap-1">
               <Check className="w-3 h-3 text-primary mt-0.5 shrink-0" />
               Starts from {category} defaults. You can change any of these later in Settings.
             </p>
@@ -274,15 +348,15 @@ const BusinessSignUp = () => {
 
           <Field icon={<FileText className="w-4 h-4" />} label="Description (optional)">
             <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Brief description of your business" rows={2}
-              className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors resize-none" />
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
           </Field>
           <Field icon={<MapPin className="w-4 h-4" />} label="Address (optional)">
             <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="City or area"
-              className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors" />
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </Field>
 
           <button type="submit" disabled={loading}
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+            className="w-full gradient-bg text-primary-foreground py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
             {loading ? "Creating..." : "Create Business Account"}
           </button>
 
@@ -308,7 +382,7 @@ const Field = ({ icon, label, children }: { icon: React.ReactNode; label: string
 
 const MiniToggle = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
   <div className="flex items-center justify-between gap-3">
-    <span className="text-xs text-foreground">{label}</span>
+    <span className="text-[11px] text-foreground">{label}</span>
     <button
       type="button"
       role="switch"
@@ -338,7 +412,7 @@ const ImpactPreview = ({ overrides }: { overrides: IndustryDefaults }) => {
 
   return (
     <div className="rounded-lg border border-border/60 bg-background/70 p-2.5 space-y-2">
-      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+      <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
         <Sparkles className="w-3 h-3 text-primary" /> Impact preview
       </p>
 
@@ -365,7 +439,7 @@ const ImpactPreview = ({ overrides }: { overrides: IndustryDefaults }) => {
         />
       </div>
 
-      <p className="text-xs text-muted-foreground leading-relaxed">
+      <p className="text-[10px] text-muted-foreground leading-relaxed">
         Marked no-show if not arrived within <span className="font-semibold text-foreground">{noShowAfter} min</span> of being called.
         {overrides.party_size_enabled && " Party size adds ~15% to service time."}
       </p>
@@ -375,11 +449,11 @@ const ImpactPreview = ({ overrides }: { overrides: IndustryDefaults }) => {
 
 const ImpactStat = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
   <div className="rounded-md bg-muted/40 px-2 py-1.5">
-    <div className="flex items-center gap-1 text-muted-foreground text-[11px]">
+    <div className="flex items-center gap-1 text-muted-foreground text-[10px]">
       {icon}
       <span>{label}</span>
     </div>
-    <div className="text-xs font-semibold text-foreground mt-0.5">{value}</div>
+    <div className="text-[12px] font-semibold text-foreground mt-0.5">{value}</div>
   </div>
 );
 

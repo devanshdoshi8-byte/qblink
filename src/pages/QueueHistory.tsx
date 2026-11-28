@@ -92,7 +92,7 @@ const HistoryContent = ({ businessId }: { businessId: string }) => {
               title="No daily sessions archived yet"
               description="Every time you close a day, the full session — joined, served, skipped, average wait — gets snapshotted here for later review."
               cta={{ label: "Go to queue manager", to: "/dashboard" }}
-              tip="Sessions are automatically archived at midnight according to your timezone, resetting counters fresh for each new business day."
+              tip="QBlink automatically archives each day's session at midnight and resets counters for tomorrow, or you can tap “Start New Day” on the queue manager anytime."
             />
           </div>
         ) : (

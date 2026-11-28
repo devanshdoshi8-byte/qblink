@@ -7,6 +7,7 @@ import logo from "@/assets/qblink-logo.png";
 import { supportsPickup } from "@/lib/categories";
 import PrefillNotice from "@/components/PrefillNotice";
 import { hapticSuccess } from "@/lib/haptics";
+import { Button } from "@/components/ui/button";
 
 interface Business {
   id: string;
@@ -36,7 +37,7 @@ const PickupOrder = () => {
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [qty, setQty] = useState<Record<string, number>>({});
-  const [activeOrders, setActiveOrders] = useState(0);
+  const [activeOrders, setActiveOrders] = useState<number | null>(null);
   const [menu, setMenu] = useState<MenuRow[]>(SAMPLE_MENU);
   const [pickupBlocked, setPickupBlocked] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
@@ -48,13 +49,13 @@ const PickupOrder = () => {
     if (!businessId) return;
     (async () => {
       if (isUuid(businessId)) {
-        const { data } = await supabase.from("businesses").select("id,name,category,address").eq("id", businessId).maybeSingle();
+        const { data } = await (supabase as any).from("businesses_public").select("id,name,category,address").eq("id", businessId).maybeSingle();
         if (data) {
           setBusiness(data as Business);
           if (!supportsPickup(data.category)) setPickupBlocked(true);
         }
         const { data: activeCount } = await (supabase as any).rpc("get_active_pickup_count", { p_business_id: businessId });
-        setActiveOrders(typeof activeCount === "number" ? activeCount : 0);
+        setActiveOrders(typeof activeCount === "number" ? activeCount : null);
 
         const { data: rows } = await supabase
           .from("menu_items")
@@ -66,9 +67,7 @@ const PickupOrder = () => {
           setMenu(rows.map(r => ({ id: r.id, name: r.name, price: Number(r.price), prep: r.prep_minutes, description: r.description })));
         }
       } else {
-        // Demo business — synthesise a friendly state.
-        setBusiness({ id: businessId, name: "Demo Restaurant", category: "Restaurant", address: "Sample address" });
-        setActiveOrders(3);
+        setBusiness(null);
       }
       setLoading(false);
     })();
@@ -89,7 +88,7 @@ const PickupOrder = () => {
   const items = useMemo(() => menu.filter(m => (qty[m.id] ?? 0) > 0).map(m => ({ ...m, qty: qty[m.id] })), [qty, menu]);
   const total = items.reduce((s, i) => s + i.price * i.qty, 0);
   const baseTime = items.reduce((s, i) => Math.max(s, i.prep), 0);
-  const loadFactor = 1 + Math.min(activeOrders, 8) * 0.15;
+  const loadFactor = 1 + Math.min(activeOrders ?? 0, 8) * 0.15;
   const eta = items.length === 0 ? 0 : Math.max(8, Math.round(baseTime * loadFactor + items.length * 1.2));
 
   const bump = (id: string, d: number) =>
@@ -107,22 +106,26 @@ const PickupOrder = () => {
       }
     } catch {}
     if (!isUuid(businessId)) {
-      // Demo mode — simulate without DB write.
-      hapticSuccess();
-      toast.success(`Order placed — token P-${Math.floor(Math.random() * 900 + 100)} (demo)`);
+      toast.error("Business not found");
       navigate("/customer-dashboard");
       return;
     }
     setSubmitting(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setSubmitting(false);
+      toast.error("Please sign in to place a pickup order");
+      navigate(`/auth/customer?next=${encodeURIComponent(`/pickup/${businessId}`)}`);
+      return;
+    }
     const token = `P-${Math.floor(Math.random() * 900 + 100)}`;
     const orderId = crypto.randomUUID();
-    const { data: { user } } = await supabase.auth.getUser();
     const { error } = await supabase
       .from("pickup_orders")
       .insert({
         id: orderId,
         business_id: business.id,
-        customer_user_id: user?.id ?? null,
+        customer_user_id: user.id,
         customer_name: name.trim(),
         customer_phone: phone.trim() || null,
         token,
@@ -156,13 +159,15 @@ const PickupOrder = () => {
   return (
     <div className="min-h-screen soft-bg pb-32">
       <header className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button
-          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/"))}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/")}
           aria-label="Go back"
           className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center hover:bg-muted/70 transition-colors shrink-0"
         >
           <ArrowLeft className="w-4 h-4 text-foreground" />
-        </button>
+        </Button>
         <Link to="/" className="shrink-0">
           <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain" />
         </Link>
@@ -183,10 +188,12 @@ const PickupOrder = () => {
               {items.length === 0 ? "Pick items to see ETA" : `~${eta} min`}
             </p>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Active</p>
-            <p className="font-bold text-foreground">{activeOrders}</p>
-          </div>
+          {activeOrders !== null && (
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">Active</p>
+              <p className="font-bold text-foreground">{activeOrders}</p>
+            </div>
+          )}
         </div>
 
         <div className="bg-card rounded-2xl card-shadow p-4">
@@ -206,7 +213,7 @@ const PickupOrder = () => {
                   <div className="flex items-center gap-2">
                     <button onClick={() => bump(m.id, -1)} disabled={q === 0} className="w-8 h-8 rounded-lg bg-muted text-foreground disabled:opacity-40 flex items-center justify-center"><Minus className="w-3.5 h-3.5" /></button>
                     <span className="w-6 text-center text-sm font-bold">{q}</span>
-                    <button onClick={() => bump(m.id, 1)} className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center"><Plus className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => bump(m.id, 1)} className="w-8 h-8 rounded-lg gradient-bg text-primary-foreground flex items-center justify-center"><Plus className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
               );
@@ -232,7 +239,7 @@ const PickupOrder = () => {
             <p className="text-xs text-muted-foreground">Total</p>
             <p className="font-bold text-foreground">₹{total} · {items.reduce((s, i) => s + i.qty, 0)} items</p>
           </div>
-          <button onClick={placeOrder} disabled={submitting || items.length === 0 || !name.trim() || !phone.trim()} className="bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-semibold disabled:opacity-50 flex items-center gap-2">
+          <button onClick={placeOrder} disabled={submitting || items.length === 0 || !name.trim() || !phone.trim()} className="gradient-bg text-primary-foreground px-5 py-3 rounded-xl text-sm font-semibold disabled:opacity-50 flex items-center gap-2">
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Confirm <ArrowRight className="w-4 h-4" /></>}
           </button>
         </div>

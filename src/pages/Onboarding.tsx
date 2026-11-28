@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { Sparkles, ArrowLeft } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 import SEO from "@/components/SEO";
+import FloatingOrbs from "@/components/onboarding/FloatingOrbs";
 import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
 import StepIdentity from "@/components/onboarding/StepIdentity";
 import StepProfile from "@/components/onboarding/StepProfile";
@@ -77,6 +78,7 @@ const Onboarding = () => {
         description="A personalized walkthrough of how Qblink turns walk-in chaos into controlled flow. Takes about a minute."
         path="/onboarding"
       />
+      <FloatingOrbs />
 
       <header className="relative z-10 flex items-center justify-between px-4 sm:px-6 pt-5 pb-2 max-w-3xl mx-auto w-full">
         <Link to="/" className="flex items-center gap-2" aria-label="Back to Qblink home">
@@ -123,8 +125,8 @@ const Onboarding = () => {
             )}
             {step === "outro" && (
               <div className="w-full max-w-md mx-auto text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-6 elevated-shadow">
-                  <CheckCircle2 className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
+                <div className="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6 elevated-shadow">
+                  <Sparkles className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight mb-4">
                   <TypingText text={`${name || "Friend"}, your journey is just beginning.`} speed={28} />
@@ -146,7 +148,7 @@ const Onboarding = () => {
                 >
                   <Link
                     to="/auth"
-                    className="bg-primary text-primary-foreground px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] transition-all elevated-shadow"
+                    className="gradient-bg text-primary-foreground px-8 py-3 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] transition-all elevated-shadow"
                   >
                     Start Free
                   </Link>

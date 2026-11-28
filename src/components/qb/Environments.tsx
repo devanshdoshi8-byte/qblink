@@ -212,7 +212,7 @@ const Tile = ({ e, i }: { e: Env; i: number }) => {
 
       {/* Content */}
       <div className="relative h-full flex flex-col justify-between p-5 sm:p-7 text-cream">
-        <div className="flex items-center gap-3 font-mono-caps text-xs tracking-[0.2em] text-cream/60">
+        <div className="flex items-center gap-3 font-mono-caps text-[10px] tracking-[0.2em] text-cream/60">
           <span>CH · {e.chapter}</span>
           <span className="h-px w-8 bg-cream/30" />
         </div>
@@ -270,19 +270,19 @@ const Tile = ({ e, i }: { e: Env; i: number }) => {
             <div className="border-t border-cream/20 pt-4 space-y-3 text-sm">
               <motion.div
                 variants={statVariants}
-                className="flex items-baseline gap-2 font-mono-caps text-xs tracking-[0.18em] text-ink-accent"
+                className="flex items-baseline gap-2 font-mono-caps text-[10px] tracking-[0.18em] text-teal"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-teal" />
+                <span className="h-1.5 w-1.5 rounded-full bg-teal animate-pulse" />
                 {e.wait}
               </motion.div>
               <motion.p variants={statVariants} className="text-cream/85 leading-relaxed">
-                <span className="font-mono-caps text-xs tracking-[0.18em] text-cream/50 block mb-1">
+                <span className="font-mono-caps text-[10px] tracking-[0.18em] text-cream/50 block mb-1">
                   The pain
                 </span>
                 {e.pain}
               </motion.p>
               <motion.p variants={statVariants} className="text-cream/85 leading-relaxed">
-                <span className="font-mono-caps text-xs tracking-[0.18em] text-ink-accent/80 block mb-1">
+                <span className="font-mono-caps text-[10px] tracking-[0.18em] text-teal/80 block mb-1">
                   With Qblink
                 </span>
                 {e.fix}
@@ -310,6 +310,7 @@ export const Environments = () => (
     <div className="max-w-7xl mx-auto px-6 lg:px-16">
       <div className="grid lg:grid-cols-12 gap-6 mb-16 items-end">
         <div className="lg:col-span-7">
+          <div className="font-mono-caps text-ink/50 mb-4">Ch. 07 · Where the wait lives</div>
           <h2 className="font-display text-4xl sm:text-6xl text-ink leading-[0.95]">
             Every walk-in business has a version of the same line.
           </h2>
@@ -344,7 +345,7 @@ export const Environments = () => (
           <br />
           <span className="text-ink/70">Different workflows.</span>
           <br />
-          <span className="text-ink-accent">The same invisible line.</span>
+          <span className="text-teal">The same invisible line.</span>
         </p>
       </motion.div>
     </div>

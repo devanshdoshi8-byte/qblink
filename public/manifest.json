@@ -1,7 +1,7 @@
 {
-  "name": "Qblink — Customer Flow Intelligence Platform",
+  "name": "QBlink — Hardware-Free Virtual Queue Management",
   "short_name": "Qblink",
-  "description": "Hardware-free customer flow platform for walk-in businesses — no app, remote waiting, live flow, analytics, and AI recommendations.",
+  "description": "Hardware-free customer flow platform incubated at Inventure · IIT Gandhinagar. Started by Devansh with co-founders Mithil, Aarav, and Vihan Patange.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -9,7 +9,7 @@
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#10637f",
+  "theme_color": "#0099ff",
   "categories": ["business", "productivity", "utilities"],
   "lang": "en",
   "dir": "ltr",

@@ -29,10 +29,6 @@ const QueueHealthAlerts = ({ businessId }: { businessId: string }) => {
 
   useEffect(() => {
     load();
-    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "default") {
-      // Ask once, silently
-      setTimeout(() => { Notification.requestPermission().catch(() => {}); }, 4000);
-    }
     // Poll for new alerts (alerts are no longer broadcast over realtime for privacy)
     const poll = setInterval(async () => {
       const { data } = await supabase

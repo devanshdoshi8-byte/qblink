@@ -70,7 +70,7 @@ const OperatingHoursCard = ({ businessId }: { businessId: string }) => {
     : "bg-muted text-muted-foreground";
 
   return (
-    <div className="bg-card rounded-2xl p-6 card-shadow lg:col-span-2">
+    <div className="min-w-0 bg-card rounded-2xl p-4 sm:p-6 card-shadow lg:col-span-2">
       <div className="flex items-center gap-2 mb-1">
         <Clock className="w-5 h-5 text-primary" aria-hidden="true" />
         <h2 className="font-bold text-foreground">Opening Hours & Holidays</h2>
@@ -101,7 +101,7 @@ const OperatingHoursCard = ({ businessId }: { businessId: string }) => {
                   type="button"
                   onClick={() => setDay(i, { closed: !d.closed })}
                   aria-label={`Toggle ${DAY_LABELS[i]} ${d.closed ? "open" : "closed"}`}
-                  className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${!d.closed ? "bg-primary" : "bg-muted"}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${!d.closed ? "gradient-bg" : "bg-muted"}`}
                 >
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform ${!d.closed ? "translate-x-5" : ""}`} />
                 </button>
@@ -127,7 +127,7 @@ const OperatingHoursCard = ({ businessId }: { businessId: string }) => {
                     <button
                       type="button"
                       onClick={() => applyToAll(i)}
-                      className="text-[11px] font-semibold text-primary hover:underline"
+                      className="text-xs font-semibold text-primary hover:underline min-h-[36px] px-2 py-1 rounded-lg hover:bg-primary/5"
                     >
                       Apply to all
                     </button>
@@ -190,7 +190,7 @@ const OperatingHoursCard = ({ businessId }: { businessId: string }) => {
           <button
             onClick={save}
             disabled={saving}
-            className="mt-5 bg-primary text-primary-foreground py-2.5 px-4 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 inline-flex items-center gap-2"
+            className="mt-5 gradient-bg text-primary-foreground py-2.5 px-4 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 inline-flex items-center gap-2"
           >
             <Save className="w-4 h-4" /> {saving ? "Saving…" : "Save Hours"}
           </button>

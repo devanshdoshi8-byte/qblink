@@ -15,7 +15,7 @@ const faqs = [
   { q: "Will customers get notified when their turn is near?", a: "Yes. Customers see live position updates and receive alerts when their turn is approaching, so they don't need to keep checking." },
   { q: "Can businesses manage walk-ins and digital joiners together?", a: "Absolutely. Staff can manually add walk-in customers into the same queue, creating a single unified flow." },
   { q: "Does it support multiple counters?", a: "Yes. You can manage multiple service counters from a single dashboard and route customers accordingly." },
-  { q: "Is Qblink free to use?", a: "Yes, during early access. We offer a free pilot so you can test everything. After launch, affordable SaaS plans will be available with a free tier remaining." },
+  { q: "Does Qblink cost anything?", a: "Qblink is completely free to use. There are no subscriptions, paid plans, trial periods, or payment requirements." },
   { q: "Is it easy to set up?", a: "Very. You can create a queue and start serving in under 2 minutes. No complicated onboarding, no training required." },
   { q: "Can it work for small businesses?", a: "Qblink is specifically built for small and medium walk-in businesses — salons, clinics, restaurants, service centers, and more." },
   { q: "Is there an affiliate program?", a: "Yes! You can earn recurring commissions by referring businesses to Qblink. Visit our Affiliate page to sign up and get your referral code." },

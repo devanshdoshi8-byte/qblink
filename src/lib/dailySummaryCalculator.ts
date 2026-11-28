@@ -62,7 +62,7 @@ export function computeDailyPerformanceSummary({
     const start = new Date(v.joined_at).getTime();
     if (end && start && end > start) {
       const mins = (end - start) / 60000;
-      if (mins <= 60) waitDurations.push(mins);
+      if (mins < 480) waitDurations.push(mins);
     }
   });
 

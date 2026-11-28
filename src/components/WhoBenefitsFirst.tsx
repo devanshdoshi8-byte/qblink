@@ -57,7 +57,7 @@ const WhoBenefitsFirst = () => (
                 : "bg-card card-shadow"
             }`}>
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${
-                c.emphasis ? "bg-primary" : "bg-primary/10"
+                c.emphasis ? "gradient-bg" : "bg-primary/10"
               }`}>
                 <c.icon className={`w-5 h-5 ${c.emphasis ? "text-primary-foreground" : "text-primary"}`} />
               </div>

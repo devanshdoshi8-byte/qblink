@@ -126,8 +126,8 @@ export const useCustomerQueueIntel = ({
     if (!enabled || !businessId) return;
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
-        .from("businesses")
+      const { data } = await (supabase as any)
+        .from("businesses_public")
         .select("rating,total_reviews")
         .eq("id", businessId)
         .maybeSingle();

@@ -4,14 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/qblink-logo.png";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
   { label: "How It Works", href: "/#how-it-works" },
-  { label: "Industries", href: "/#industries" },
-  { label: "Features", href: "/#features" },
+  { label: "For Clinics", href: "/#for-clinics" },
+  { label: "Pilots", href: "/#pilots" },
+  { label: "Live Demo", href: "/pitch" },
   { label: "Affiliate", href: "/affiliate" },
-  { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 const Navbar = () => {
@@ -57,14 +58,18 @@ const Navbar = () => {
               <Shield size={14} /> Admin
             </Link>
           )}
-          <Link to="/auth" className="bg-primary text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+          <ThemeToggle />
+          <Link to="/auth" className="gradient-bg text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
             Dashboard
           </Link>
         </div>
 
-        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle size="sm" />
+          <button className="text-foreground p-1" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -92,7 +97,7 @@ const Navbar = () => {
                   <Shield size={14} /> Admin
                 </Link>
               )}
-              <Link to="/auth" onClick={() => setOpen(false)} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold text-center">
+              <Link to="/auth" onClick={() => setOpen(false)} className="gradient-bg text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold text-center">
                 Dashboard
               </Link>
             </div>

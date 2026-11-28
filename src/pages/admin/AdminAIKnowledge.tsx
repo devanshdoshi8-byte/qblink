@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import GlideSelect from "@/components/reactbits/GlideSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkles, Plus, Trash2 } from "lucide-react";
@@ -26,22 +25,14 @@ const AdminAIKnowledge = () => {
       <div className="grid lg:grid-cols-[400px,1fr] gap-6">
         <div className="bg-card rounded-2xl p-6 card-shadow self-start flex flex-col gap-3">
           <h2 className="font-bold text-foreground">New entry</h2>
-          <GlideSelect
-            value={form.audience}
-            onChange={(val) => setForm({ ...form, audience: val })}
-            ariaLabel="Audience"
-            menuWidth="100%"
-            className="w-full"
-            options={["all", "customer", "business", "founder", "admin"].map((a) => ({
-              value: a,
-              label: a,
-            }))}
-          />
+          <select value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value })} className="input">
+            {["all","customer","business","founder","admin"].map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
           <input placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input" />
           <input placeholder="Question / trigger" value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} className="input" />
           <textarea placeholder="Answer / response" rows={4} value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} className="input" />
           <input type="number" placeholder="Priority" value={form.priority} onChange={(e) => setForm({ ...form, priority: Number(e.target.value) || 0 })} className="input" />
-          <button onClick={create} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Add</button>
+          <button onClick={create} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Add</button>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">
           <h2 className="font-bold text-foreground mb-4">All entries ({rows.length})</h2>

@@ -145,7 +145,7 @@ const StepIdentity = ({ data, onChange, onNext }: Props) => {
               <button
                 type="button"
                 onClick={advance}
-                className="bg-primary text-primary-foreground inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
+                className="gradient-bg text-primary-foreground inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all elevated-shadow"
               >
                 Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>

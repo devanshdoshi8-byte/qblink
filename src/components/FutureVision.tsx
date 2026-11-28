@@ -21,7 +21,7 @@ const FutureVision = () => (
         {visions.map((v, i) => (
           <AnimatedSection key={v.title} delay={i * 0.08}>
             <div className="bg-card rounded-2xl p-6 card-shadow hover:elevated-shadow transition-shadow duration-300 h-full">
-              <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center mb-4">
+              <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center mb-4">
                 <v.icon className="w-5 h-5 text-primary-foreground" />
               </div>
               <h3 className="font-semibold text-foreground mb-2">{v.title}</h3>

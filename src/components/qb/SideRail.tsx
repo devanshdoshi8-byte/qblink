@@ -110,9 +110,9 @@ export const SideRail = () => {
               <div
                 role="menu"
                 aria-label="Appearance"
-                className="no-theme-transition absolute left-12 bottom-0 min-w-[180px] rounded-lg border border-glow/25 bg-[hsl(var(--brand-navy))] shadow-xl overflow-hidden animate-fade-in"
+                className="no-theme-transition absolute left-12 bottom-0 min-w-[180px] rounded-lg border border-glow/25 bg-[hsl(215_55%_10%/0.98)] backdrop-blur-md shadow-2xl overflow-hidden animate-fade-in"
               >
-                <div className="px-3 py-2 font-mono-caps text-[hsl(var(--brand-glow))]/80 border-b border-glow/15">
+                <div className="px-3 py-2 font-mono-caps text-[hsl(177_42%_65%)]/80 border-b border-glow/15">
                   Appearance
                 </div>
                 <AppearanceItem
@@ -156,7 +156,7 @@ export const SideRail = () => {
           <ThemeToggle size="sm" />
           <button
             onClick={() => setOpen(true)}
-            className="font-mono-caps text-cream/80 border border-glow/40 px-3 py-1.5 rounded-sm bg-ink/85"
+            className="font-mono-caps text-cream/80 border border-glow/40 px-3 py-1.5 rounded-sm backdrop-blur-md bg-ink/40"
             aria-label="Open menu"
           >
             Menu
@@ -239,11 +239,11 @@ const AppearanceItem = ({
     role="menuitemradio"
     aria-checked={active}
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-3 py-2.5 text-left text-[hsl(var(--brand-cream))] hover:bg-[hsl(var(--brand-glow)/0.1)] transition-colors"
+    className="w-full flex items-center gap-3 px-3 py-2.5 text-left text-[hsl(44_33%_94%)] hover:bg-[hsl(177_42%_55%/0.1)] transition-colors"
   >
-    <span className="text-[hsl(var(--brand-glow))]">{icon}</span>
+    <span className="text-[hsl(177_42%_65%)]">{icon}</span>
     <span className="flex-1 font-display">{label}</span>
-    {active && <Check className="w-4 h-4 text-[hsl(var(--brand-glow))]" />}
+    {active && <Check className="w-4 h-4 text-[hsl(177_42%_65%)]" />}
   </button>
 );
 

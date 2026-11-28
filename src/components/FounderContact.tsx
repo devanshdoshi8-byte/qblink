@@ -4,7 +4,7 @@ import { Phone, Mail, Copy, Check, MessageSquare, Heart, HandHelping, ExternalLi
 import { toast } from "sonner";
 import { hapticCopy } from "@/lib/haptics";
 
-const FounderContact = () => {
+const FounderContact = ({ compact = false }: { compact?: boolean }) => {
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedBizEmail, setCopiedBizEmail] = useState(false);
@@ -48,13 +48,13 @@ const FounderContact = () => {
       className="mb-8"
     >
       <div className="bg-card rounded-2xl card-shadow border border-border/60 overflow-hidden">
-        {/* Top accent bar */}
-        <div className="h-1.5 bg-primary w-full" />
+        {/* Top gradient accent */}
+        <div className="h-1.5 gradient-bg w-full" />
 
         <div className="p-5 sm:p-6">
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-sm">
+            <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shadow-sm">
               <UserCircle2 className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
@@ -68,7 +68,7 @@ const FounderContact = () => {
           </div>
 
           {/* Mission message */}
-          <div className="bg-muted/40 rounded-xl p-4 mb-5 border border-border/40">
+          {!compact && <div className="bg-muted/40 rounded-xl p-4 mb-5 border border-border/40">
             <p className="text-sm text-foreground leading-relaxed">
               Qblink is being built to make waiting smarter, more transparent, and less frustrating for everyone. If you have feedback, ideas, questions, or know a clinic, restaurant, salon, or other busy business that could benefit from Qblink, feel free to reach out directly. Every conversation helps improve the product and bring Qblink to more people.
             </p>
@@ -78,10 +78,10 @@ const FounderContact = () => {
                 Built with care in India
               </span>
             </div>
-          </div>
+          </div>}
 
           {/* Contact details */}
-          <div className="space-y-3 mb-5">
+          <div className={compact ? "hidden" : "space-y-3 mb-5"}>
             {/* Founder name */}
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -154,8 +154,8 @@ const FounderContact = () => {
             {/* Business email */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-lg bg-info-soft flex items-center justify-center shrink-0">
-                  <Mail className="w-4 h-4 text-info" />
+                <div className="w-9 h-9 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                  <Mail className="w-4 h-4 text-secondary" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs text-muted-foreground">Business Email</p>

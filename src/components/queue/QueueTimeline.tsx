@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { ReactNode, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { ticketCopyFor, type TicketLanguage } from "@/lib/waitingExperience";
 
 interface Props {
   tokens: Array<{ token: number; status: string }>;
@@ -11,6 +12,7 @@ interface Props {
   /** True while the first backend read is still in flight. */
   loading?: boolean;
   className?: string;
+  language?: TicketLanguage;
 }
 
 const DONE = new Set(["served", "completed", "no_show", "skipped", "removed"]);
@@ -20,8 +22,9 @@ const DONE = new Set(["served", "completed", "no_show", "skipped", "removed"]);
  * Completed tokens rise out, the serving token pulses, the customer's own
  * token stays highlighted. Never resets — it's derived, not stateful.
  */
-const QueueTimeline = ({ tokens, myToken, nowServing, loading = false, className }: Props) => {
+const QueueTimeline = ({ tokens, myToken, nowServing, loading = false, className, language = "en" }: Props) => {
   const reduce = useReducedMotion();
+  const c = ticketCopyFor(language);
 
   const rows = useMemo(() => {
     if (!tokens.length) return [];
@@ -44,9 +47,9 @@ const QueueTimeline = ({ tokens, myToken, nowServing, loading = false, className
     <section
       className={cn("min-h-[188px] rounded-2xl border border-border bg-card p-4 text-left", className)}
       data-reserved-height="188"
-      aria-label="Queue timeline"
+      aria-label={c.timeline}
     >
-      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Queue timeline</h3>
+      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{c.timeline}</h3>
       {children}
     </section>
   );
@@ -64,7 +67,7 @@ const QueueTimeline = ({ tokens, myToken, nowServing, loading = false, className
   if (rows.length < 2) {
     return shell(
       <p className="text-xs leading-relaxed text-muted-foreground">
-        No queue activity yet. Customer events will appear here in real time.
+        {c.noActivity}
       </p>,
     );
   }
@@ -73,9 +76,9 @@ const QueueTimeline = ({ tokens, myToken, nowServing, loading = false, className
     <section
       className={cn("min-h-[188px] rounded-2xl border border-border bg-card p-4 text-left", className)}
       data-reserved-height="188"
-      aria-label="Queue timeline"
+      aria-label={c.timeline}
     >
-      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Queue timeline</h3>
+      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{c.timeline}</h3>
       <ol className="relative max-h-[140px] space-y-1.5 overflow-y-auto pl-4">
         <span className="absolute left-[5px] top-1 bottom-1 w-px bg-border" aria-hidden="true" />
         <AnimatePresence initial={false}>
@@ -114,8 +117,8 @@ const QueueTimeline = ({ tokens, myToken, nowServing, loading = false, className
                 )}
                 <span className="tabular-nums">#{token}</span>
                 {isDone && <Check className="h-3 w-3 text-muted-foreground" aria-label="served" />}
-                {isServing && <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">Now serving</span>}
-                {isMe && <span className="ml-auto text-[10px] font-bold uppercase tracking-wide">You</span>}
+                {isServing && <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">{c.serving}</span>}
+                {isMe && <span className="ml-auto text-[10px] font-bold uppercase tracking-wide">{c.you}</span>}
               </motion.li>
             );
           })}

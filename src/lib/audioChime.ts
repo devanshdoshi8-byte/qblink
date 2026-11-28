@@ -1,8 +1,107 @@
 /**
- * Synthesized Web Audio API Chime Engine for Qblink Staff Command Center.
- * Zero external audio files required. Produces clean, harmonic bells for
- * customer arrivals and next-in-line dispatches.
+ * Pure Web Audio API Hospital/Clinic Queue Chime
+ * Synthesizes a soothing, audible two-tone/three-tone hospital chime
+ * without requiring any external MP3/WAV file downloads.
  */
+
+let sharedAudioCtx: AudioContext | null = null;
+
+export function getAudioContext(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+  if (!AudioCtx) return null;
+  if (!sharedAudioCtx || sharedAudioCtx.state === "closed") {
+    sharedAudioCtx = new AudioCtx();
+  }
+  return sharedAudioCtx;
+}
+
+/**
+ * Checks whether audio context is allowed to play sound without browser blocking.
+ */
+export function isAudioAllowed(): boolean {
+  if (!sharedAudioCtx) return false;
+  return sharedAudioCtx.state === "running";
+}
+
+/**
+ * Resumes audio context on user gesture.
+ */
+export async function unlockAudio(): Promise<boolean> {
+  const ctx = getAudioContext();
+  if (!ctx) return false;
+  if (ctx.state === "suspended") {
+    try {
+      await ctx.resume();
+    } catch {
+      return false;
+    }
+  }
+  return ctx.state === "running";
+}
+
+/**
+ * Plays a classic clinic chime: Ding-Dong (C5 -> G4 or E5 -> C5)
+ * with exponential volume decay.
+ */
+export async function playClinicChime(volume = 0.5): Promise<void> {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  if (ctx.state === "suspended") {
+    try {
+      await ctx.resume();
+    } catch {
+      return;
+    }
+  }
+
+  const now = ctx.currentTime;
+
+  // Tone 1: High harmonic bell (659.25 Hz - E5)
+  const osc1 = ctx.createOscillator();
+  const gain1 = ctx.createGain();
+  osc1.type = "sine";
+  osc1.frequency.setValueAtTime(659.25, now);
+  gain1.gain.setValueAtTime(volume * 0.7, now);
+  gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+  osc1.connect(gain1);
+  gain1.connect(ctx.destination);
+  osc1.start(now);
+  osc1.stop(now + 0.85);
+
+  // Tone 2: Warm fundamental chime (523.25 Hz - C5) after 200ms
+  const osc2 = ctx.createOscillator();
+  const gain2 = ctx.createGain();
+  osc2.type = "triangle";
+  osc2.frequency.setValueAtTime(523.25, now + 0.22);
+  gain2.gain.setValueAtTime(0, now);
+  gain2.gain.setValueAtTime(volume, now + 0.22);
+  gain2.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+  osc2.connect(gain2);
+  gain2.connect(ctx.destination);
+  osc2.start(now + 0.22);
+  osc2.stop(now + 1.25);
+}
+
+/**
+ * Speaks out the token number aloud using SpeechSynthesis if available.
+ */
+export function announceTokenVoice(tokenNumber: number, queueName?: string, lang = "en-IN"): void {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const text = queueName
+      ? `Token number ${tokenNumber}, for ${queueName}.`
+      : `Token number ${tokenNumber}.`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // Gracefully ignore voice synthesis restrictions
+  }
+}
 
 const AUDIO_STORAGE_KEY = "qblink:staffAudioEnabled";
 
@@ -18,22 +117,20 @@ export const isStaffAudioEnabled = (): boolean => {
 export const setStaffAudioEnabled = (enabled: boolean): void => {
   try {
     localStorage.setItem(AUDIO_STORAGE_KEY, String(enabled));
-  } catch {}
+  } catch {
+    // ignore storage errors
+  }
 };
 
-/**
- * Plays a pleasant double chime (C5 -> E5) when a new customer joins the line.
- */
 export const playArrivalChime = (): void => {
   if (!isStaffAudioEnabled()) return;
   try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    if (ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
     const now = ctx.currentTime;
-
-    // Note 1: C5 (523.25 Hz)
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
     osc1.type = "sine";
@@ -45,7 +142,6 @@ export const playArrivalChime = (): void => {
     osc1.start(now);
     osc1.stop(now + 0.38);
 
-    // Note 2: E5 (659.25 Hz)
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = "sine";
@@ -56,26 +152,21 @@ export const playArrivalChime = (): void => {
     osc2.connect(gain2).connect(ctx.destination);
     osc2.start(now + 0.12);
     osc2.stop(now + 0.58);
-
-    setTimeout(() => {
-      ctx.close().catch(() => {});
-    }, 700);
-  } catch {}
+  } catch {
+    // ignore audio restrictions
+  }
 };
 
-/**
- * Plays an upbeat ascending triad (E5 -> G5 -> C6) when staff calls next token.
- */
 export const playCallNextChime = (): void => {
   if (!isStaffAudioEnabled()) return;
   try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    if (ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
     const now = ctx.currentTime;
-
-    const notes = [659.25, 783.99, 1046.5]; // E5, G5, C6
+    const notes = [659.25, 783.99, 1046.5];
     notes.forEach((freq, i) => {
       const start = now + i * 0.08;
       const osc = ctx.createOscillator();
@@ -89,9 +180,7 @@ export const playCallNextChime = (): void => {
       osc.start(start);
       osc.stop(start + 0.35);
     });
-
-    setTimeout(() => {
-      ctx.close().catch(() => {});
-    }, 700);
-  } catch {}
+  } catch {
+    // ignore audio restrictions
+  }
 };

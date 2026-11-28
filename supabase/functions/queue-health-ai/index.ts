@@ -32,10 +32,7 @@ async function buildContext(businessId: string) {
   const total = visitors?.length || 0;
   const served = (visitors || []).filter(v => v.status === "served");
   const abandoned = (visitors || []).filter(v => ["skipped","removed","no_show"].includes(v.status));
-  const waits = served
-    .filter(v => v.served_at)
-    .map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime())/60000)
-    .filter(m => Number.isFinite(m) && m >= 0 && m <= 60);
+  const waits = served.filter(v => v.served_at).map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime())/60000);
   const avgWait = waits.length ? waits.reduce((a,b)=>a+b,0)/waits.length : 0;
   const serviceTimes = served.filter(v => v.called_at && v.served_at).map(v => (new Date(v.served_at!).getTime() - new Date(v.called_at!).getTime())/60000);
   const avgService = serviceTimes.length ? serviceTimes.reduce((a,b)=>a+b,0)/serviceTimes.length : 0;
@@ -100,7 +97,12 @@ TEAM CONTACTS (use these everywhere, never invent others):
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { messages = [], businessId, mode = "chat" } = await req.json() as { messages: Msg[]; businessId: string; mode?: string };
+    const { messages: rawMessages = [], businessId, mode = "chat" } = await req.json() as { messages: Msg[]; businessId: string; mode?: string };
+    // Only accept user/assistant turns from the caller; system instructions are server-owned.
+    const messages: Msg[] = (Array.isArray(rawMessages) ? rawMessages : [])
+      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+      .slice(-30)
+      .map((m) => ({ ...m, content: String(m.content).slice(0, 4000) }));
     if (!businessId) {
       return new Response(JSON.stringify({ error: "businessId required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
@@ -116,11 +118,11 @@ Deno.serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } },
     );
     const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claims?.claims?.sub) {
+    const { data: userData, error: userErr } = await userClient.auth.getUser(token);
+    if (userErr || !userData?.user?.id) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    const { data: ownedBiz } = await userClient.from("businesses").select("id").eq("id", businessId).eq("owner_id", claims.claims.sub).maybeSingle();
+    const { data: ownedBiz } = await userClient.from("businesses").select("id").eq("id", businessId).eq("owner_id", userData.user.id).maybeSingle();
     if (!ownedBiz) {
       // allow admins via has_role check
       const { data: isAdmin } = await userClient.rpc("is_admin");

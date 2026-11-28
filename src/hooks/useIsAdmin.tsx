@@ -32,19 +32,30 @@ export const useIsAdmin = () => {
     }
 
     setLoading(true);
-    const request = adminRequests.get(user.id) ?? Promise.resolve(supabase.rpc("is_admin")).then(({ data, error }) => {
-      const allowed = !error && Boolean(data);
-      if (!error) adminCache.set(user.id, allowed);
-      adminRequests.delete(user.id);
-      return allowed;
-    });
+    const request = adminRequests.get(user.id) ?? Promise.resolve(supabase.rpc("is_admin"))
+      .then(({ data, error }) => {
+        const allowed = !error && Boolean(data);
+        if (!error) adminCache.set(user.id, allowed);
+        adminRequests.delete(user.id);
+        return allowed;
+      })
+      .catch(() => {
+        adminRequests.delete(user.id);
+        return false;
+      });
     adminRequests.set(user.id, request);
 
-    request.then((allowed) => {
-      if (cancelled) return;
-      setIsAdmin(allowed);
-      setLoading(false);
-    });
+    request
+      .then((allowed) => {
+        if (cancelled) return;
+        setIsAdmin(allowed);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setIsAdmin(false);
+        setLoading(false);
+      });
 
     return () => { cancelled = true; };
   }, [user?.id, authLoading]);

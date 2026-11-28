@@ -115,12 +115,11 @@ export const registerServiceWorker = (): void => {
         /* SW is a progressive enhancement */
       });
 
-    // Reload once only when an existing controller is replaced with a newer build.
-    // Never reload on first-time worker installation.
-    const hadController = Boolean(navigator.serviceWorker.controller);
+    // Reload once when a fresh worker takes control so the user sees the
+    // new build rather than the cached one.
     let refreshing = false;
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (!hadController || refreshing) return;
+      if (refreshing) return;
       refreshing = true;
       window.location.reload();
     });

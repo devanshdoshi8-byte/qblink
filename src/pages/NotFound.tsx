@@ -24,7 +24,7 @@ const NotFound = () => {
           Try one of the options below to get back on track.
         </p>
         <div className="grid gap-2">
-          <Link to="/" className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+          <Link to="/" className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
             <Home className="w-4 h-4" /> Back to Home
           </Link>
           <button onClick={() => window.history.back()} className="bg-muted text-foreground py-2.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-muted/70 transition-colors">

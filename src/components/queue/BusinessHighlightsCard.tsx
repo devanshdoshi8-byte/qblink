@@ -106,12 +106,12 @@ const BusinessHighlightsCard = ({ rating, totalReviews, pulse, loading = false, 
       data-reserved-height="142"
       aria-label="Business highlights"
     >
-      <div className="grid grid-cols-3 gap-2">
+      <div className={cn("grid min-h-[116px] gap-2", metrics.length === 1 ? "grid-cols-1" : metrics.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
         {metrics.map(({ key, label, value, Icon }) => (
-          <div key={key} className="rounded-xl bg-muted/40 px-2 py-2 text-center">
-            <Icon className="mx-auto mb-1 h-3.5 w-3.5 text-primary" aria-hidden="true" />
-            <p className="text-sm font-bold leading-none text-foreground tabular-nums">{value}</p>
-            <p className="mt-1 text-[10px] leading-tight text-muted-foreground">{label}</p>
+          <div key={key} className="flex flex-col items-center justify-center rounded-xl bg-muted/40 px-2 py-2 text-center">
+            <Icon className={cn("mb-1 text-primary", metrics.length === 1 ? "h-5 w-5" : "h-3.5 w-3.5")} aria-hidden="true" />
+            <p className={cn("font-bold leading-none text-foreground tabular-nums", metrics.length === 1 ? "text-3xl" : "text-sm")}>{value}</p>
+            <p className={cn("mt-1 leading-tight text-muted-foreground", metrics.length === 1 ? "text-sm" : "text-[10px]")}>{label}</p>
           </div>
         ))}
       </div>

@@ -92,7 +92,7 @@ const IndustrySection = () => {
                   onClick={() => setActive(i)}
                   className={`flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                     i === active
-                      ? "bg-primary text-primary-foreground elevated-shadow"
+                      ? "gradient-bg text-primary-foreground elevated-shadow"
                       : "bg-background text-muted-foreground hover:bg-muted card-shadow"
                   }`}
                 >
@@ -116,7 +116,7 @@ const IndustrySection = () => {
               className="bg-background rounded-2xl p-6 md:p-8 card-shadow min-w-0 break-words"
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center" aria-hidden="true">
+                <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center" aria-hidden="true">
                   <s.icon className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">{s.label}</h3>
@@ -132,11 +132,11 @@ const IndustrySection = () => {
                   <p className="text-muted-foreground leading-relaxed">{s.solution}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-primary mb-2">Key Advantages</h4>
+                  <h4 className="text-sm font-semibold text-accent mb-2">Key Advantages</h4>
                   <ul className="space-y-2">
                     {s.advantages.map((a) => (
                       <li key={a} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 mt-1.5" aria-hidden="true" />
+                        <span className="w-1.5 h-1.5 rounded-full gradient-bg flex-shrink-0 mt-1.5" aria-hidden="true" />
                         {a}
                       </li>
                     ))}

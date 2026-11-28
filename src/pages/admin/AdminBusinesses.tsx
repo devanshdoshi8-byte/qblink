@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
-import GlideSelect from "@/components/reactbits/GlideSelect";
-import { computeActiveAvgWaitMinutes } from "@/lib/queueInactivity";
 import { toast } from "sonner";
-import { Search, Download, Eye, Pause, Play, Trash2, RotateCcw, X } from "lucide-react";
+import { Search, Download, Eye, Pause, Play, Trash2, RotateCcw, X, QrCode, AlertTriangle } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { publicUrl } from "@/lib/publicUrl";
+import { hapticCopy } from "@/lib/haptics";
 import BusinessHealthBarChart from "@/components/health/BusinessHealthBarChart";
 import HealthFactorDetail from "@/components/health/HealthFactorDetail";
 import HealthAIAssistant from "@/components/health/HealthAIAssistant";
 import { Activity } from "lucide-react";
+import { csvCell } from "@/lib/csv";
+import { collectSupabaseErrors, medianWaitMinutes, normalizeCategoryName } from "@/lib/adminAnalytics";
 
 interface BizRow {
   id: string;
@@ -43,6 +46,7 @@ const AdminBusinesses = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("All");
   const [selected, setSelected] = useState<BizRow | null>(null);
+  const [queryErrors, setQueryErrors] = useState<string[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -55,25 +59,38 @@ const AdminBusinesses = () => {
   }, []);
 
   const fetchData = async () => {
-    const { data: bizs } = await supabase.from("businesses").select("id, name, category, owner_id, created_at").order("created_at", { ascending: false });
+    const [bizRes, qRes, vRes] = await Promise.all([
+      supabase.from("businesses").select("id, name, category, owner_id, created_at").order("created_at", { ascending: false }),
+      supabase.from("queues").select("id, business_id, status"),
+      supabase.from("queue_visitors").select("queue_id, status, joined_at, called_at, served_at"),
+    ]);
+
+    const errors = collectSupabaseErrors([
+      { source: "businesses", error: bizRes.error },
+      { source: "queues", error: qRes.error },
+      { source: "queue_visitors", error: vRes.error },
+    ]);
+    setQueryErrors(errors);
+
+    const bizs = bizRes.data;
     if (!bizs) { setRows([]); return; }
-    const { data: queues } = await supabase.from("queues").select("id, business_id, status");
-    const { data: visitors } = await supabase.from("queue_visitors").select("queue_id, status, joined_at, served_at");
+    const queues = qRes.data || [];
+    const visitors = vRes.data || [];
 
     const real: BizRow[] = bizs.map(b => {
-      const bQueues = queues?.filter(q => q.business_id === b.id) || [];
+      const bQueues = queues.filter(q => q.business_id === b.id);
       const qIds = bQueues.map(q => q.id);
-      const bVisitors = visitors?.filter(v => qIds.includes(v.queue_id)) || [];
+      const bVisitors = visitors.filter(v => qIds.includes(v.queue_id));
       const served = bVisitors.filter(v => v.status === "served");
       return {
         id: b.id,
         name: b.name,
-        category: b.category || "Other",
+        category: normalizeCategoryName(b.category),
         ownerId: b.owner_id,
         status: bQueues.some(q => q.status === "active") ? "active" : bQueues.length ? "inactive" : "no-queue",
         queues: bQueues.length,
         served: served.length,
-        avgWait: computeActiveAvgWaitMinutes(served),
+        avgWait: medianWaitMinutes(served),
         createdAt: b.created_at,
         healthScore: null,
         healthBand: null,
@@ -102,7 +119,7 @@ const AdminBusinesses = () => {
     const head = ["Business", "Category", "Status", "Queues", "Served", "Avg Wait (min)", "Created"];
     const headFull = [...head, "Health Score", "Health Band"];
     const csv = [headFull, ...filtered.map(r => [r.name, r.category, r.status, r.queues, r.served, r.avgWait, new Date(r.createdAt).toISOString().slice(0, 10), r.healthScore ?? "", r.healthBand ?? ""])]
-      .map(row => row.map(c => `"${c}"`).join(",")).join("\n");
+      .map(row => row.map(c => csvCell(c)).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     a.download = `qblink-businesses-${new Date().toISOString().slice(0, 10)}.csv`;
@@ -142,30 +159,29 @@ const AdminBusinesses = () => {
         </button>
       </div>
 
+      {queryErrors.length > 0 && (
+        <div className="bg-danger-soft border border-danger/30 rounded-2xl p-4 mb-4 flex items-start justify-between gap-3">
+          <div className="flex items-start gap-2.5 text-sm">
+            <AlertTriangle className="w-4 h-4 text-danger mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">Database query issue: {queryErrors.join(" · ")}</p>
+          </div>
+          <button onClick={fetchData} className="px-3 py-1 rounded-lg bg-card text-xs font-semibold border border-border">Retry</button>
+        </div>
+      )}
+
       <div className="bg-card rounded-2xl p-4 card-shadow mb-4 flex flex-wrap gap-3 items-center">
         <div className="flex-1 min-w-[220px] relative">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by business or category…"
             className="w-full pl-10 pr-4 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
         </div>
-        <GlideSelect
-          size="sm"
-          value={filter}
-          onChange={setFilter}
-          ariaLabel="Filter businesses"
-          menuWidth={170}
-          options={[
-            { value: "All", label: "All" },
-            { value: "active", label: "active" },
-            { value: "inactive", label: "inactive" },
-            { value: "no-queue", label: "no-queue" },
-            { value: "Restaurant", label: "Restaurant" },
-            { value: "Clinic", label: "Clinic" },
-            { value: "Salon", label: "Salon" },
-            { value: "Hospital", label: "Hospital" },
-            { value: "Hotel", label: "Hotel" },
-          ]}
-        />
+        <select value={filter} onChange={e => setFilter(e.target.value)} className="px-3 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+          <option>All</option>
+          <option>active</option><option>inactive</option><option>no-queue</option>
+          {Array.from(new Set(rows.map(r => r.category))).sort().map(c => (
+            <option key={c}>{c}</option>
+          ))}
+        </select>
       </div>
 
       <div className="bg-card rounded-2xl p-5 card-shadow mb-4">
@@ -195,7 +211,7 @@ const AdminBusinesses = () => {
                 <th className="px-4 py-3 text-left hidden sm:table-cell">Served</th>
                 <th className="px-4 py-3 text-left hidden md:table-cell">Avg Wait</th>
                 <th className="px-4 py-3 text-left">Health</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-4 py-3 text-right pr-6">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -217,7 +233,7 @@ const AdminBusinesses = () => {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 pr-6">
                     <div className="flex items-center justify-end gap-1">
                       <IconBtn title="View" onClick={() => setSelected(r)}><Eye className="w-3.5 h-3.5" /></IconBtn>
                       <IconBtn title={r.status === "active" ? "Pause queues" : "Activate queues"} onClick={() => action("toggle", r)}>
@@ -278,6 +294,7 @@ const Detail = ({ biz, onClose }: { biz: BizRow; onClose: () => void }) => {
                 <Stat label="Health band" value={biz.healthBand || "—"} />
               </div>
               <p className="text-xs text-muted-foreground font-mono">Owner ID: {biz.ownerId}</p>
+              <BusinessQRCodes businessId={biz.id} />
             </>
           ) : (
             <div className="grid lg:grid-cols-2 gap-5">
@@ -287,6 +304,69 @@ const Detail = ({ biz, onClose }: { biz: BizRow; onClose: () => void }) => {
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+interface QueueRow {
+  id: string;
+  name: string;
+  status: string;
+  parent_queue_id: string | null;
+  table_size: number | null;
+}
+
+const BusinessQRCodes = ({ businessId }: { businessId: string }) => {
+  const [queues, setQueues] = useState<QueueRow[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("queues")
+      .select("id, name, status, parent_queue_id, table_size")
+      .eq("business_id", businessId)
+      .order("created_at", { ascending: true })
+      .then(({ data }) => {
+        setQueues((data as QueueRow[]) ?? []);
+        setLoaded(true);
+      });
+  }, [businessId]);
+
+  if (!loaded) return <p className="text-xs text-muted-foreground mt-4">Loading QR codes…</p>;
+
+  // Show customer-facing queues only: top-level counters (restaurant children share the parent's QR).
+  const visible = queues.filter(q => !q.parent_queue_id);
+
+  return (
+    <div className="mt-5 border-t border-border pt-4">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2 mb-1">
+        <QrCode className="w-4 h-4 text-primary" /> Customer Join QR Codes
+      </h3>
+      <p className="text-xs text-muted-foreground mb-3">Customers scan these to join. Same codes as in the business dashboard.</p>
+      {visible.length === 0 ? (
+        <p className="text-xs text-muted-foreground">This business has no queues yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {visible.map(q => {
+            const joinUrl = publicUrl(`/join/${q.id}`);
+            return (
+              <div key={q.id} className="bg-muted/40 rounded-xl p-4 flex flex-col items-center gap-2">
+                <p className="text-sm font-semibold text-foreground">{q.name}</p>
+                <div className="bg-white p-3 rounded-xl">
+                  <QRCodeSVG value={joinUrl} size={140} />
+                </div>
+                <p className="text-[11px] text-muted-foreground break-all text-center">{joinUrl}</p>
+                <button
+                  onClick={() => { hapticCopy(); navigator.clipboard.writeText(joinUrl); toast.success("Link copied!"); }}
+                  className="gradient-bg text-primary-foreground px-4 py-2 rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity"
+                >
+                  Copy Link
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

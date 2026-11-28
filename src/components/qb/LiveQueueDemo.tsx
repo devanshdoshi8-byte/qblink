@@ -1,19 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, RotateCcw, FastForward, CheckCircle2, Bell, Activity } from "lucide-react";
-import BellToggle from "@/components/reactbits/BellToggle";
-import Counter from "@/components/reactbits/Counter";
-import TearTicket from "@/components/reactbits/TearTicket";
-import SlideCommit from "@/components/reactbits/SlideCommit";
-import BorderGlow from "@/components/reactbits/BorderGlow";
-import { useOptionalTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/hooks/useTheme";
 
 const TOTAL_AHEAD = 6;
 const TICK_MS = 2800;
 
 export const LiveQueueDemo = () => {
-  const themeCtx = useOptionalTheme();
-  const isDark = themeCtx?.theme === "dark";
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [position, setPosition] = useState(TOTAL_AHEAD);
   const [phase, setPhase] = useState<"waiting" | "almost" | "called" | "done">("waiting");
   const [paused, setPaused] = useState(false);
@@ -110,14 +105,7 @@ export const LiveQueueDemo = () => {
               </p>
 
               {/* Interactive Director Controls */}
-              <BorderGlow
-                backgroundColor={isDark ? "#0e1e34" : "#ffffff"}
-                surfaceTheme={isDark ? "dark" : "light"}
-                borderRadius={16}
-                glowColor={isDark ? "180 54 54" : "195 78 28"}
-                colors={isDark ? ["#51c2c2", "#10637f", "#f4f2eb"] : ["#10637f", "#51c2c2", "#0e1e34"]}
-                className="mt-8 max-w-md"
-              >
+              <div className="mt-8 max-w-md rounded-2xl border border-primary/25 bg-card shadow-sm">
                 <div className="p-4">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center justify-between">
                   <span>Simulator Controls</span>
@@ -163,74 +151,58 @@ export const LiveQueueDemo = () => {
                       "Customer turn alert"
                     )}
                   </span>
-                  <BellToggle
-                    offLabel="Notify me"
-                    onLabel="Turn alert active"
-                    color="#f4f2eb"
-                    background="#0e1e34"
-                    onColor="#ecfdf5"
-                    onBackground="#059669"
-                    size="sm"
-                    radius={22}
-                    ringAmplitude={17}
-                    ringPasses={5}
-                    ringDecay={1}
-                    ringDuration={820}
-                    ringPivot={16}
-                    crossfadeMs={200}
-                    revealBounce={0}
-                    count={phase === "almost" || phase === "called" ? 1 : 0}
-                    badge
-                    badgeColor="#c93a3a"
-                    waves
-                    clapper={false}
-                    pressed={notifyEnabled}
-                    onChange={setNotifyEnabled}
-                  />
+                  <button
+                    type="button"
+                    aria-label={notifyEnabled ? "Disable turn alert" : "Enable turn alert"}
+                    aria-pressed={notifyEnabled}
+                    onClick={() => setNotifyEnabled((enabled) => !enabled)}
+                    className={`inline-flex min-h-[40px] items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition-colors ${
+                      notifyEnabled
+                        ? "border-success/30 bg-success/10 text-success"
+                        : "border-border bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Bell className="h-3.5 w-3.5" />
+                    {notifyEnabled ? "On" : "Off"}
+                  </button>
                 </div>
                 </div>
-              </BorderGlow>
+              </div>
 
               {/* Tactile Perforated TearTicket */}
               <div ref={ticketBoxRef} className="mt-6 w-full max-w-md overflow-visible">
                 <div className="text-[11px] font-mono-caps text-muted-foreground mb-5">
                   {ticketTorn ? "Stub torn · Ticket #A-42 active on phone" : "Pull perforated stub to draw ticket"}
                 </div>
-                <TearTicket
+                <button
                   key={ticketKey}
-                  width={ticketWidth}
-                  height={118}
-                  stubSize={Math.round(ticketWidth * 0.27)}
-                  radius={14}
-                  background={isDark ? "#1a3552" : "#f4f2eb"}
-                  stubBackground={isDark ? "#13273d" : "#eae5d9"}
-                  color={isDark ? "#f4f2eb" : "#0e1e34"}
-                  border
-                  borderColor={isDark ? "rgba(81,194,194,0.28)" : "rgba(14,30,52,0.16)"}
-                  onTear={() => {
+                  type="button"
+                  aria-label="Activate queue ticket A-42"
+                  onClick={() => {
                     setTicketTorn(true);
                     setNotifyEnabled(true);
                   }}
-                  ariaLabel="Tear queue ticket A-42"
-                  stub={
-                    <div className="flex flex-col items-center justify-center h-full text-center px-1">
-                      <span className="text-[9px] font-mono uppercase tracking-widest opacity-60">Pull</span>
-                      <span className="font-display text-lg font-extrabold tracking-tight">#{tokenNum}</span>
-                    </div>
-                  }
+                  style={{ width: ticketWidth, minHeight: 118 }}
+                  className={`flex items-stretch overflow-hidden rounded-2xl border border-dashed text-left transition-transform active:scale-[0.99] ${
+                    isDark ? "border-primary/30 bg-secondary text-secondary-foreground" : "border-border bg-card text-card-foreground"
+                  }`}
                 >
-                  <div className="flex items-center justify-between h-full px-5 py-3">
-                    <div>
+                  <div className="flex min-w-0 flex-1 items-center justify-between gap-3 px-5 py-3">
+                    <div className="min-w-0">
                       <div className="text-[10px] font-mono uppercase tracking-widest opacity-60">Qblink Paper Pass</div>
-                      <div className="font-display text-2xl font-black tracking-tight mt-0.5">#{tokenNum}</div>
-                      <div className="text-[11px] opacity-75">City Life Health · Counter 2</div>
+                      <div className="mt-0.5 font-display text-2xl font-black">#{tokenNum}</div>
+                      <div className="truncate text-[11px] opacity-75">City Life Health · Counter 2</div>
                     </div>
-                    <div className="text-right">
+                    <div className="shrink-0 text-right">
                       <div className="text-[10px] font-mono uppercase opacity-60">Ahead</div>
                       <div className="font-display text-xl font-bold tabular-nums">{position}</div>
                     </div>
                   </div>
-                </TearTicket>
+                  <div className="flex w-[27%] shrink-0 flex-col items-center justify-center border-l border-dashed border-current/20 px-2 text-center">
+                    <span className="text-[9px] font-mono uppercase tracking-widest opacity-60">Tap</span>
+                    <span className="font-display text-lg font-extrabold">#{tokenNum}</span>
+                  </div>
+                </button>
               </div>
 
               <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
@@ -257,7 +229,7 @@ export const LiveQueueDemo = () => {
               {/* Phone Frame */}
               <div className="relative rounded-[3rem] border-[7px] border-foreground/15 bg-card shadow-xl overflow-hidden">
                 {/* Phone Speaker Notch */}
-                <div className="h-8 bg-card flex items-center justify-between px-7 pt-1">
+                <div className="h-8 bg-card flex items-center justify-between px-5 sm:px-7 pt-1">
                   <span className="text-[0.6875rem] font-semibold text-foreground/80 tabular-nums">9:41</span>
                   <div className="w-20 h-4 bg-foreground/10 rounded-full flex items-center justify-center">
                     <span className="w-2.5 h-2.5 rounded-full bg-foreground/20" />
@@ -268,7 +240,7 @@ export const LiveQueueDemo = () => {
                 </div>
 
                 {/* App Content */}
-                <div className="p-6 min-h-[460px] flex flex-col justify-between relative overflow-hidden">
+                <div className="p-4 sm:p-6 min-h-[440px] sm:min-h-[460px] flex flex-col justify-between relative overflow-hidden">
                   {/* Top Bar / Brand header */}
                   <div className="flex items-center justify-between pb-4 border-b border-border/60">
                     <div className="flex items-center gap-3">
@@ -310,30 +282,24 @@ export const LiveQueueDemo = () => {
                         </div>
 
                         {phase === "done" ? (
-                          <div
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-success text-white text-xs font-bold shadow-md shadow-success/30"
-                          >
+                          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-success text-success-foreground text-xs font-bold shadow-md shadow-success/30">
                             <Bell className="w-3.5 h-3.5" /> Check-in Confirmed
                           </div>
                         ) : (
                           <div className="flex justify-center pt-1">
-                            <SlideCommit
-                              label="Slide to confirm arrival"
-                              doneLabel="Checked in"
-                              errorLabel="Try again"
-                              width={236}
-                              height={44}
-                              radius={22}
-                              trackColor="#0e1e34"
-                              handleColor="#51c2c2"
-                              successColor="#1a7a53"
-                              holdMs={0}
-                              onConfirm={() => new Promise((resolve) => setTimeout(resolve, 350))}
-                              onDone={() => {
+                            <button
+                              type="button"
+                              onClick={() => {
                                 if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
-                                confirmTimerRef.current = setTimeout(() => setPhase("done"), 700);
+                                confirmTimerRef.current = setTimeout(() => {
+                                  setPhase("done");
+                                  confirmTimerRef.current = null;
+                                }, 700);
                               }}
-                            />
+                              className="min-h-[44px] rounded-full bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground transition-transform active:scale-[0.98]"
+                            >
+                              Slide to confirm arrival
+                            </button>
                           </div>
                         )}
                       </div>
@@ -376,16 +342,8 @@ export const LiveQueueDemo = () => {
                             <span className="text-[10px] font-mono-caps text-muted-foreground uppercase tracking-widest font-semibold">
                               Position
                             </span>
-                            <div className="font-display font-extrabold tracking-tighter my-0.5">
-                              <Counter
-                                key={`pos-${ticketKey}`}
-                                value={position + 1}
-                                fontSize="3.25rem"
-                                fontWeight={800}
-                                textColor="hsl(var(--foreground))"
-                                duration={480}
-                                bounce={0.22}
-                              />
+                            <div className="font-display text-5xl font-extrabold tracking-tighter my-0.5 tabular-nums">
+                              {position + 1}
                             </div>
                             <span className="text-[11px] text-muted-foreground font-medium">
                               {position === 1 ? "1 person ahead" : `${position} people ahead`}

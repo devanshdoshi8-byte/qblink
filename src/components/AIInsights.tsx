@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sparkles, RefreshCw, Loader2, AlertTriangle, TrendingUp, Lightbulb } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isStandaloneMode } from "@/integrations/supabase/client";
 
 type Insight = "queue" | "analytics" | "pickup" | "customer_queue" | "customer_pickup";
 
@@ -36,6 +36,15 @@ export default function AIInsights({ insight, mode, businessId, payload, title, 
   const run = async () => {
     setLoading(true);
     setError(null);
+    if (isStandaloneMode) {
+      setData({
+        summary: "OPD consultation flow is running at an optimal pace (~12 min/patient) with 98% patient retention.",
+        suggestions: ["Maintain steady consultation interval", "Token #15 Rahul Sharma is queued up"],
+        urgency: "low",
+      });
+      setLoading(false);
+      return;
+    }
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/qblink-ai`;
       const { data: sessionData } = await supabase.auth.getSession();
@@ -75,7 +84,7 @@ export default function AIInsights({ insight, mode, businessId, payload, title, 
   return (
     <div className={`rounded-2xl border ${urgencyColor} p-4 ${className ?? ""}`}>
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+        <div className="w-7 h-7 rounded-lg gradient-bg flex items-center justify-center">
           <Icon className="w-3.5 h-3.5 text-primary-foreground" />
         </div>
         <p className="text-sm font-bold text-foreground flex-1">{title ?? TITLES[insight]}</p>

@@ -8,7 +8,7 @@ const STORAGE_KEY = "qb-admin-onboarding-dismissed";
 const items = [
   {
     label: "Open Discovery Control",
-    description: "Click the highlighted Discovery link in the left sidebar.",
+    description: "Click the highlighted Discovery link in the navigation menu.",
     icon: Compass,
     link: "/admin/discovery",
   },

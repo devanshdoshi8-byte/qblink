@@ -1,18 +1,17 @@
 import { Suspense, lazy } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
-import { ThemeInitModal } from "@/components/ThemeInitModal";
 import BackButton from "./components/BackButton";
 import InstallAppPrompt from "./components/InstallAppPrompt";
-import StageDemoSwitcher from "./components/pitch/StageDemoSwitcher";
+import PostAuthRouter from "./components/auth/PostAuthRouter";
+import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index.tsx";
 import JoinQueue from "./pages/JoinQueue.tsx";
-const CustomerJoinEntry = lazy(() => import("./pages/CustomerJoinEntry.tsx"));
 import AdminRoute from "./components/admin/AdminRoute.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -23,6 +22,7 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
 const CustomerSignUp = lazy(() => import("./pages/CustomerSignUp.tsx"));
 const BusinessSignUp = lazy(() => import("./pages/BusinessSignUp.tsx"));
 const CustomerDashboard = lazy(() => import("./pages/CustomerDashboard.tsx"));
+const CustomerProfile = lazy(() => import("./pages/CustomerProfile.tsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const Analytics = lazy(() => import("./pages/Analytics.tsx"));
 const Insights = lazy(() => import("./pages/Insights.tsx"));
@@ -60,10 +60,7 @@ const PwaStatus = lazy(() => import("./pages/PwaStatus.tsx"));
 const CacheDiagnostics = lazy(() => import("./pages/CacheDiagnostics.tsx"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent.tsx"));
 const PitchDemo = lazy(() => import("./pages/PitchDemo.tsx"));
-const RoiCalculatorPage = lazy(() => import("./pages/RoiCalculatorPage.tsx"));
-const ChaosToClarityPage = lazy(() => import("./pages/ChaosToClarityPage.tsx"));
-const IndustryMorphPage = lazy(() => import("./pages/IndustryMorphPage.tsx"));
-const LegalPage = lazy(() => import("./pages/LegalPage.tsx"));
+const AboutUs = lazy(() => import("./pages/AboutUs.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -80,7 +77,7 @@ const GlobalBackButton = () => {
   const { pathname } = useLocation();
   const hidden =
     pathname === "/" ||
-    pathname === "/pitch" ||
+    pathname === "/about" ||
     pathname === "/roi" ||
     pathname === "/calculator" ||
     pathname === "/chaos-to-clarity" ||
@@ -92,11 +89,9 @@ const GlobalBackButton = () => {
     pathname.startsWith("/pickup") ||
     pathname.startsWith("/join") ||
     pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/auth/signin") ||
-    pathname.startsWith("/auth/forgot-password") ||
-    pathname.startsWith("/auth/customer") ||
-    pathname.startsWith("/auth/business") ||
-    pathname.startsWith("/install");
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/install") ||
+    pathname.startsWith("/pitch");
   if (hidden) return null;
   return <BackButton />;
 };
@@ -109,24 +104,26 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <ScrollToTop />
             <GlobalBackButton />
-            <StageDemoSwitcher />
             <InstallAppPrompt />
+            <PostAuthRouter />
           <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/pitch" element={<PitchDemo />} />
-            <Route path="/roi" element={<RoiCalculatorPage />} />
-            <Route path="/calculator" element={<RoiCalculatorPage />} />
-            <Route path="/chaos-to-clarity" element={<ChaosToClarityPage />} />
-            <Route path="/industries" element={<IndustryMorphPage />} />
+            <Route path="/signin" element={<Navigate to="/auth/signin" replace />} />
+            <Route path="/login" element={<Navigate to="/auth/signin" replace />} />
+            <Route path="/tokens" element={<Navigate to="/dashboard/tokens" replace />} />
+            <Route path="/settings" element={<Navigate to="/dashboard/settings" replace />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/auth" element={<RoleSelection />} />
+            <Route path="/auth/signup" element={<Navigate to="/auth" replace />} />
             <Route path="/auth/signin" element={<SignIn />} />
             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
             <Route path="/auth/customer" element={<CustomerSignUp />} />
             <Route path="/auth/business" element={<BusinessSignUp />} />
             <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+            <Route path="/customer-dashboard/profile" element={<CustomerProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/analytics" element={<Analytics />} />
             <Route path="/dashboard/insights" element={<Insights />} />
@@ -136,17 +133,21 @@ const App = () => (
             <Route path="/dashboard/history" element={<QueueHistory />} />
             <Route path="/dashboard/pickup" element={<Pickup />} />
             <Route path="/dashboard/menu" element={<MenuManagement />} />
-            <Route path="/join" element={<CustomerJoinEntry />} />
+            <Route path="/join" element={<Navigate to="/auth/customer" replace />} />
             <Route path="/join/:queueId" element={<JoinQueue />} />
             <Route path="/display/:queueId" element={<PublicDisplay />} />
             <Route path="/pickup/:businessId" element={<PickupOrder />} />
             <Route path="/pickup/track/:orderId" element={<PickupTrack />} />
             <Route path="/affiliate" element={<AffiliatePage />} />
-            <Route path="/privacy" element={<LegalPage type="privacy" />} />
-            <Route path="/terms" element={<LegalPage type="terms" />} />
             <Route path="/install" element={<Install />} />
             <Route path="/pwa-status" element={<PwaStatus />} />
             <Route path="/cache-diagnostics" element={<CacheDiagnostics />} />
+            <Route path="/pitch" element={<PitchDemo />} />
+            <Route path="/roi" element={<Navigate to="/#roi" replace />} />
+            <Route path="/calculator" element={<Navigate to="/#roi" replace />} />
+            <Route path="/chaos-to-clarity" element={<Navigate to="/#simulation" replace />} />
+            <Route path="/industries" element={<Navigate to="/#simulation" replace />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="/admin" element={<AdminRoute><AdminOverview /></AdminRoute>} />
             <Route path="/admin/businesses" element={<AdminRoute><AdminBusinesses /></AdminRoute>} />

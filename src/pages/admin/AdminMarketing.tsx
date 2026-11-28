@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import GlideSelect from "@/components/reactbits/GlideSelect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tag, Plus, Trash2 } from "lucide-react";
@@ -47,7 +46,7 @@ const AdminMarketing = () => {
               <Select label="Applies to" value={form.applies_to} options={["all", "business", "customer"]} onChange={(v) => setForm({ ...form, applies_to: v })} />
             </div>
             <Input type="datetime-local" label="Expires" value={form.expires_at} onChange={(v) => setForm({ ...form, expires_at: v })} />
-            <button onClick={create} className="bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create coupon</button>
+            <button onClick={create} className="gradient-bg text-primary-foreground py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Create coupon</button>
           </div>
         </div>
         <div className="bg-card rounded-2xl p-6 card-shadow">
@@ -86,15 +85,7 @@ const Input = ({ label, value, onChange, type = "text" }: any) => (
 );
 const Select = ({ label, value, options, onChange }: any) => (
   <div><label className="text-xs uppercase font-bold text-muted-foreground mb-1.5 block">{label}</label>
-    <GlideSelect
-      value={value}
-      onChange={onChange}
-      ariaLabel={label}
-      menuWidth="100%"
-      className="w-full"
-      options={options.map((o: string) => ({ value: o, label: o }))}
-    />
-  </div>
+    <select value={value} onChange={(e) => onChange(e.target.value)} className="input">{options.map((o: string) => <option key={o} value={o}>{o}</option>)}</select></div>
 );
 
 export default AdminMarketing;

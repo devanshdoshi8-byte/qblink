@@ -96,7 +96,7 @@ export default function TimeCalculator() {
                 aria-valuenow={index}
                 aria-label="Daily waiting time in minutes"
                 tabIndex={0}
-                className="relative h-2.5 bg-muted rounded-full cursor-pointer select-none touch-none"
+                className="relative h-2.5 bg-secondary rounded-full cursor-pointer select-none touch-none"
                 onPointerDown={onPointerDown}
                 onKeyDown={(e) => {
                   if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
@@ -110,7 +110,7 @@ export default function TimeCalculator() {
               >
                 {/* Fill */}
                 <div
-                  className="absolute top-0 left-0 h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
+                  className="absolute top-0 left-0 h-full rounded-full gradient-bg transition-[width] duration-300 ease-out"
                   style={{ width: `${pct}%` }}
                 />
 
@@ -165,7 +165,7 @@ export default function TimeCalculator() {
                 You lose approximately
               </p>
               <div className="flex items-baseline justify-center gap-2">
-                <span className="text-6xl sm:text-7xl font-extrabold text-primary tabular-nums leading-none">
+                <span className="text-6xl sm:text-7xl font-extrabold gradient-text tabular-nums leading-none">
                   {animatedHours}
                 </span>
                 <span className="text-xl sm:text-2xl font-bold text-foreground">

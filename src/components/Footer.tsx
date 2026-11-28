@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
 import logo from "@/assets/qblink-logo.png";
 
@@ -18,11 +19,11 @@ const Footer = () => (
         <div>
           <h4 className="font-semibold text-background mb-4 text-sm">Quick Links</h4>
           <ul className="space-y-2.5 text-sm">
-            <li><a href="#how-it-works" className="hover:text-background transition-colors">How It Works</a></li>
-            <li><a href="#industries" className="hover:text-background transition-colors">Industries</a></li>
-            <li><a href="#features" className="hover:text-background transition-colors">Features</a></li>
-            <li><a href="#affiliate" className="hover:text-background transition-colors">Affiliate Program</a></li>
-            <li><a href="#about" className="hover:text-background transition-colors">About</a></li>
+            <li><Link to="/about" className="hover:text-background transition-colors">About &amp; Founders</Link></li>
+            <li><Link to="/pitch" className="hover:text-background transition-colors">Pitch Demo Simulator</Link></li>
+            <li><a href="/#industries" className="hover:text-background transition-colors">Industries</a></li>
+            <li><a href="/#roi" className="hover:text-background transition-colors">ROI Calculator</a></li>
+            <li><Link to="/affiliate" className="hover:text-background transition-colors">Affiliate Program</Link></li>
           </ul>
         </div>
 

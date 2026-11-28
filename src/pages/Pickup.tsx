@@ -87,7 +87,7 @@ const PickupBoard = ({ businessId, businessName }: { businessId: string; busines
 
       <div className="grid grid-cols-3 gap-3 mb-6">
         <Stat label="Active" value={todayCount} />
-        <Stat label="Cooking" value={cookingCount} />
+        <Stat label="Preparing" value={cookingCount} />
         <Stat label="Ready" value={readyCount} />
       </div>
 
@@ -126,7 +126,7 @@ const PickupBoard = ({ businessId, businessName }: { businessId: string; busines
                           {o.items?.map(i => `${i.qty}× ${i.name}`).join(", ")}
                         </p>
                         {o.notes && <p className="text-[10px] text-muted-foreground italic mb-2">"{o.notes}"</p>}
-                        <button onClick={() => advance(o, col.next)} className="w-full bg-primary text-primary-foreground rounded-lg py-2 text-xs font-semibold flex items-center justify-center gap-1">
+                        <button onClick={() => advance(o, col.next)} className="w-full gradient-bg text-primary-foreground rounded-lg py-2 text-xs font-semibold flex items-center justify-center gap-1">
                           {col.nextLabel} <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>

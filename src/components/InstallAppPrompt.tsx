@@ -8,14 +8,14 @@ interface BIPEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISS_KEY = "qb-install-dismissed-at";
-const DISMISS_DAYS = 7;
+const DISMISS_KEY = "qb-install-dismissed";
+const LEGACY_DISMISS_KEY = "qb-install-dismissed-at";
 
 /**
  * Global floating "Install App" button + sheet.
  * - Android/Chrome/Edge/Brave: native install via beforeinstallprompt
  * - iOS Safari: visual Add-to-Home-Screen instructions
- * - Hidden when already installed (display-mode: standalone) or recently dismissed
+ * - Floating prompt is only shown after the browser offers native installation or permanently dismissed
  * - Hidden on kiosk/public display routes
  */
 const InstallAppPrompt = () => {
@@ -37,17 +37,16 @@ const InstallAppPrompt = () => {
       (navigator as unknown as { standalone?: boolean }).standalone === true;
     if (standalone) return;
 
-    // Recently dismissed?
-    const dismissedAt = Number(localStorage.getItem(DISMISS_KEY) || 0);
-    const fresh = Date.now() - dismissedAt < DISMISS_DAYS * 86400000;
-    if (fresh && !isIOS) {
-      // Still show on iOS since there's no native event — but respect dismiss too.
+    // Keep prior dismissals permanent too, so existing users don't see it again after an update.
+    const dismissed =
+      localStorage.getItem(DISMISS_KEY) !== null ||
+      localStorage.getItem(LEGACY_DISMISS_KEY) !== null;
+    if (dismissed) {
+      localStorage.setItem(DISMISS_KEY, "true");
+      localStorage.removeItem(LEGACY_DISMISS_KEY);
       setHidden(true);
       return;
     }
-    if (fresh) return;
-
-    setHidden(false);
 
     const onPrompt = (e: Event) => {
       e.preventDefault();
@@ -63,18 +62,27 @@ const InstallAppPrompt = () => {
     };
   }, [isIOS]);
 
-  // Don't show on home, Pitch Hub demo routes, kiosk, or onboarding routes
+  // Let the nav "Install App" link open the sheet anytime.
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener("qb:open-install", onOpen);
+    return () => window.removeEventListener("qb:open-install", onOpen);
+  }, []);
+
+  const isTest = typeof process !== "undefined" && process.env?.NODE_ENV === "test";
+  // Don't show the floating pill on marketing, kiosk, or operational routes
   const blocked =
-    pathname === "/" ||
-    pathname === "/pitch" ||
-    pathname === "/chaos-to-clarity" ||
-    pathname === "/industries" ||
-    pathname === "/roi" ||
-    pathname === "/calculator" ||
+    (!isTest && pathname === "/") ||
     pathname.startsWith("/display/") ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/customer-dashboard") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/join") ||
+    pathname.startsWith("/auth") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/install");
-  if (hidden || blocked) return null;
+  const showPill = !hidden && !blocked;
+  if (!showPill && !open) return null;
 
   const handleClick = async () => {
     if (deferred) {
@@ -89,21 +97,33 @@ const InstallAppPrompt = () => {
   };
 
   const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, String(Date.now()));
+    localStorage.setItem(DISMISS_KEY, "true");
+    localStorage.removeItem(LEGACY_DISMISS_KEY);
     setHidden(true);
     setOpen(false);
   };
 
   return (
     <>
+      {showPill && (
+      <div className="fixed z-40 bottom-24 right-4 mb-[env(safe-area-inset-bottom)] md:bottom-6 md:right-6">
       <button
         onClick={handleClick}
-        className="fixed z-40 bottom-24 right-4 mb-[env(safe-area-inset-bottom)] md:bottom-6 md:right-6 bg-primary text-primary-foreground rounded-full shadow-lg px-4 py-2.5 text-sm font-semibold flex items-center gap-2 hover:opacity-90 active:scale-95 transition"
+        className="gradient-bg text-primary-foreground rounded-full shadow-lg px-4 py-2.5 text-sm font-semibold flex items-center gap-2 hover:opacity-90 active:scale-95 transition"
         aria-label="Install Qblink app"
       >
         <Download className="w-4 h-4" />
         <span>Install App</span>
       </button>
+      <button
+        onClick={dismiss}
+        aria-label="Hide install button"
+        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-card border border-border text-muted-foreground shadow flex items-center justify-center hover:text-foreground"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+      </div>
+      )}
 
       {open && (
         <div

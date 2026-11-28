@@ -1,20 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
-    <meta name="supported-color-schemes" content="light" />
-    <title>Qblink — Customer Flow Intelligence Platform</title>
-    <meta name="description" content="Qblink is a hardware-free customer flow platform. Reduce crowding, uncertainty, and interruptions with remote waiting, live flow visibility, analytics, and AI recommendations — no app, no hardware.">
-    <meta name="author" content="Qblink" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="supported-color-schemes" content="dark light" />
 
-    <meta name="google-site-verification" content="Ln1yK0WZe5zzt6i_xi7oM_tI82TWGbhl3CSJVRk4H88" />
+    <!-- Primary Search & Entity Title -->
+    <title>QBlink — Hardware-Free Virtual Queue Management</title>
+    <meta name="title" content="QBlink — Hardware-Free Virtual Queue Management" />
+    <meta name="description" content="QBlink is a hardware-free virtual queue management platform incubated at Inventure · IIT Gandhinagar. Eliminate physical waiting rooms with QR code joins, live wait tracking, and instant turn alerts — zero kiosks or app downloads." />
+    <meta name="keywords" content="QBlink, Qblink, Q-blink, Qblink Tech, qblink.tech, Devansh, Devansh Doshi, Mithil, Aarav, Vihan Patange, Inventure IIT Gandhinagar, customer flow intelligence, virtual queue management, queue system, waitlist management, token system, wait time tracker, clinic queue system, restaurant waitlist, digital queue system" />
+    <meta name="author" content="Devansh (Founder & Creator), Mithil, Aarav, Vihan Patange — Qblink" />
+    <meta name="publisher" content="Qblink Technologies" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.placename" content="India" />
+    <meta name="language" content="English" />
+    <meta name="application-name" content="Qblink" />
+    <meta name="rating" content="General" />
+    <meta name="revisit-after" content="2 days" />
+
+    <link rel="canonical" href="https://qblink.tech/" />
+    <link rel="alternate" hreflang="en" href="https://qblink.tech/" />
+    <link rel="alternate" hreflang="x-default" href="https://qblink.tech/" />
+
+    <meta name="google-site-verification" content="nQI99cIjTxIt5z3oX4E9dJKH6DQ7jwdizTYQ9kBAGtw" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet" />
-    <meta name="theme-color" content="#10637f" />
+    <meta name="theme-color" content="#0099ff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -24,36 +42,337 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-    
     <script>
-      // Pre-hydration theme setter — prevents flash of wrong theme on load.
+      // Pre-hydration theme setter — defaults to dark mode without flash.
       (function () {
         try {
           var stored = localStorage.getItem("qblink-theme");
           if (stored === "light") {
             document.documentElement.classList.remove("dark");
+            document.documentElement.style.colorScheme = "light";
           } else {
             document.documentElement.classList.add("dark");
+            document.documentElement.style.colorScheme = "dark";
           }
         } catch (e) {}
       })();
     </script>
 
-    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:site_name" content="Qblink" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Qblink — Customer Flow Intelligence Platform">
-  <meta name="twitter:title" content="Qblink — Customer Flow Intelligence Platform">
-  <meta property="og:description" content="Hardware-free customer flow platform for walk-in businesses. Remote waiting, live flow visibility, analytics, and AI recommendations — no app required.">
-  <meta name="twitter:description" content="Hardware-free customer flow platform for walk-in businesses. Remote waiting, live flow visibility, analytics, and AI recommendations — no app required.">
-  <meta property="og:image" content="https://qblink-real.lovable.app/og-image.png">
-  <meta property="og:image:width" content="1216">
-  <meta property="og:image:height" content="640">
-  <meta name="twitter:image" content="https://qblink-real.lovable.app/og-image.png">
-  <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:url" content="https://qblink.tech/" />
+    <meta property="og:title" content="QBlink — Hardware-Free Virtual Queue Management" />
+    <meta property="og:description" content="Hardware-free virtual queue management incubated at Inventure · IIT Gandhinagar. Remote waiting, live flow visibility, and turn alerts without kiosks or app downloads." />
+    <meta property="og:image" content="https://qblink.tech/og-image.png" />
+    <meta property="og:image:secure_url" content="https://qblink.tech/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1216" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content="QBlink — Hardware-Free Virtual Queue Management" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="en_IN" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@qblinktech" />
+    <meta name="twitter:creator" content="@qblinktech" />
+    <meta name="twitter:title" content="QBlink — Hardware-Free Virtual Queue Management" />
+    <meta name="twitter:description" content="Hardware-free virtual queue management incubated at Inventure · IIT Gandhinagar. Remote waiting and live turn alerts without kiosks or app downloads." />
+    <meta name="twitter:image" content="https://qblink.tech/og-image.png" />
+    <meta name="twitter:image:alt" content="QBlink — Hardware-Free Virtual Queue Management" />
+
+    <!-- Knowledge Graph Entity Schema (JSON-LD) for Search Engines & AI Crawlers -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://qblink.tech/#organization",
+          "name": "Qblink",
+          "alternateName": ["QBlink", "Q-blink", "Qblink Tech", "Qblink Technologies", "qblink.tech"],
+          "url": "https://qblink.tech",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://qblink.tech/#logo",
+            "url": "https://qblink.tech/icon-512.png",
+            "caption": "Qblink Logo"
+          },
+          "image": "https://qblink.tech/og-image.png",
+          "description": "QBlink is a hardware-free virtual queue management and customer flow intelligence platform that eliminates physical waiting rooms for clinics, restaurants, and salons. Incubated at Inventure, IIT Gandhinagar.",
+          "slogan": "The line still exists. Nobody has to stand in it.",
+          "foundingDate": "2025",
+          "foundingLocation": {
+            "@type": "Place",
+            "name": "India"
+          },
+          "founder": {
+            "@id": "https://qblink.tech/#founder-devansh"
+          },
+          "founders": [
+            {
+              "@id": "https://qblink.tech/#founder-devansh"
+            },
+            {
+              "@id": "https://qblink.tech/#cofounder-mithil"
+            },
+            {
+              "@id": "https://qblink.tech/#cofounder-aarav"
+            },
+            {
+              "@id": "https://qblink.tech/#cofounder-vihan"
+            }
+          ],
+          "employee": [
+            {
+              "@id": "https://qblink.tech/#founder-devansh"
+            },
+            {
+              "@id": "https://qblink.tech/#cofounder-mithil"
+            },
+            {
+              "@id": "https://qblink.tech/#cofounder-aarav"
+            },
+            {
+              "@id": "https://qblink.tech/#cofounder-vihan"
+            }
+          ],
+          "sponsor": {
+            "@type": "Organization",
+            "name": "Inventure, IIT Gandhinagar",
+            "url": "https://iitgn.ac.in"
+          },
+          "award": "Incubated at Inventure, IIT Gandhinagar",
+          "knowsAbout": [
+            "Customer Flow Intelligence",
+            "Virtual Queue Management",
+            "Hardware-Free Waiting Lists",
+            "Real-Time Wait Tracking",
+            "Predictive Wait Time Analytics",
+            "Healthcare Clinic Queue Systems",
+            "Restaurant & Cafe Waitlists",
+            "Salon & Spa Flow Management"
+          ],
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "telephone": "+91-9372090507",
+              "contactType": "customer service",
+              "email": "teamqblink@gmail.com",
+              "areaServed": "IN",
+              "availableLanguage": ["English", "Hindi"]
+            }
+          ],
+          "sameAs": [
+            "https://qblink.tech",
+            "https://www.linkedin.com/company/qblink",
+            "https://github.com/devanshdoshi8-byte/qblink"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://qblink.tech/#founder-devansh",
+          "name": "Devansh",
+          "alternateName": "Devansh Doshi",
+          "jobTitle": "Founder & Creator",
+          "description": "Devansh started Qblink to eliminate chaotic waiting lines with a browser-native, hardware-free customer flow intelligence platform. He leads overall product direction, company vision, and core system engineering.",
+          "worksFor": {
+            "@id": "https://qblink.tech/#organization"
+          },
+          "email": "mailto:devanshdoshi8@gmail.com",
+          "telephone": "+91-9372090507",
+          "knowsAbout": [
+            "Customer Flow Intelligence",
+            "Virtual Queue Management",
+            "Hardware-Free Queuing Systems",
+            "Real-Time Systems",
+            "System Architecture"
+          ],
+          "sameAs": [
+            "mailto:devanshdoshi8@gmail.com"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://qblink.tech/#cofounder-mithil",
+          "name": "Mithil",
+          "jobTitle": "Co-founder",
+          "description": "Co-founder at Qblink. Joined Devansh to scale business counter operations, merchant stability, and multi-location deployment across clinics, salons, and food businesses.",
+          "worksFor": {
+            "@id": "https://qblink.tech/#organization"
+          },
+          "knowsAbout": [
+            "Business Operations",
+            "Merchant Onboarding",
+            "Customer Success",
+            "Queue Operations"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://qblink.tech/#cofounder-aarav",
+          "name": "Aarav",
+          "jobTitle": "Co-founder",
+          "description": "Co-founder at Qblink. Joined Devansh to architect real-time queue synchronization, sub-second WebSocket signals, and fluid responsive smartphone experiences.",
+          "worksFor": {
+            "@id": "https://qblink.tech/#organization"
+          },
+          "knowsAbout": [
+            "Real-Time Architecture",
+            "WebSocket Systems",
+            "Mobile Queue UX",
+            "Frontend Performance"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://qblink.tech/#cofounder-vihan",
+          "name": "Vihan Patange",
+          "jobTitle": "Co-founder",
+          "description": "Co-founder at Qblink. Joined Devansh to develop predictive wait-time models, customer flow analytics, and automated peak-hour intelligence algorithms.",
+          "worksFor": {
+            "@id": "https://qblink.tech/#organization"
+          },
+          "knowsAbout": [
+            "Predictive Wait-Time Algorithms",
+            "Customer Flow Analytics",
+            "Queue Throughput Modeling",
+            "Peak-Hour Forecasting"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://qblink.tech/#website",
+          "url": "https://qblink.tech",
+          "name": "Qblink",
+          "alternateName": ["QBlink", "Qblink Tech"],
+          "publisher": {
+            "@id": "https://qblink.tech/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://qblink.tech/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://qblink.tech/#software",
+          "name": "Qblink",
+          "alternateName": ["QBlink", "Qblink Flow Intelligence"],
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "All, Web, iOS, Android (Hardware-free browser-native)",
+          "description": "Hardware-free customer flow intelligence platform for walk-in businesses. Remote waiting, live flow visibility, analytics, and AI recommendations. Incubated at Inventure, IIT Gandhinagar.",
+          "offers": {
+            "@type": "Offer",
+            "price": "499",
+            "priceCurrency": "INR",
+            "description": "1 month free trial, then ₹499/month self-sustainable social initiative incubated at Inventure, IIT Gandhinagar."
+          },
+          "author": {
+            "@id": "https://qblink.tech/#organization"
+          },
+          "creator": {
+            "@id": "https://qblink.tech/#founder-devansh"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://qblink.tech/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Who founded Qblink and who are the founders?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Qblink was started by Devansh (Founder & Creator), who conceived the hardware-free queue platform to eliminate physical waiting chaos. He was subsequently joined by co-founders Mithil, Aarav, and Vihan Patange to scale the customer flow intelligence technology."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Who started QBlink?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Devansh started Qblink to banish physical waiting lines and crowding with a browser-native customer flow intelligence platform. He was subsequently joined by co-founders Mithil, Aarav, and Vihan Patange."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What are Qblink's key achievements and recognition?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Qblink is incubated at Inventure, IIT Gandhinagar as an innovative customer flow intelligence platform. Qblink eliminates proprietary hardware entirely, running browser-native live queues across clinics, restaurants, salons, and walk-in businesses with real-time wait tracking and AI recommendations."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is QBlink (Qblink)?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Qblink (often searched as QBlink or Q-blink) is a hardware-free customer flow intelligence platform that lets customers join queues via QR code, wait remotely from anywhere, and receive live turn alerts on their phone without installing an app."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do customers need to download an app to use Qblink?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Customers simply scan a QR code or open a link in their smartphone browser. No app store download or sign-up is required."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do businesses need special hardware to run Qblink?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Not at all. Qblink runs 100% in any web browser on existing phones, tablets, or computers, replacing expensive ₹50,000+ hardware kiosks and paper printers."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+        <h1>QBlink — Hardware-Free Virtual Queue Management</h1>
+        <p>The line still exists. Nobody has to stand in it. Browser-native QR queue tokens, live turn alerts, 1-month free trial, then ₹499/month. Incubated at Inventure · IIT Gandhinagar.</p>
+      </div>
+    </div>
+    <noscript>
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:2.5rem 1.5rem;max-width:860px;margin:0 auto;line-height:1.65;color:#0f172a;">
+        <header style="margin-bottom:2rem;border-bottom:1px solid #e2e8f0;padding-bottom:1.5rem;">
+          <h1 style="font-size:2rem;font-weight:800;color:#0284c7;margin-bottom:0.5rem;">QBlink — Hardware-Free Virtual Queue Management</h1>
+          <p style="font-size:1.15rem;color:#475569;font-weight:500;">Replace crowded waiting rooms and ₹50,000+ kiosks with instant browser QR queues for clinics, restaurants, salons, and walk-in businesses.</p>
+          <div style="display:inline-block;background-color:#f0fdfa;color:#0d9488;border:1px solid #99f6e4;padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.85rem;font-weight:600;margin-top:0.5rem;">
+            Incubated at Inventure · IIT Gandhinagar
+          </div>
+        </header>
+
+        <section style="margin-bottom:2rem;">
+          <h2 style="font-size:1.4rem;font-weight:700;color:#0f172a;">How QBlink Works</h2>
+          <ul>
+            <li><strong>100% Hardware-Free</strong>: Runs in any existing phone, tablet, or laptop browser — zero kiosks or thermal printers.</li>
+            <li><strong>Zero-App QR Joining</strong>: Visitors scan a QR code or link to claim a digital token and track live wait times remotely.</li>
+            <li><strong>Self-Sustainable Pricing</strong>: 1-month free trial, then ₹499/month per counter.</li>
+            <li><strong>Built by Indian Founders</strong>: Started by Devansh with co-founders Mithil, Aarav, and Vihan Patange (<a href="https://qblink.tech/about">meet the founders</a>).</li>
+          </ul>
+        </section>
+
+        <nav style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid #e2e8f0;font-size:0.95rem;">
+          <a href="https://qblink.tech/" style="color:#0284c7;text-decoration:underline;margin-right:1.25rem;">Home</a>
+          <a href="https://qblink.tech/about" style="color:#0284c7;text-decoration:underline;margin-right:1.25rem;">Founders &amp; Story</a>
+          <a href="https://qblink.tech/industries" style="color:#0284c7;text-decoration:underline;margin-right:1.25rem;">Industries</a>
+          <a href="https://qblink.tech/roi" style="color:#0284c7;text-decoration:underline;margin-right:1.25rem;">ROI Calculator</a>
+          <a href="https://qblink.tech/pitch" style="color:#0284c7;text-decoration:underline;margin-right:1.25rem;">Pitch Simulator</a>
+          <a href="https://qblink.tech/auth" style="color:#0284c7;text-decoration:underline;">Get Started</a>
+        </nav>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

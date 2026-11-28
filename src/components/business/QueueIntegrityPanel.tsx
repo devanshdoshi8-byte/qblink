@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { saveCustomerDetailsSetting } from "@/lib/customerDetailsSetting";
 import { toast } from "sonner";
 import { Shield, RotateCcw, CheckCircle2, XCircle, Clock, UserX, Activity, Save, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -8,6 +9,7 @@ type Settings = {
   auto_expire_minutes: number;
   join_cooldown_minutes: number;
   duplicate_protection: boolean;
+  require_customer_details: boolean;
 };
 
 type Visitor = {
@@ -35,9 +37,9 @@ const EXPIRE_OPTIONS = [10, 20, 30, 45, 60];
 
 const ACTION_STYLES: Record<string, { color: string; label: string; icon: any }> = {
   joined:      { color: "text-info bg-info-soft",    label: "Joined",      icon: CheckCircle2 },
-  checked_in:  { color: "text-primary bg-primary",    label: "Checked In",  icon: CheckCircle2 },
+  checked_in:  { color: "text-primary bg-primary/10",    label: "Checked In",  icon: CheckCircle2 },
   called:      { color: "text-info bg-info-soft",label: "Called",      icon: Activity },
-  serving:     { color: "text-primary bg-primary",label: "Serving",     icon: Activity },
+  serving:     { color: "text-primary bg-primary/10",label: "Serving",     icon: Activity },
   completed:   { color: "text-success bg-success-soft",  label: "Completed",   icon: CheckCircle2 },
   skipped:     { color: "text-warning bg-warning-soft",label: "Skipped",     icon: UserX },
   recalled:    { color: "text-primary bg-primary/10",  label: "Recalled",    icon: RotateCcw },
@@ -54,12 +56,14 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
   const [skipped, setSkipped] = useState<Visitor[]>([]);
   const [log, setLog] = useState<LogRow[]>([]);
   const [expanded, setExpanded] = useState(true);
+  const dirtyRef = useRef(false);
+  const edit = (s: Settings) => { dirtyRef.current = true; setSettings(s); };
 
   const loadAll = useCallback(async () => {
     const [{ data: q }, { data: sk }, { data: lg }] = await Promise.all([
       supabase
         .from("queues")
-        .select("arrival_window_minutes,auto_expire_minutes,join_cooldown_minutes,duplicate_protection")
+        .select("arrival_window_minutes,auto_expire_minutes,join_cooldown_minutes,duplicate_protection,require_customer_details")
         .eq("id", queueId)
         .maybeSingle() as any,
       supabase
@@ -76,7 +80,7 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
         .order("created_at", { ascending: false })
         .limit(20),
     ]);
-    if (q) setSettings(q as Settings);
+    if (q && !dirtyRef.current) setSettings(q as Settings);
     setSkipped((sk as Visitor[]) || []);
     setLog((lg as LogRow[]) || []);
   }, [queueId]);
@@ -118,9 +122,24 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
   const saveSettings = async () => {
     if (!settings) return;
     setSaving(true);
-    const { error } = await supabase.from("queues").update(settings as any).eq("id", queueId);
+    // Apply to the whole counter family (parent + table-size child queues) so QR joins match.
+    const { data: me, error: lookupError } = await supabase.from("queues").select("id,parent_queue_id,business_id").eq("id", queueId).maybeSingle();
+    if (lookupError || !me) {
+      setSaving(false);
+      return toast.error("Could not find this queue. Please refresh and try again.");
+    }
+    const rootId = (me as any)?.parent_queue_id || queueId;
+    const { require_customer_details, ...queueSettings } = settings;
+    const { error } = await supabase.from("queues").update(queueSettings).or(`id.eq.${rootId},parent_queue_id.eq.${rootId}`);
+    if (error) {
+      setSaving(false);
+      return toast.error("Could not save settings");
+    }
+    const { error: detailsError } = await saveCustomerDetailsSetting(me.business_id, require_customer_details);
     setSaving(false);
-    if (error) return toast.error("Could not save settings");
+    if (detailsError) return toast.error("Could not save customer details setting");
+    dirtyRef.current = false;
+    await loadAll();
     toast.success("Integrity settings saved");
   };
 
@@ -163,7 +182,7 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
                 icon={<Clock className="w-3.5 h-3.5" />}
                 value={settings.arrival_window_minutes}
                 options={ARRIVAL_OPTIONS}
-                onChange={(n) => setSettings({ ...settings, arrival_window_minutes: n })}
+                onChange={(n) => edit({ ...settings, arrival_window_minutes: n })}
                 unit="min"
               />
               <SettingSelect
@@ -172,7 +191,7 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
                 icon={<XCircle className="w-3.5 h-3.5" />}
                 value={settings.auto_expire_minutes}
                 options={EXPIRE_OPTIONS}
-                onChange={(n) => setSettings({ ...settings, auto_expire_minutes: n })}
+                onChange={(n) => edit({ ...settings, auto_expire_minutes: n })}
                 unit="min"
               />
               <div>
@@ -187,7 +206,7 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
                     max={240}
                     value={settings.join_cooldown_minutes}
                     onChange={(e) =>
-                      setSettings({ ...settings, join_cooldown_minutes: Math.max(0, Math.min(240, Number(e.target.value) || 0)) })
+                      edit({ ...settings, join_cooldown_minutes: Math.max(0, Math.min(240, Number(e.target.value) || 0)) })
                     }
                     className="w-24 px-3 py-2 rounded-lg border border-border bg-background text-sm"
                   />
@@ -202,7 +221,7 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
                   type="button"
                   role="switch"
                   aria-checked={settings.duplicate_protection}
-                  onClick={() => setSettings({ ...settings, duplicate_protection: !settings.duplicate_protection })}
+                  onClick={() => edit({ ...settings, duplicate_protection: !settings.duplicate_protection })}
                   className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border transition-colors ${
                     settings.duplicate_protection
                       ? "bg-primary/10 border-primary/30 text-primary"
@@ -213,12 +232,32 @@ const QueueIntegrityPanel = ({ queueId }: { queueId: string }) => {
                   {settings.duplicate_protection ? "On — same phone blocked" : "Off"}
                 </button>
               </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 mb-1.5">
+                  <UserX className="w-3.5 h-3.5" /> Require customer details
+                </label>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={settings.require_customer_details}
+                  onClick={() => edit({ ...settings, require_customer_details: !settings.require_customer_details })}
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border transition-colors ${
+                    settings.require_customer_details
+                      ? "bg-primary/10 border-primary/30 text-primary"
+                      : "bg-muted border-border text-muted-foreground"
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${settings.require_customer_details ? "bg-primary" : "bg-muted-foreground/40"}`} />
+                  {settings.require_customer_details ? "On — name & phone asked" : "Off — 1-tap token, no details"}
+                </button>
+                <p className="text-[10px] text-muted-foreground mt-1">Applies to every queue in this business. When off, guests join without a name or phone.</p>
+              </div>
               <div className="sm:col-span-2 flex justify-end">
                 <button
                   type="button"
                   onClick={saveSettings}
                   disabled={saving}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg gradient-bg text-primary-foreground text-xs font-semibold hover:opacity-90 disabled:opacity-50"
                 >
                   <Save className="w-3.5 h-3.5" />
                   {saving ? "Saving…" : "Save settings"}
