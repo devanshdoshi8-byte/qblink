@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Search, Star, Users, LogOut, MapPin, ArrowLeft, ArrowRight, UtensilsCrossed, X, Clock, Zap, Activity } from "lucide-react";
+import { Search, Star, Users, LogOut, MapPin, ArrowLeft, ArrowRight, UtensilsCrossed, X, Clock, Zap } from "lucide-react";
 import { SkeletonCardGrid, SkeletonStatGrid, SkeletonPageHeader } from "@/components/skeletons/DashboardSkeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import EmptyState from "@/components/EmptyState";
@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import logo from "@/assets/qblink-logo.png";
 import { CATEGORIES, getCategoryForBusiness, getCategoryByKey } from "@/lib/categories";
 import AIAssistant from "@/components/AIAssistant";
-import { motion, AnimatePresence } from "framer-motion";
 import FavoriteBusinesses from "@/components/FavoriteBusinesses";
 import NotificationBell from "@/components/customer/NotificationBell";
 import UpcomingAppointments from "@/components/customer/UpcomingAppointments";
@@ -274,94 +273,87 @@ const CustomerDashboard = () => {
 
   return (
     <div className="min-h-screen soft-bg">
-      <header className="bg-card/80 backdrop-blur border-b border-border sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src={logo} alt="Qblink" className="h-9 w-9 rounded-lg object-contain" />
+      <header className="bg-card/90 border-b border-border sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2 shrink-0 min-h-[44px] min-w-[44px] justify-center sm:justify-start">
+            <img src={logo} alt="Qblink" className="h-8 w-8 rounded-lg object-contain" />
             <span className="font-bold text-foreground hidden sm:block">Qblink</span>
           </Link>
-          <div className="flex-1 max-w-xl relative">
+          <div className="flex-1 max-w-md relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search businesses by name or location…"
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              placeholder="Search places or areas…"
+              className="w-full min-h-[40px] pl-9 pr-3 py-2 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
-          <NotificationBell />
-          <div className="hidden sm:flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
+          <div className="flex items-center gap-1.5 ml-auto">
+            <NotificationBell />
+            <div className="hidden sm:flex w-9 h-9 rounded-full bg-primary items-center justify-center text-primary-foreground text-xs font-bold">
               {profileName?.[0]?.toUpperCase() || "C"}
             </div>
+            <button onClick={signOut} className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl hover:bg-muted transition-colors" title="Sign out" aria-label="Sign out">
+              <LogOut className="w-4 h-4 text-muted-foreground" />
+            </button>
           </div>
-          <button onClick={signOut} className="p-2 rounded-lg hover:bg-muted transition-colors" title="Sign out" aria-label="Sign out">
-            <LogOut className="w-5 h-5 text-muted-foreground" />
-          </button>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {!activeCat && !search && (
           <>
-            <div className="mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                Hi {profileName?.split(" ")[0] || "there"}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                What kind of service do you need today?
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                  Hi {profileName?.split(" ")[0] || "there"}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Your queue activity and live venues nearby
+                </p>
+              </div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+                {CATEGORIES.map(c => {
+                  const count = categoryCounts[c.key] ?? 0;
+                  return (
+                    <button
+                      key={c.key}
+                      onClick={() => setActiveCategory(c.key)}
+                      className="min-h-[38px] shrink-0 px-3.5 py-1.5 rounded-full bg-card border border-border hover:border-primary/40 text-xs font-medium text-foreground transition-colors inline-flex items-center gap-1.5"
+                    >
+                      <span>{c.label}</span>
+                      <span className="text-muted-foreground">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {user && <CustomerAnalyticsBento userId={user.id} />}
+            {/* Minimalistic Bento Grid: Left = Personal Analytics, Right = Live Near You + Appointments */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+              <div className="lg:col-span-8 min-w-0">
+                {user && <CustomerAnalyticsBento userId={user.id} />}
+              </div>
+              <div className="lg:col-span-4 space-y-5 min-w-0">
+                <LiveDiscoveryBento
+                  businesses={businesses}
+                  queueMap={queueMap}
+                  queuesByBiz={queuesByBiz}
+                  selectedQueueByBiz={selectedQueueByBiz}
+                />
+                <UpcomingAppointments
+                  businesses={businesses.map((b) => ({ id: b.id, name: b.name }))}
+                  customerName={profileName}
+                />
+              </div>
+            </div>
 
             <FavoriteBusinesses />
 
-            <UpcomingAppointments
-              businesses={businesses.map((b) => ({ id: b.id, name: b.name }))}
-              customerName={profileName}
-            />
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-8">
-              {CATEGORIES.map(c => {
-                const Icon = c.icon;
-                const count = categoryCounts[c.key] ?? 0;
-                return (
-                  <button
-                    key={c.key}
-                    onClick={() => setActiveCategory(c.key)}
-                    className="bg-card rounded-2xl card-shadow hover:elevated-shadow transition-all p-4 sm:p-5 flex flex-col items-start gap-3 sm:gap-4 text-left"
-                  >
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center ${c.tint}`}>
-                      <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
-                    </div>
-                    <div className="w-full">
-                      <p className="font-bold text-foreground text-sm sm:text-base leading-tight">{c.label}</p>
-                      <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">{c.description}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs font-semibold text-primary">{count} places</span>
-                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Recommended strip */}
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-bold text-foreground">Recommended for you</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground">Recommended places</h2>
             </div>
           </>
-        )}
-
-        {!activeCat && !search && (
-          <LiveDiscoveryStrip
-            businesses={businesses}
-            queueMap={queueMap}
-            queuesByBiz={queuesByBiz}
-            selectedQueueByBiz={selectedQueueByBiz}
-          />
         )}
 
         {(activeCat || search) && (
@@ -395,7 +387,7 @@ const CustomerDashboard = () => {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {(activeCat || search
               ? filtered
               : businesses.filter(b => b.is_sponsored || b.is_featured || b.is_recommended)
@@ -407,46 +399,42 @@ const CustomerDashboard = () => {
               const cat = getCategoryForBusiness(b.category);
               const showPickup = cat.supportsPickup;
               return (
-                <div key={b.id} className="bg-card rounded-2xl p-5 card-shadow hover:elevated-shadow transition-all flex flex-col">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isActive ? "bg-success-soft text-success" : "bg-muted text-muted-foreground"}`}>
+                <div key={b.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-3 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${isActive ? "bg-success-soft text-success" : "bg-muted text-muted-foreground"}`}>
                       {isClosedByHours ? (
                         openState.label
                       ) : isActive ? (
                         b.show_live_queue_info === false
-                          ? "● Open"
-                          : <>● <AnimatedNumber value={q.waiting} suffix=" waiting" invertHighlight /></>
+                          ? "Open"
+                          : <><AnimatedNumber value={q.waiting} suffix=" waiting" invertHighlight /></>
                       ) : q ? "Queue closed" : "No queue"}
                     </span>
                     {b.is_sponsored ? (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary font-medium">
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                         Sponsored
                       </span>
                     ) : b.is_featured ? (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-info-soft text-info font-medium">
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-info-soft text-info font-medium">
                         Featured
                       </span>
                     ) : b.is_recommended && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-warning-soft text-warning font-medium flex items-center gap-1">
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-warning-soft text-warning font-medium inline-flex items-center gap-1">
                         <Star className="w-3 h-3 fill-current" /> Top Pick
                       </span>
                     )}
                   </div>
 
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${cat.tint} mb-3`}>
-                    <cat.icon className="w-5 h-5" />
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-foreground truncate">{b.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{b.category || cat.label}</p>
                   </div>
 
-                  <h3 className="font-bold text-foreground mb-1 line-clamp-1">{b.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-2">{b.category} · {cat.label}</p>
-                  {b.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-1">{b.description}</p>}
-
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-                    {b.address && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {b.address}</span>}
+                  <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    {b.address && <span className="inline-flex items-center gap-1 truncate"><MapPin className="w-3 h-3 shrink-0" /> {b.address}</span>}
                     {b.rating && (b.total_reviews ?? 0) > 0 && (
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1">
                         <Star className="w-3 h-3 fill-warning text-warning" /> {b.rating}
-                        <span className="opacity-70">({b.total_reviews})</span>
                       </span>
                     )}
                     {q && isActive && b.show_live_queue_info !== false && <span>~<AnimatedNumber value={q.waiting * q.est_time} suffix="m" invertHighlight /></span>}
@@ -571,10 +559,8 @@ const CustomerDashboard = () => {
 
 export default CustomerDashboard;
 
-// ===== Live Discovery Strip =====
-// Dynamic, real-time row of the most accessible active queues right now,
-// ranked by current wait time. Animates when wait positions shift.
-const LiveDiscoveryStrip = ({
+// ===== Live Discovery Bento =====
+const LiveDiscoveryBento = ({
   businesses,
   queueMap,
   queuesByBiz,
@@ -602,32 +588,34 @@ const LiveDiscoveryStrip = ({
         };
       })
       .filter(Boolean)
-      .sort((a, b) => (a!.wait - b!.wait)) as Array<{
-        biz: Business;
-        waiting: number;
-        wait: number;
-        queueId: string;
-        showLive: boolean;
-        remoteJoin: boolean;
-      }>;
+      .sort((a, b) => a!.wait - b!.wait) as Array<{
+      biz: Business;
+      waiting: number;
+      wait: number;
+      queueId: string;
+      showLive: boolean;
+      remoteJoin: boolean;
+    }>;
   }, [businesses, queueMap]);
 
-  if (live.length === 0) return null;
-  const top = live.slice(0, 8);
+  const top = live.slice(0, 4);
 
   return (
-    <section className="mb-8">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="inline-block h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
-          <h2 className="text-lg font-bold text-foreground">Live near you</h2>
-          <span className="text-[11px] text-muted-foreground">
-            · sorted by shortest wait
-          </span>
+    <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Live near you</h2>
+          <p className="text-xs text-muted-foreground">Shortest wait right now</p>
         </div>
+        <Zap className="w-4 h-4 text-primary" />
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
-        <AnimatePresence initial={false}>
+
+      {top.length === 0 ? (
+        <p className="text-xs text-muted-foreground py-2">
+          No active queues nearby at the moment.
+        </p>
+      ) : (
+        <div className="divide-y divide-border">
           {top.map((row) => {
             const activeQs = (queuesByBiz[row.biz.id] || []).filter(
               (x) => x.status === "active"
@@ -637,48 +625,29 @@ const LiveDiscoveryStrip = ({
               activeQs.find((x) => x.id === remembered)?.id ||
               (!row.biz.id.startsWith("demo-") ? row.queueId : row.biz.id);
             return (
-              <motion.div
+              <div
                 key={row.biz.id}
-                layout
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ type: "spring", stiffness: 260, damping: 28 }}
-                className="snap-start shrink-0 w-[220px] bg-card rounded-2xl card-shadow border border-border/60 p-3"
+                className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
-                    <Activity className="w-3 h-3" /> LIVE
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">
-                    {row.showLive
-                      ? <AnimatedNumber value={row.waiting} suffix=" waiting" invertHighlight />
-                      : "Open"}
-                  </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {row.biz.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {row.showLive ? `~${row.wait}m · ${row.waiting} waiting` : "Open"}
+                  </p>
                 </div>
-                <p className="font-semibold text-sm text-foreground line-clamp-1">
-                  {row.biz.name}
-                </p>
-                <p className="text-[11px] text-muted-foreground line-clamp-1 mb-2">
-                  {row.biz.category || "Service"}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-foreground">
-                    <Zap className="w-3 h-3 text-primary" />
-                    {row.showLive ? `~${row.wait}m` : "Status on arrival"}
-                  </span>
-                  <Link
-                    to={`/join/${targetId}`}
-                    className="text-[11px] font-semibold bg-primary text-primary-foreground px-2.5 py-1 rounded-lg hover:opacity-90"
-                  >
-                    {row.remoteJoin ? "Join" : "Visit"}
-                  </Link>
-                </div>
-              </motion.div>
+                <Link
+                  to={`/join/${targetId}`}
+                  className="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 shrink-0"
+                >
+                  {row.remoteJoin ? "Join" : "Visit"}
+                </Link>
+              </div>
             );
           })}
-        </AnimatePresence>
-      </div>
-    </section>
+        </div>
+      )}
+    </div>
   );
 };
