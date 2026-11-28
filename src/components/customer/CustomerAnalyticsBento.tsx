@@ -140,22 +140,22 @@ const CustomerAnalyticsBento = ({ userId }: CustomerAnalyticsBentoProps) => {
   }
 
   return (
-    <div className="space-y-4 min-w-0" aria-label="Your queue analytics">
+    <div className="space-y-5 min-w-0" aria-label="Your queue analytics">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-base sm:text-lg font-semibold text-foreground tracking-tight">
+          <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
             Your Activity
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Personal visits, wait times, and peak hours
           </p>
         </div>
-        <div className="inline-flex gap-1 bg-card border border-border rounded-xl p-1">
+        <div className="inline-flex gap-1 bg-card rounded-xl p-1 card-shadow">
           {(["week", "month", "90d"] as const).map((r) => (
             <button
               key={r}
               onClick={() => setRange(r)}
-              className={`min-h-[36px] px-3 rounded-lg text-xs font-medium transition-colors ${
+              className={`min-h-[36px] px-3.5 rounded-lg text-xs font-semibold transition-colors ${
                 range === r
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -167,8 +167,8 @@ const CustomerAnalyticsBento = ({ userId }: CustomerAnalyticsBentoProps) => {
         </div>
       </div>
 
-      {/* 4-tile minimalistic Bento KPI row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* 4-tile bold Bento KPI row (matches Admin UI) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <BentoStat
           icon={<Ticket className="w-4 h-4 text-primary" />}
           label="Visits"
@@ -202,9 +202,9 @@ const CustomerAnalyticsBento = ({ userId }: CustomerAnalyticsBentoProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 min-w-0">
-            <div className="mb-3">
-              <h3 className="text-sm font-semibold text-foreground">Weekly Visits</h3>
+          <div className="bg-card rounded-2xl p-5 card-shadow min-w-0">
+            <div className="mb-4">
+              <h3 className="font-bold text-foreground">Weekly Visits</h3>
               <p className="text-xs text-muted-foreground">Served vs skipped (last 7 days)</p>
             </div>
             <ResponsiveContainer width="100%" height={180}>
@@ -226,9 +226,9 @@ const CustomerAnalyticsBento = ({ userId }: CustomerAnalyticsBentoProps) => {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 min-w-0">
-            <div className="mb-3">
-              <h3 className="text-sm font-semibold text-foreground">Hourly Pattern</h3>
+          <div className="bg-card rounded-2xl p-5 card-shadow min-w-0">
+            <div className="mb-4">
+              <h3 className="font-bold text-foreground">Hourly Pattern</h3>
               <p className="text-xs text-muted-foreground">When you usually join queues</p>
             </div>
             <ResponsiveContainer width="100%" height={180}>
@@ -268,21 +268,23 @@ const BentoStat = ({
   highlight?: boolean;
 }) => (
   <div
-    className={`rounded-2xl border p-4 flex flex-col justify-between gap-2 min-w-0 ${
-      highlight ? "bg-primary/10 border-primary/30" : "bg-card border-border"
+    className={`rounded-2xl p-5 card-shadow flex flex-col justify-between gap-2 min-w-0 ${
+      highlight ? "bg-primary/10 border border-primary/30" : "bg-card"
     }`}
   >
     <div className="flex items-center justify-between gap-2">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
-      {icon}
+      <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+        {icon}
+      </span>
     </div>
     <div>
-      <p className={`text-2xl font-bold tabular-nums leading-none ${highlight ? "text-primary" : "text-foreground"}`}>
+      <p className={`text-2xl sm:text-3xl font-bold tabular-nums leading-none ${highlight ? "text-primary" : "text-foreground"}`}>
         {value}
       </p>
-      <p className="text-[11px] text-muted-foreground mt-1.5">{sub}</p>
+      <p className="text-xs text-muted-foreground mt-1.5">{sub}</p>
     </div>
   </div>
 );

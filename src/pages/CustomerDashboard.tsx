@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Search, Star, Users, LogOut, MapPin, ArrowLeft, ArrowRight, UtensilsCrossed, X, Clock, Zap } from "lucide-react";
+import { Search, Star, Users, LogOut, MapPin, ArrowLeft, ArrowRight, UtensilsCrossed, X, Clock, Zap, Ticket } from "lucide-react";
 import { SkeletonCardGrid, SkeletonStatGrid, SkeletonPageHeader } from "@/components/skeletons/DashboardSkeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import EmptyState from "@/components/EmptyState";
@@ -52,6 +52,16 @@ interface QueueOption {
   waiting: number;
 }
 
+interface ActiveTicket {
+  id: string;
+  queue_id: string;
+  business_id: string;
+  business_name: string;
+  queue_name: string;
+  token_number: number;
+  status: string;
+}
+
 const CustomerDashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const { role, loading: roleLoading } = useUserRole();
@@ -68,6 +78,7 @@ const CustomerDashboard = () => {
   });
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeTickets, setActiveTickets] = useState<ActiveTicket[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -218,8 +229,47 @@ const CustomerDashboard = () => {
     setBusinesses(biz);
     setQueueMap(map);
     setQueuesByBiz(byBiz);
+
+    if (user?.id) {
+      const { data: myActive } = await supabase
+        .from("queue_visitors")
+        .select("id, queue_id, token_number, status")
+        .eq("customer_user_id", user.id)
+        .in("status", ["waiting", "called"])
+        .order("joined_at", { ascending: false });
+
+      const qLookup = new Map<string, any>((queues || []).map((q: any) => [q.id, q]));
+      const bLookup = new Map<string, any>((bizRaw || []).map((b: any) => [b.id, b]));
+      const resolvedTickets: ActiveTicket[] = (myActive || []).map((t: any) => {
+        const qRow = qLookup.get(t.queue_id);
+        const bRow = qRow ? bLookup.get(qRow.business_id) : null;
+        return {
+          id: t.id,
+          queue_id: t.queue_id,
+          business_id: qRow?.business_id || "",
+          business_name: bRow?.name || "Business",
+          queue_name: qRow?.name || "Queue",
+          token_number: t.token_number,
+          status: t.status,
+        };
+      });
+      setActiveTickets(resolvedTickets);
+    } else {
+      setActiveTickets([]);
+    }
+
     setLoading(false);
   };
+
+  const activeTicketByBiz = useMemo(() => {
+    const map: Record<string, ActiveTicket> = {};
+    activeTickets.forEach((t) => {
+      if (t.business_id && !map[t.business_id]) {
+        map[t.business_id] = t;
+      }
+    });
+    return map;
+  }, [activeTickets]);
 
   // Count businesses per category for grid badges.
   const categoryCounts = useMemo(() => {
@@ -300,12 +350,12 @@ const CustomerDashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-7 sm:space-y-8">
         {!activeCat && !search && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
                   Hi {profileName?.split(" ")[0] || "there"}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -319,17 +369,69 @@ const CustomerDashboard = () => {
                     <button
                       key={c.key}
                       onClick={() => setActiveCategory(c.key)}
-                      className="min-h-[38px] shrink-0 px-3.5 py-1.5 rounded-full bg-card border border-border hover:border-primary/40 text-xs font-medium text-foreground transition-colors inline-flex items-center gap-1.5"
+                      className="min-h-[40px] shrink-0 px-3.5 py-2 rounded-xl bg-card card-shadow hover:border-primary/40 border border-transparent text-xs font-bold text-foreground transition-colors inline-flex items-center gap-1.5"
                     >
                       <span>{c.label}</span>
-                      <span className="text-muted-foreground">{count}</span>
+                      <span className="text-muted-foreground font-semibold">{count}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Minimalistic Bento Grid: Left = Personal Analytics, Right = Live Near You + Appointments */}
+            {activeTickets.length > 0 && (
+              <section aria-label="Your active queues" className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2">
+                    <Ticket className="w-5 h-5 text-primary" />
+                    <span>Your Active Queues</span>
+                  </h2>
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {activeTickets.length} active
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {activeTickets.map((t) => (
+                    <div
+                      key={t.id}
+                      className="bg-card rounded-2xl p-5 card-shadow border border-primary/25 flex items-center justify-between gap-4"
+                    >
+                      <div className="min-w-0 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/15 text-primary">
+                            #{t.token_number}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-bold capitalize ${
+                              t.status === "called"
+                                ? "bg-warning-soft text-warning"
+                                : "bg-success-soft text-success"
+                            }`}
+                          >
+                            {t.status}
+                          </span>
+                        </div>
+                        <p className="font-bold text-foreground text-base truncate">
+                          {t.business_name}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {t.queue_name}
+                        </p>
+                      </div>
+                      <Link
+                        to={`/join/${t.queue_id}`}
+                        className="min-h-[44px] shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
+                      >
+                        <span>Open Queue</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Bold Admin-style Bento Grid: Left = Personal Analytics, Right = Live Near You + Appointments */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
               <div className="lg:col-span-8 min-w-0">
                 {user && <CustomerAnalyticsBento userId={user.id} />}
@@ -340,6 +442,7 @@ const CustomerDashboard = () => {
                   queueMap={queueMap}
                   queuesByBiz={queuesByBiz}
                   selectedQueueByBiz={selectedQueueByBiz}
+                  activeTicketByBiz={activeTicketByBiz}
                 />
                 <UpcomingAppointments
                   businesses={businesses.map((b) => ({ id: b.id, name: b.name }))}
@@ -351,7 +454,7 @@ const CustomerDashboard = () => {
             <FavoriteBusinesses />
 
             <div className="flex items-center justify-between">
-              <h2 className="text-base sm:text-lg font-semibold text-foreground">Recommended places</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-foreground">Recommended places</h2>
             </div>
           </>
         )}
@@ -399,7 +502,7 @@ const CustomerDashboard = () => {
               const cat = getCategoryForBusiness(b.category);
               const showPickup = cat.supportsPickup;
               return (
-                <div key={b.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-3 min-w-0">
+                <div key={b.id} className="bg-card rounded-2xl p-5 card-shadow flex flex-col gap-3.5 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${isActive ? "bg-success-soft text-success" : "bg-muted text-muted-foreground"}`}>
                       {isClosedByHours ? (
@@ -426,7 +529,7 @@ const CustomerDashboard = () => {
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-foreground truncate">{b.name}</h3>
+                    <h3 className="font-bold text-foreground text-base truncate">{b.name}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5 truncate">{b.category || cat.label}</p>
                   </div>
 
@@ -441,7 +544,14 @@ const CustomerDashboard = () => {
                   </div>
 
                   <div className="space-y-2 mt-auto">
-                    {isActive ? (() => {
+                    {activeTicketByBiz[b.id] ? (
+                      <Link
+                        to={`/join/${activeTicketByBiz[b.id].queue_id}`}
+                        className="w-full min-h-[44px] text-center bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                      >
+                        <Ticket className="w-4 h-4" /> Open Ticket (#{activeTicketByBiz[b.id].token_number})
+                      </Link>
+                    ) : isActive ? (() => {
                       const activeQs = (queuesByBiz[b.id] || []).filter(x => x.status === "active");
                       const remembered = selectedQueueByBiz[b.id];
                       const rememberedStillActive = remembered && activeQs.some(x => x.id === remembered);
@@ -565,11 +675,13 @@ const LiveDiscoveryBento = ({
   queueMap,
   queuesByBiz,
   selectedQueueByBiz,
+  activeTicketByBiz,
 }: {
   businesses: Business[];
   queueMap: Record<string, QueueInfo>;
   queuesByBiz: Record<string, QueueOption[]>;
   selectedQueueByBiz: Record<string, string>;
+  activeTicketByBiz: Record<string, ActiveTicket>;
 }) => {
   const live = useMemo(() => {
     return businesses
@@ -601,10 +713,10 @@ const LiveDiscoveryBento = ({
   const top = live.slice(0, 4);
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 space-y-3">
+    <div className="bg-card rounded-2xl p-5 card-shadow space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Live near you</h2>
+          <h2 className="text-base font-bold text-foreground">Live near you</h2>
           <p className="text-xs text-muted-foreground">Shortest wait right now</p>
         </div>
         <Zap className="w-4 h-4 text-primary" />
@@ -617,31 +729,37 @@ const LiveDiscoveryBento = ({
       ) : (
         <div className="divide-y divide-border">
           {top.map((row) => {
+            const existing = activeTicketByBiz[row.biz.id];
             const activeQs = (queuesByBiz[row.biz.id] || []).filter(
               (x) => x.status === "active"
             );
             const remembered = selectedQueueByBiz[row.biz.id];
-            const targetId =
-              activeQs.find((x) => x.id === remembered)?.id ||
-              (!row.biz.id.startsWith("demo-") ? row.queueId : row.biz.id);
+            const targetId = existing
+              ? existing.queue_id
+              : activeQs.find((x) => x.id === remembered)?.id ||
+                (!row.biz.id.startsWith("demo-") ? row.queueId : row.biz.id);
             return (
               <div
                 key={row.biz.id}
-                className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
+                className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
+                  <p className="text-sm font-bold text-foreground truncate">
                     {row.biz.name}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {row.showLive ? `~${row.wait}m · ${row.waiting} waiting` : "Open"}
+                    {existing
+                      ? `In queue · Token #${existing.token_number}`
+                      : row.showLive
+                      ? `~${row.wait}m · ${row.waiting} waiting`
+                      : "Open"}
                   </p>
                 </div>
                 <Link
                   to={`/join/${targetId}`}
-                  className="min-h-[36px] inline-flex items-center px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 shrink-0"
+                  className="min-h-[40px] inline-flex items-center px-3.5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 shrink-0"
                 >
-                  {row.remoteJoin ? "Join" : "Visit"}
+                  {existing ? "Open" : row.remoteJoin ? "Join" : "Visit"}
                 </Link>
               </div>
             );

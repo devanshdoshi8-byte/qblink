@@ -324,6 +324,51 @@ const JoinQueue = () => {
     return () => { supabase.removeChannel(channel); clearInterval(poll); };
   }, [activeQueueId, myVisitorId, myToken, joined]);
 
+  // Restore active ticket if the signed-in customer is already in this queue
+  useEffect(() => {
+    if (!user?.id || !queueId || isDemo || joined) return;
+    let cancelled = false;
+    (async () => {
+      const { data: activeRows } = await supabase
+        .from("queue_visitors")
+        .select("id, queue_id, token_number, status, joined_at")
+        .eq("customer_user_id", user.id)
+        .in("status", ["waiting", "called"])
+        .order("joined_at", { ascending: false });
+
+      if (cancelled || !activeRows || activeRows.length === 0) return;
+
+      let match = activeRows.find(
+        (r) => r.queue_id === activeQueueId || r.queue_id === queueId
+      );
+
+      // Also match child table-size queues whose parent_queue_id === queueId
+      if (!match) {
+        const candidateIds = activeRows.map((r) => r.queue_id);
+        const { data: qs } = await supabase
+          .from("queues")
+          .select("id, parent_queue_id")
+          .in("id", candidateIds);
+        const child = (qs || []).find((q: any) => q.parent_queue_id === queueId);
+        if (child) {
+          match = activeRows.find((r) => r.queue_id === child.id);
+        }
+      }
+
+      if (cancelled || !match) return;
+      setActiveQueueId(match.queue_id);
+      setMyToken(match.token_number);
+      setMyVisitorId(match.id);
+      setMyStatus(match.status);
+      setJoinedAt(new Date(match.joined_at).getTime());
+      setJoined(true);
+      fetchLiveQueueState(match.token_number, match.id);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, queueId, activeQueueId, isDemo, joined]);
+
   const refreshNow = () => {
     hapticRefresh();
     toast.success("Refreshed");
