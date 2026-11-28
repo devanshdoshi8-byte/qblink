@@ -18,9 +18,10 @@ export async function signInWithGoogle(role: AuthRole, redirectPath?: string): P
     if (redirectPath) sessionStorage.setItem("qblink.pendingNext", redirectPath);
   } catch { /* storage unavailable */ }
 
+  const defaultPath = role === "business" ? "/dashboard" : "/customer-dashboard";
   const redirectTo = redirectPath
     ? `${window.location.origin}${redirectPath}`
-    : `${window.location.origin}/dashboard`;
+    : `${window.location.origin}${defaultPath}`;
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",

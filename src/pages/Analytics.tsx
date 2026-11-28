@@ -8,6 +8,7 @@ import TrendBadge from "@/components/TrendBadge";
 import InfoHint from "@/components/InfoHint";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
+import { computeActiveAvgWaitMinutes } from "@/lib/queueInactivity";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import {
   SkeletonStatGrid,
@@ -64,10 +65,7 @@ const AnalyticsContent = ({ businessId }: { businessId: string }) => {
     const served = all.filter(v => v.status === "served");
     const skipped = all.filter(v => v.status === "skipped");
 
-    const waitTimes = served.filter(v => v.served_at).map(v =>
-      (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000
-    );
-    const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
+    const avgWait = computeActiveAvgWaitMinutes(served);
 
     setStats({ total: all.length, served: served.length, avgWait });
 

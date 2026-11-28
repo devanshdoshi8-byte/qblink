@@ -152,3 +152,34 @@ export function filterRowsAfterInactivityGap<T extends ActivityVisitorLike>(
   }
   return kept;
 }
+
+/**
+ * Computes average wait time in minutes for served visitors, excluding stale
+ * wait durations that exceed the inactivity threshold (default 60 minutes).
+ */
+export function computeActiveAvgWaitMinutes(
+  rows: ActivityVisitorLike[],
+  maxWaitMinutes: number = DEFAULT_INACTIVITY_MINUTES
+): number {
+  const waits = getActiveWaitMinutes(rows, maxWaitMinutes);
+  return waits.length ? Math.round(waits.reduce((a, b) => a + b, 0) / waits.length) : 0;
+}
+
+/**
+ * Returns individual wait durations (in minutes) for served visitors,
+ * excluding negative values and durations exceeding maxWaitMinutes (inactive time).
+ */
+export function getActiveWaitMinutes(
+  rows: ActivityVisitorLike[],
+  maxWaitMinutes: number = DEFAULT_INACTIVITY_MINUTES
+): number[] {
+  return rows
+    .filter((v) => v.status === "served" && v.served_at && v.joined_at)
+    .map((v) => {
+      const joined = parseTimestampMs(v.joined_at);
+      const served = parseTimestampMs(v.served_at);
+      if (joined === null || served === null) return NaN;
+      return (served - joined) / 60000;
+    })
+    .filter((mins) => Number.isFinite(mins) && mins >= 0 && mins <= maxWaitMinutes);
+}

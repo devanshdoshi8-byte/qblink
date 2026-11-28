@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { getActiveWaitMinutes } from "@/lib/queueInactivity";
 import { toast } from "sonner";
 import { Pause, Play, RotateCcw, X as XIcon, RefreshCw, Activity, Clock, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -32,6 +33,7 @@ const STATUS_CLS: Record<string, string> = {
 const AdminQueues = () => {
   const [queues, setQueues] = useState<LiveQueue[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
+  const [overallAvgWait, setOverallAvgWait] = useState(0);
 
   useEffect(() => {
     fetchQueues();
@@ -43,27 +45,43 @@ const AdminQueues = () => {
   }, []);
 
   const fetchQueues = async () => {
-    const [{ data: qs }, { data: bizs }, { data: visitors }, { data: recent }] = await Promise.all([
+    const [{ data: qs }, { data: bizs }, { data: visitors }, { data: recent }, { data: servedRows }] = await Promise.all([
       supabase.from("queues").select("id, name, status, current_token, business_id, estimated_service_time, updated_at"),
       supabase.from("businesses").select("id, name"),
       supabase.from("queue_visitors").select("queue_id, status").eq("status", "waiting"),
       supabase.from("queue_visitors").select("queue_id, status, joined_at, called_at, served_at, token_number").order("joined_at", { ascending: false }).limit(40),
+      supabase.from("queue_visitors").select("queue_id, joined_at, served_at").eq("status", "served").not("served_at", "is", null),
     ]);
 
     const bizMap = new Map((bizs || []).map(b => [b.id, b.name]));
     const qNameMap = new Map((qs || []).map(q => [q.id, q.name]));
     const qBizMap = new Map((qs || []).map(q => [q.id, bizMap.get(q.business_id) || "—"]));
 
-    const real: LiveQueue[] = (qs || []).map(q => ({
-      id: q.id,
-      queue: q.name,
-      business: bizMap.get(q.business_id) || "—",
-      status: q.status,
-      current: q.current_token || 0,
-      waiting: (visitors || []).filter(v => v.queue_id === q.id).length,
-      avgWait: q.estimated_service_time || 5,
-      updated: formatDistanceToNow(new Date(q.updated_at), { addSuffix: true }),
-    }));
+    const waitsByQueue = new Map<string, number[]>();
+    const allWaits: number[] = [];
+    (servedRows || []).forEach((v: any) => {
+      const [mins] = getActiveWaitMinutes([{ status: "served", joined_at: v.joined_at, served_at: v.served_at }]);
+      if (mins === undefined) return;
+      allWaits.push(mins);
+      const arr = waitsByQueue.get(v.queue_id) || [];
+      arr.push(mins);
+      waitsByQueue.set(v.queue_id, arr);
+    });
+    setOverallAvgWait(allWaits.length ? Math.round(allWaits.reduce((a, b) => a + b, 0) / allWaits.length) : 0);
+
+    const real: LiveQueue[] = (qs || []).map(q => {
+      const qWaits = waitsByQueue.get(q.id) || [];
+      return {
+        id: q.id,
+        queue: q.name,
+        business: bizMap.get(q.business_id) || "—",
+        status: q.status,
+        current: q.current_token || 0,
+        waiting: (visitors || []).filter(v => v.queue_id === q.id).length,
+        avgWait: qWaits.length ? Math.round(qWaits.reduce((a, b) => a + b, 0) / qWaits.length) : 0,
+        updated: formatDistanceToNow(new Date(q.updated_at), { addSuffix: true }),
+      };
+    });
     setQueues(real);
 
     // Build live event log from recent visitor activity
@@ -107,7 +125,7 @@ const AdminQueues = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <Mini icon={<Activity className="w-4 h-4 text-success" />} label="Active queues" value={queues.filter(q => q.status === "active").length} />
         <Mini icon={<Users className="w-4 h-4 text-primary" />} label="Total waiting" value={queues.reduce((a, q) => a + q.waiting, 0)} />
-        <Mini icon={<Clock className="w-4 h-4 text-warning" />} label="Avg wait (all)" value={`${Math.round(queues.reduce((a, q) => a + q.avgWait, 0) / Math.max(queues.length, 1))}m`} />
+        <Mini icon={<Clock className="w-4 h-4 text-warning" />} label="Avg wait (all)" value={`${overallAvgWait}m`} />
         <Mini icon={<Pause className="w-4 h-4 text-warning" />} label="Paused" value={queues.filter(q => q.status === "paused").length} />
       </div>
 

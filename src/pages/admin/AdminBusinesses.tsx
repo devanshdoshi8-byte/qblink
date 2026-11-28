@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import GlideSelect from "@/components/reactbits/GlideSelect";
+import { computeActiveAvgWaitMinutes } from "@/lib/queueInactivity";
 import { toast } from "sonner";
 import { Search, Download, Eye, Pause, Play, Trash2, RotateCcw, X } from "lucide-react";
 import BusinessHealthBarChart from "@/components/health/BusinessHealthBarChart";
@@ -64,7 +65,6 @@ const AdminBusinesses = () => {
       const qIds = bQueues.map(q => q.id);
       const bVisitors = visitors?.filter(v => qIds.includes(v.queue_id)) || [];
       const served = bVisitors.filter(v => v.status === "served");
-      const waitTimes = served.filter(v => v.served_at).map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000);
       return {
         id: b.id,
         name: b.name,
@@ -73,7 +73,7 @@ const AdminBusinesses = () => {
         status: bQueues.some(q => q.status === "active") ? "active" : bQueues.length ? "inactive" : "no-queue",
         queues: bQueues.length,
         served: served.length,
-        avgWait: waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0,
+        avgWait: computeActiveAvgWaitMinutes(served),
         createdAt: b.created_at,
         healthScore: null,
         healthBand: null,

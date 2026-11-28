@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import GlideSelect from "@/components/reactbits/GlideSelect";
+import { computeActiveAvgWaitMinutes } from "@/lib/queueInactivity";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import { supabase } from "@/integrations/supabase/client";
 import { SkeletonPageHeader, SkeletonStatGrid, SkeletonChartCard } from "@/components/skeletons/DashboardSkeletons";
@@ -63,11 +64,7 @@ const AdminAnalytics = () => {
   const vToday = scoped.filter(v => new Date(v.joined_at).getTime() >= today0);
   const served = scoped.filter(v => v.status === "served");
   const dropped = scoped.filter(v => v.status === "skipped" || v.status === "removed" || v.status === "no_show");
-  const waitTimes = served
-    .filter(v => v.served_at)
-    .map(v => (new Date(v.served_at).getTime() - new Date(v.joined_at).getTime()) / 60000)
-    .filter(mins => Number.isFinite(mins) && mins >= 0);
-  const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
+  const avgWait = computeActiveAvgWaitMinutes(served);
   const completion = scoped.length ? Math.round((served.length / scoped.length) * 100) : 0;
   const dropOff = scoped.length ? +((dropped.length / scoped.length) * 100).toFixed(1) : 0;
 

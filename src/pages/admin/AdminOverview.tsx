@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import MagicBento from "@/components/reactbits/MagicBento";
 import BorderGlow from "@/components/reactbits/BorderGlow";
+import { computeActiveAvgWaitMinutes, getActiveWaitMinutes } from "@/lib/queueInactivity";
 import { CHART_COLORS, CHART_SERIES } from "@/lib/chartPalette";
 import AdminOnboardingChecklist from "@/components/admin/AdminOnboardingChecklist";
 import {
@@ -76,11 +77,9 @@ const AdminOverview = () => {
     const served = activeVisitorsToday.filter(v => v.status === "served").length;
     const total = activeVisitorsToday.length;
     const dropped = activeVisitorsToday.filter(v => v.status === "skipped" || v.status === "removed" || v.status === "no_show").length;
-    const waitTimes = activeVisitorsToday
-      .filter(v => v.status === "served" && v.served_at)
-      .map(v => (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000)
-      .filter(mins => Number.isFinite(mins) && mins >= 0);
-    const avgWait = waitTimes.length ? Math.round(waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length) : 0;
+    const todayWaitTimes = getActiveWaitMinutes(activeVisitorsToday);
+    const waitSource = todayWaitTimes.length ? activeVisitorsToday : v90;
+    const avgWait = computeActiveAvgWaitMinutes(waitSource);
 
     setTotals({
       businesses: bizCount || 0,
@@ -102,9 +101,9 @@ const AdminOverview = () => {
     const mostActiveEntry = Object.entries(tokensByBiz).sort((a, b) => b[1] - a[1])[0];
 
     const waitByQueue: Record<string, number[]> = {};
-    activeVisitorsToday.filter(v => v.status === "served" && v.served_at).forEach(v => {
-      const mins = (new Date(v.served_at!).getTime() - new Date(v.joined_at).getTime()) / 60000;
-      if (Number.isFinite(mins) && mins >= 0) {
+    waitSource.forEach(v => {
+      const [mins] = getActiveWaitMinutes([v]);
+      if (mins !== undefined) {
         (waitByQueue[v.queue_id] = waitByQueue[v.queue_id] || []).push(mins);
       }
     });

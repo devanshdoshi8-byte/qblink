@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   INACTIVITY_PAUSE_MS,
+  computeActiveAvgWaitMinutes,
   getLastQueueActivityMs,
   isQueueInactiveForPause,
   shouldCancelAvgWait,
@@ -93,5 +94,22 @@ describe("queueInactivity", () => {
 
     // If queue just reactivated and only old pre-inactivity rows exist, void all of them
     expect(filterRowsAfterInactivityGap([oldSessionRow], queue, now)).toEqual([]);
+  });
+
+  it("excludes inactive-span wait durations (>60m) from computeActiveAvgWaitMinutes", () => {
+    const now = Date.now();
+    const rows = [
+      {
+        status: "served",
+        joined_at: new Date(now - 10 * 60 * 1000).toISOString(),
+        served_at: new Date(now).toISOString(), // 10m
+      },
+      {
+        status: "served",
+        joined_at: new Date(now - 300 * 60 * 1000).toISOString(),
+        served_at: new Date(now).toISOString(), // 300m (inactive span) -> excluded
+      },
+    ];
+    expect(computeActiveAvgWaitMinutes(rows)).toBe(10);
   });
 });
