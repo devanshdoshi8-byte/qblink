@@ -133,7 +133,7 @@ const jsonLd = [
     },
     sameAs: [
       "https://qblink.tech",
-      "https://www.linkedin.com/company/qblink",
+      "https://in.linkedin.com/in/qblink-tech-a479563b3",
       "https://github.com/devanshdoshi8-byte/qblink",
     ],
   },

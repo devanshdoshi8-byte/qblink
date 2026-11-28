@@ -18,7 +18,7 @@ describe("Static SEO & Knowledge Graph Validation", () => {
     expect(html).toContain("<title>QBlink — Hardware-Free Virtual Queue Management</title>");
     expect(html).not.toContain("<title>Qblink (QBlink)");
     expect(html).not.toContain('"name": "About & Founders"');
-    expect(html).toContain('https://www.linkedin.com/company/qblink');
+    expect(html).toContain('https://in.linkedin.com/in/qblink-tech-a479563b3');
     expect(html).toContain('rel="canonical" href="https://qblink.tech/"');
     expect(html).toContain('hreflang="en"');
     expect(html).toContain('hreflang="x-default"');
